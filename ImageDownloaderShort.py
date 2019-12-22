@@ -87,7 +87,10 @@ def sleeper():
 def response_handler(url, status):
     print("\nDEBUG: ERROR WITH PAGE REQUEST: " + url)
     print("\tdue to response status: " + str(status))
-    print("\nCURRENT PAGE: " + str(search_page_counter))
+    if search_page_counter == 0:
+        print("\nREASON: STORE NOT FOUND.")
+    else:
+        print("\nCURRENT PAGE: " + str(search_page_counter))
 
 
 def make_http_req(url):
@@ -196,7 +199,7 @@ def get_products_from_page(data, store_name, current_url):
 
 
 def download_all_products_from_store(store_name, store_url):
-    search_page_counter = 1
+    global search_page_counter
     data = make_http_req(store_url)
     if data is None:
         failed_stores.add(store_url)
