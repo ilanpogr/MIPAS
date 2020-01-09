@@ -1,0 +1,30 @@
+<Menu>:
+    Label:
+        pos_hint: {'center_x': 0.11, 'center_y': 0.95}
+        text: 'MIPAS'
+        font_size: 50
+        height: 50
+    Label:
+        pos_hint: {'x': -0.28, 'center_y': 0.9}
+        text: 'Merchant\'s Intellectual Property Authentication System'
+        font_size: 15
+        height: 50
+    ImageButton:
+        id: button_settings
+        color: (1,1,1,1) if self.state == 'normal' else (0.4,0.4,0.4,1)
+        source: 'resources/settings.png'
+        size_hint_x: 0.1
+        size_hint_y: 0.1
+        pos_hint: {'center_x': 0.95, 'center_y': 0.935}
+        allow_stretch: True
+        on_release: app.open_settings()
+    Tabs:
+        id: tabs
+
+
+<TPI@TabbedPanelItem>:
+    canvas:
+        Rectangle:
+            source: 'resources/home.png'
+            size: 35,35
+            pos: self.width/2-60,0
