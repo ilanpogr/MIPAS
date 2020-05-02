@@ -1,111 +1,107 @@
-import csv
 import os
+from typing import List, Tuple, Set
+
 import cv2
 from PIL import Image
 
 
 class ReadingModule:
-    """a reading module."""
+    """
+    This class in change of all the reading functionality of the system.
+    All reading of csv file and images.
+    """
 
-    def __init__(self):
-        self.image_extensions = {".jpg", ".JPG" , ".png" , ".PNG" , ".JPEG"}
-        self.csv_extensions = ".csv"
+    image_extensions = {".jpg", ".JPG", ".png", ".PNG", ".JPEG"}
+    csv_extensions = ".csv"
 
-    def reading_image_from_tuple_path_open_cv(self, tuple_image_path_and_name):
-        """reading an image from path."""
+    @staticmethod
+    def reading_image_from_tuple_path_open_cv(tuple_image_path_and_name: Tuple):
+        """
+        This functions reading an images from given tuple of path and image name using the open_cv library.
+
+        :param tuple_image_path_and_name: The given tuple of (path to image, image name).
+        :return: The image of the given tuple.
+        """
         image_name = tuple_image_path_and_name[0] + "/" + tuple_image_path_and_name[1]
         return cv2.imread(image_name)
 
-    def reading_image_from_tuple_path_using_image(self, tuple_image_path_and_name):
+    @staticmethod
+    def reading_image_from_tuple_path_using_image(tuple_image_path_and_name: Tuple):
+        """
+        This functions reading an images from given tuple of path and image name using the PIL library.
+
+        :param tuple_image_path_and_name: The given tuple of (path to image, image name).
+        :return: The image of the given tuple.
+        """
         image_name = tuple_image_path_and_name[0] + "/" + tuple_image_path_and_name[1]
         return Image.open(image_name)
 
-    def reading_all_images_from_given_tuple_path_list(self, tuple_path_list):
-        """reading all images from a given path, the names of the pics are in the given list."""
+    @staticmethod
+    def reading_all_images_from_given_tuple_path_list(tuple_path_list: Tuple) -> List[Tuple]:
+        """
+        This read all images from given tuple of path and image name.
+
+        :param tuple_path_list: List of tuple (path to image, image name)
+        :return: List of tuples containing (image name, image)
+        """
         all_images = []
         for image_path in tuple_path_list:
-            all_images.append((image_path[1], self.reading_image_from_tuple_path_open_cv(image_path)))
+            all_images.append((image_path[1], ReadingModule.reading_image_from_tuple_path_open_cv(image_path)))
         return all_images
 
-    def get_images_names_in_folder(self, path):
-        """getting all the images names from a given path."""
+    @staticmethod
+    def get_images_names_in_folder(path: str) -> List[Tuple[str, str]]:
+        """
+        This function return all the images paths and name.
+
+        :param path: The given path of the images.
+        :return: List of tuples containing (path to image, image name)
+        """
         images = []
         for r, d, f in os.walk(path):
             for file in f:
-                for ext in self.image_extensions:
+                for ext in ReadingModule.image_extensions:
                     if ext in file:
                         to_add = os.path.join(r), file
                         images.append(to_add)
         return images
 
-    def reading_all_folders_in_given_path(self, path):
-        """return all the sub-folder names (one level down) in a given path."""
-        folders_names = []
-        subfolders = [path + "/" + dI for dI in os.listdir(path) if os.path.isdir(os.path.join(path, dI))]
-        for subfolder in subfolders:
-            splitted = subfolder.split("/")
-            folders_names.append(splitted[len(splitted) - 1])
-        return folders_names
+    @staticmethod
+    def read_all_csv_paths_from_path(path_to_csv_files: str) -> List[str]:
+        """
+        This function returns all the csv paths and names.
 
-    def read_histogram_csv_file(self, path_to_file):
-        with open(path_to_file) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            origin_images = []
-            to_compare_images = []
-            counter = 0
-            for row in csv_reader:
-                if counter == 0:
-                    counter += 1
-                    continue
-                origin_iamge_data = row[0], row[1]
-                if origin_iamge_data not in origin_images:
-                    origin_images.append(origin_iamge_data)
-
-                to_comapre_images_data = row[2], row[3]
-                if to_comapre_images_data not in to_compare_images:
-                    to_compare_images.append(to_comapre_images_data)
-        return origin_images, to_compare_images
-
-    def get_images_after_histogram_test(self, passed_histogram_test):
-        origin_images = []
-        to_compare_images = []
-        similar_images = []
-        for row in passed_histogram_test:
-            row = row.split(",")
-            similar_images_to_add = row[1], row[3]
-            similar_images.append(similar_images_to_add)
-            origin_iamge_data = row[0], row[1]
-            if origin_iamge_data not in origin_images:
-                # origin_iamge_data = origin_iamge_data , row[4]
-                origin_images.append(origin_iamge_data)
-
-            to_comapre_images_data = row[2], row[3]
-            if to_comapre_images_data not in to_compare_images:
-                # to_comapre_images_data = to_comapre_images_data , row[4]
-                to_compare_images.append(to_comapre_images_data)
-        return origin_images, to_compare_images, similar_images
-
-    def get_image_name_and_path(self, images_list, image_index):
-        """reading the path and the name of an image."""
-        origin_image_name = images_list[image_index][1]
-        origin_image_path = images_list[image_index][0]
-        return origin_image_path, origin_image_name
-
-    def read_all_csv_paths_from_path(self, path_to_csv_files):
-        """getting all the images names from a given path."""
+        :param path_to_csv_files: The given path to csv files.
+        :return: List of the path to the csv files.
+        """
         csv_files_paths = []
         for r, d, f in os.walk(path_to_csv_files):
             for file in f:
-                if self.csv_extensions in file:
+                if ReadingModule.csv_extensions in file:
                     to_add = os.path.join(r) + file
                     csv_files_paths.append(to_add)
         return csv_files_paths
 
-    def reading_all_folders_paths_in_given_path(self, stores_path):
-        subfolders = [stores_path + "/" + dI for dI in os.listdir(stores_path) if os.path.isdir(os.path.join(stores_path, dI))]
-        return subfolders
+    @staticmethod
+    def reading_all_folders_paths_in_given_path(stores_path: str) -> List[str]:
+        """
+        This function returns a list of full paths of the store names.
 
-    def get_prev_store_results(self, store_path):
+        :param stores_path: The path to the stores folder.
+        :return: A list of the full path to the store.
+        """
+        sub_folders = [stores_path + "/" + dI for dI in os.listdir(stores_path) if os.path.isdir
+                                                                (os.path.join(stores_path, dI))]
+        return sub_folders
+
+    @staticmethod
+    def get_prev_store_results(store_path: str) -> Set[str]:
+        """
+        This function returns the previous results of a store.
+
+        :param store_path: the path of the store.
+        :return: A set of the results of the store previous results.
+        """
         file_name = store_path + "/results.csv"
         prev_store_results = set()
         first = True
