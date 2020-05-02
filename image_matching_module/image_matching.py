@@ -43,7 +43,16 @@ class ImageMatching:
         in_depth_results = self.run_in_depth_filtering(initial_results)
 
         # write results to store results file (overwrite old file if exists)
-        self.writer.write_store_results_to_file(store_path,in_depth_results)
+        self.writer.write_store_results_to_file(store_path, in_depth_results)
+
+        # get list of previous store results, if exists
+        prev_store_results = self.reader.get_prev_store_results(store_path)
+
+        # merge results with total results file (create one if doesn't exist)
+        if prev_store_results is None:
+            self.writer.update_final_results_file(self.stores_path, in_depth_results)
+        else:
+            self.writer.update_final_results_file(self.stores_path, in_depth_results, prev_store_results)
 
         # check if there is a final results file
         # if no -> create it and write the results to it
@@ -51,7 +60,7 @@ class ImageMatching:
         # if in-depth results has a higher score -> write it to the new final results file
         # else -> write the first record to the new results file and pull the next record from the old results file
         # repeat this until both in depth list and final results file are empty
-        self.writer.update_final_results_file(self.stores_path,in_depth_results)
+
         # delete old final results file
 
         # rename new final results file
