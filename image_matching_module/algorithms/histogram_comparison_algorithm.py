@@ -49,14 +49,8 @@ class HistogramComparisonAlgorithm(ComparisonAlgorithm):
                 # create a tuple for the compared pairs
                 image_pair_tuple = (origin_image[0],to_compare_image[0])
 
-                # histogram for the origin image
-                customer_hist_base = self.create_hist_pic(origin_image[1])
-
-                # histogram for the to_compare image
-                to_compare_hist_base = self.create_hist_pic(to_compare_image[1])
-
                 # get the score
-                score = self.calculate_score(customer_hist_base, to_compare_hist_base)
+                score = self.calculate_score(origin_image[1], to_compare_image[1])
 
                 # insert the pair's score into the dictionary
                 passed_histogram_test[image_pair_tuple] = score
