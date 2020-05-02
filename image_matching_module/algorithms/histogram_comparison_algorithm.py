@@ -4,7 +4,7 @@ from image_matching_module.algorithms.comparison_algorithm import ComparisonAlgo
 
 class HistogramComparisonAlgorithm(ComparisonAlgorithm):
 
-    def __init__(self, name_of_algorithm, threshold):
+    def __init__(self, name_of_algorithm):
         super().__init__(name_of_algorithm)
         h_bins = 50
         s_bins = 60
@@ -15,7 +15,6 @@ class HistogramComparisonAlgorithm(ComparisonAlgorithm):
         self.ranges = h_range + s_range
         # Use the 0-th and 1-st channels
         self.channels = [0, 1]
-        self.threshold = threshold
 
     def get_histogram_threshold_results(self, score):
         if score > self.threshold:

@@ -5,7 +5,7 @@ import numpy as np
 class ChiSquaredComparisonAlgorithm(HistogramComparisonAlgorithm):
 
     def __init__(self):
-        HistogramComparisonAlgorithm.__init__(self, "chi_squared", 250)
+        HistogramComparisonAlgorithm.__init__(self, "chi_squared")
 
     def calculate_score(self, origin_hist_base, to_compare_hist_base):
         eps = 1e-10

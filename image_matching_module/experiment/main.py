@@ -9,8 +9,10 @@ from image_matching_module.algorithms.intersection_comparison_algorithm import I
 from image_matching_module.experiment.experiments.precision_recall_experiment import PrecisionRecallExperiment
 import itertools
 from itertools import chain, permutations
-
-
+from image_matching_module.image_matching import ImageMatching
+from image_matching_module.image_matching_configuration import ImageMatchingConfiguration
+from image_matching_module.writing_module import WritingModule
+from image_matching_module.reading_module import ReadingModule
 def main():
 
     experiment = ComparisonExperiment("/Users/avig/myStuff/final_project/test1", "/Users/avig/myStuff/final_project/test2")
@@ -59,5 +61,12 @@ def get_all_permutations(numbers):
     return new_results
 
 
+def test_image_matching():
+    image_maching = ImageMatching("F:/avi/test_image_maching/customer","F:/avi/test_image_maching/stores",ImageMatchingConfiguration(),
+                                  ReadingModule(),WritingModule())
+    image_maching.run_matching_for_all_stores()
+
+
 if __name__ == '__main__':
-    main()
+    #main()
+    test_image_matching()

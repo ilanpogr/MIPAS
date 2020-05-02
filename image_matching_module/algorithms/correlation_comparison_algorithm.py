@@ -5,7 +5,7 @@ from image_matching_module.algorithms.histogram_comparison_algorithm import Hist
 class CorrelationComparisonAlgorithm(HistogramComparisonAlgorithm):
 
     def __init__(self):
-        HistogramComparisonAlgorithm.__init__(self, "correlation", 0.4)
+        HistogramComparisonAlgorithm.__init__(self, "correlation")
 
     def calculate_score(self, customer_image, store_image):
         customer_hist_base = self.create_hist_pic(customer_image)

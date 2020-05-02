@@ -4,9 +4,8 @@ from image_matching_module.algorithms.feature_comparison_algorithm import Featur
 
 class ORBFeatureComparisonAlgorithm(FeatureComparisonAlgorithm):
 
-    def __init__(self,threshold):
-        FeatureComparisonAlgorithm.__init__(self,"orb_features",threshold)
-        self.threshold = threshold
+    def __init__(self):
+        FeatureComparisonAlgorithm.__init__(self,"orb_features")
         self.orb = cv2.ORB_create(nfeatures=5000,scaleFactor=1.3,nlevels=8, edgeThreshold=60, firstLevel=0, WTA_K=3)
         self.bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
@@ -85,7 +84,7 @@ class ORBFeatureComparisonAlgorithm(FeatureComparisonAlgorithm):
 
     def calculate_score(self,origin_image, to_compare_image):
 
-        origin_image_mirror_horizontal = self.flipped_image_horizontal(origin_image[1])
+        origin_image_mirror_horizontal = FeatureComparisonAlgorithm.flipped_image_horizontal(origin_image)
         key_points1, description1, key_points2, description2, key_points3, description3 = self.detect_and_compute(origin_image,to_compare_image,origin_image_mirror_horizontal)
 
         # TODO : no to rethink this method, what is the mirrored has features but origion not?

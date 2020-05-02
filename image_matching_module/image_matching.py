@@ -21,7 +21,7 @@ class ImageMatching:
         """run image comparison for all the customer's images with all stores"""
 
         customer_images_paths = self.reader.get_images_names_in_folder(self.customer_path)
-        store_paths = self.reader.reading_all_folders_in_given_path(self.stores_path)
+        store_paths = self.reader.reading_all_folders_paths_in_given_path(self.stores_path)
 
         for store_path in store_paths:
             self.run_matching_for_store(customer_images_paths, store_path)
@@ -76,6 +76,8 @@ class ImageMatching:
             for store_images_batch in store_images_batches:
                 store_images_batch = self.reader.reading_all_images_from_given_tuple_path_list(store_images_batch)
                 # combine results from all initial comparison algorithms according to given weights
+                if customer_images_batch[2][0] == "3.jpg":
+                    i = 0
                 initial_batch_results = IMU.get_combined_initial_score(customer_path, customer_images_batch, store_path,
                                                                        store_images_batch,
                                                                        self.settings.initial_algorithms_weights,
@@ -98,13 +100,13 @@ class ImageMatching:
             #                       ................................................................ ]
             image_pairs_list = []
             for image_pair in image_pair_batch:
-                image_pair_tuples = [(image_pair.customer_path, image_pair.customer_name),
-                                     (image_pair.store_path, image_pair.store_name)]
+                image_pair_tuples = [(image_pair.customer_image_path, image_pair.customer_image_name),
+                                     (image_pair.store_image_path, image_pair.store_image_name)]
 
                 image_pair_data = self.reader.reading_all_images_from_given_tuple_path_list(image_pair_tuples)
-                image_pair_data.append((image_pair.initial_score,))
+                image_pair_data.append((image_pair.initial_score,image_pair.customer_image_path,image_pair.store_image_path))
 
-                image_pairs_list.append(self.reader.reading_all_images_from_given_tuple_path_list(image_pair_tuples))
+                image_pairs_list.append(image_pair_data)
 
             in_depth_batch_results = IMU.get_combined_in_depth_score(image_pairs_list,
                                                                      self.settings.in_depth_algorithms_weights,
@@ -113,6 +115,6 @@ class ImageMatching:
             total_in_depth_results.extend(in_depth_batch_results)
 
         # sort results according to highest score
-        total_in_depth_sorted_results = sorted(total_in_depth_results)
+        total_in_depth_results.sort(key=lambda x: x.final_score, reverse=True)
 
-        return total_in_depth_sorted_results
+        return total_in_depth_results

@@ -100,3 +100,7 @@ class ReadingModule:
                     to_add = os.path.join(r) + file
                     csv_files_paths.append(to_add)
         return csv_files_paths
+
+    def reading_all_folders_paths_in_given_path(self, stores_path):
+        subfolders = [stores_path + "/" + dI for dI in os.listdir(stores_path) if os.path.isdir(os.path.join(stores_path, dI))]
+        return subfolders
