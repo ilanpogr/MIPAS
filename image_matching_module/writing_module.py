@@ -203,7 +203,6 @@ class WritingModule:
                         line = csvfile.readline()
                         continue
                 spllited_line = line.split(",")
-                spllited_line[4] = spllited_line[4]
                 old_score = spllited_line[4]
                 if float(old_score) > in_depth_results[in_depth_results_index]:
                     self.write_spllitted_line_to_csv(spllited_line, file_name_tmp)
@@ -211,9 +210,9 @@ class WritingModule:
                 else:
                     self.write_object_to_csv(in_depth_results[in_depth_results_index], file_name_tmp)
                     in_depth_results_index += 1
-            while line:
+            while line and line != '"\n':
+                line = line.rstrip()
                 spllited_line = line.split(",")
-                spllited_line[4] = spllited_line[4]
                 self.write_spllitted_line_to_csv(spllited_line, file_name_tmp)
                 line = csvfile.readline()
             while in_depth_results_index < len(in_depth_results):
