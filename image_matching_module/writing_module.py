@@ -197,12 +197,13 @@ class WritingModule:
                     first = False
                     continue
                 # check if image pair already exists in previous final results file
+                line = line.rstrip()
                 if prev_store_results_exists:
                     if line in prev_store_results:
                         line = csvfile.readline()
                         continue
                 spllited_line = line.split(",")
-                spllited_line[4] = spllited_line[4][:-1]
+                spllited_line[4] = spllited_line[4]
                 old_score = spllited_line[4]
                 if float(old_score) > in_depth_results[in_depth_results_index]:
                     self.write_spllitted_line_to_csv(spllited_line, file_name_tmp)
@@ -212,7 +213,7 @@ class WritingModule:
                     in_depth_results_index += 1
             while line:
                 spllited_line = line.split(",")
-                spllited_line[4] = spllited_line[4][:-1]
+                spllited_line[4] = spllited_line[4]
                 self.write_spllitted_line_to_csv(spllited_line, file_name_tmp)
                 line = csvfile.readline()
             while in_depth_results_index < len(in_depth_results):
@@ -228,7 +229,7 @@ class WritingModule:
             if prev_store_results is None:
                 self.merge_final_results_file_and_new_results(stores_path, in_depth_results)
             else:
-                self.merge_final_results_file_and_new_results(stores_path, prev_store_results)
+                self.merge_final_results_file_and_new_results(stores_path,in_depth_results, prev_store_results)
         else:
             self.write_final_results_file(stores_path, in_depth_results)
 

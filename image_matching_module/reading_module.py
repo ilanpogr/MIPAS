@@ -104,3 +104,19 @@ class ReadingModule:
     def reading_all_folders_paths_in_given_path(self, stores_path):
         subfolders = [stores_path + "/" + dI for dI in os.listdir(stores_path) if os.path.isdir(os.path.join(stores_path, dI))]
         return subfolders
+
+    def get_prev_store_results(self, store_path):
+        file_name = store_path + "/results.csv"
+        prev_store_results = set()
+        first = True
+        if not os.path.isfile(file_name):
+            return None
+        with open(file_name) as csv_file:
+            for line in csv_file:
+                if first:
+                    first = False
+                    continue
+                line = line.rstrip()
+                prev_store_results.add(line)
+        csv_file.close()
+        return prev_store_results
