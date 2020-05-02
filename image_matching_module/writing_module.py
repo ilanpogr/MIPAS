@@ -6,6 +6,7 @@ from image_matching_module.reading_module import ReadingModule
 from image_matching_module.in_depth_image_pair import InDepthImagePair as InDepthIP
 
 
+
 class WritingModule:
 
     @staticmethod
@@ -151,56 +152,68 @@ class WritingModule:
         if os.path.isfile(file_name):
             os.remove(file_name)
         with open(file_name,'w',newline='') as csv_file:
-            csvwriter = csv.writer(csv_file ,delimiter=' ',lineterminator = '\n')
+            csvwriter = csv.writer(csv_file ,delimiter=',',lineterminator = '\n')
             origin_image_path = "origin_image_path"
             origin_image_name = "origin_image_name"
             to_compare_image_path = "to_compare_image_path"
             to_compare_image_name = "to_compare_image_name"
             score = "score"
-            csvwriter.writerow(origin_image_path + "," + origin_image_name + "," + to_compare_image_path +
-                               "," + to_compare_image_name + "," + score)
+            csvwriter.writerow([origin_image_path,origin_image_name,to_compare_image_path
+                              ,to_compare_image_name,score])
             for row in in_depth_results:
-                csvwriter.writerow(row)
+                csvwriter.writerow([row.customer_image_path,row.customer_image_name,row.store_image_path
+                                  ,row.store_image_name,str(row.final_score)])
+        csv_file.close()
 
     def write_final_results_file(self,stores_path, in_depth_results : List[InDepthIP]):
         file_name = stores_path + "/final_results.csv"
-        with open(file_name,'w',newline='') as csv_file:
-            csvwriter = csv.writer(csv_file ,delimiter=' ',lineterminator = '\n')
+        with open(file_name, 'w', newline='') as csv_file:
+            csvwriter = csv.writer(csv_file, delimiter=',', lineterminator='\n')
             origin_image_path = "origin_image_path"
             origin_image_name = "origin_image_name"
             to_compare_image_path = "to_compare_image_path"
             to_compare_image_name = "to_compare_image_name"
             score = "score"
-            csvwriter.writerow(origin_image_path + "," + origin_image_name + "," + to_compare_image_path +
-                               "," + to_compare_image_name + "," + score)
+            csvwriter.writerow([origin_image_path,origin_image_name , to_compare_image_path
+                              , to_compare_image_name , score])
             for row in in_depth_results:
-                csvwriter.writerow(row)
+                csvwriter.writerow([row.customer_image_path , row.customer_image_name, row.store_image_path
+                                   , row.store_image_name , str(row.final_score)])
+        csv_file.close()
 
     def merge_final_results_file_and_new_results(self, stores_path, in_depth_results : List[InDepthIP]):
         file_name = stores_path + "/final_results.csv"
-        new_results = [InDepthIP]
-        old_file_index = 1
+        file_name_tmp = stores_path + "/final_results_tmp.csv"
         in_depth_results_index = 0
+        first = True
+        self.write_coulmns_names(stores_path)
         with open(file_name, newline='') as csvfile:
-            old_results_list = [line.rstrip() for line in csvfile]
-            while old_file_index < len(old_results_list) and in_depth_results_index < len(in_depth_results):
-                old_score = old_results_list[old_file_index][4]
-                if old_score > in_depth_results[in_depth_results_index]:
-                    new_results.append(old_results_list[old_file_index])
-                    old_file_index += 1
+            line = csvfile.readline()
+            while line and in_depth_results_index < len(in_depth_results):
+                if first:
+                    line = csvfile.readline()
+                    first = False
+                    continue
+                spllited_line = line.split(",")
+                spllited_line[4] = spllited_line[4][:-1]
+                old_score = spllited_line[4]
+                if float(old_score) > in_depth_results[in_depth_results_index]:
+                    self.wrtie_spllited_line_to_csv(stores_path, spllited_line,file_name_tmp)
+                    line = csvfile.readline()
                 else:
-                    new_results.append(in_depth_results[in_depth_results_index])
+                    self.wrtie_object_to_csv(stores_path,in_depth_results[in_depth_results_index],file_name_tmp)
                     in_depth_results_index += 1
-            while old_file_index < len(old_results_list):
-                new_results.append(old_results_list[old_file_index])
-                old_file_index += 1
+            while line:
+                spllited_line = line.split(",")
+                spllited_line[4] = spllited_line[4][:-1]
+                self.wrtie_spllited_line_to_csv(stores_path, spllited_line,file_name_tmp)
+                line = csvfile.readline()
             while in_depth_results_index < len(in_depth_results):
-                new_results.append(old_results_list[old_file_index])
-                old_file_index += 1
+                self.wrtie_object_to_csv(stores_path,in_depth_results[in_depth_results_index],file_name_tmp)
+                in_depth_results_index += 1
         csvfile.close()
         os.remove(file_name)
-        self.write_final_results_file(stores_path,new_results)
-
+        os.rename(file_name_tmp,file_name)
 
     def update_final_results_file(self, stores_path, in_depth_results : List[InDepthIP]):
         file_name = stores_path + "/final_results.csv"
@@ -208,3 +221,29 @@ class WritingModule:
             self.merge_final_results_file_and_new_results(stores_path,in_depth_results)
         else:
             self.write_final_results_file(stores_path,in_depth_results)
+
+    def wrtie_spllited_line_to_csv(self, stores_path, spllited_line,file_name_tmp):
+        with open(file_name_tmp, 'a', newline='') as csv_file:
+            csvwriter = csv.writer(csv_file, delimiter=',', lineterminator='\n')
+            csvwriter.writerow([spllited_line[0],spllited_line[1],spllited_line[2],spllited_line[3],spllited_line[4]])
+        csv_file.close()
+
+    def wrtie_object_to_csv(self,stores_path, result : InDepthIP,file_name_tmp):
+        with open(file_name_tmp, 'a', newline='') as csv_file:
+            csvwriter = csv.writer(csv_file, delimiter=',', lineterminator='\n')
+            csvwriter.writerow([result.customer_image_path,result.customer_image_name,result.store_image_path
+                            ,result.store_image_name,result.final_score])
+        csv_file.close()
+
+
+    def write_coulmns_names(self, stores_path):
+        file_name = stores_path + "/final_results_tmp.csv"
+        with open(file_name, 'w', newline='') as csv_file:
+            csvwriter = csv.writer(csv_file, delimiter=',', lineterminator='\n')
+            origin_image_path = "origin_image_path"
+            origin_image_name = "origin_image_name"
+            to_compare_image_path = "to_compare_image_path"
+            to_compare_image_name = "to_compare_image_name"
+            score = "score"
+            csvwriter.writerow([origin_image_path,origin_image_name , to_compare_image_path
+                                , to_compare_image_name , score])

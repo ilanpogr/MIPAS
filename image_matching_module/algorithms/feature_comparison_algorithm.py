@@ -5,13 +5,13 @@ from image_matching_module.algorithms.comparison_algorithm import ComparisonAlgo
 # TODO: CHANGE HISTOGRAMS OF IMAGES SENT TO CALCULATE_SCORE INTO JUST THE IMAGES
 class FeatureComparisonAlgorithm(ComparisonAlgorithm):
 
-    def __init__(self, name_of_algorithm, threshold):
+    def __init__(self, name_of_algorithm):
         super().__init__(name_of_algorithm)
-        self.threshold = threshold
-        
+
     @staticmethod
     def flipped_image_horizontal(image):
-        return cv2.flip(image, 1)
+        flipped_horizontal =  cv2.flip(image, 1)
+        return flipped_horizontal
 
     def calculate_score(self, origin_image, to_compare_image):
         pass

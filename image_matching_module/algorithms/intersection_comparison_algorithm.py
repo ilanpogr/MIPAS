@@ -5,7 +5,7 @@ import numpy as np
 class IntersectionComparisonAlgorithm(HistogramComparisonAlgorithm):
 
     def __init__(self):
-        HistogramComparisonAlgorithm.__init__(self,"intersection", 2.8)
+        HistogramComparisonAlgorithm.__init__(self,"intersection")
 
     def calculate_score(self, customer_image, store_image):
         customer_hist_base = self.create_hist_pic(customer_image)

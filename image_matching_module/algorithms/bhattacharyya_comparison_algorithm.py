@@ -6,7 +6,7 @@ class BhattacharyyaComparisonAlgorithm(HistogramComparisonAlgorithm):
 
     def __init__(self):
 
-        HistogramComparisonAlgorithm.__init__(self, "bhattacharyya", 0.67)
+        HistogramComparisonAlgorithm.__init__(self, "bhattacharyya")
 
     def calculate_score(self, customer_image, store_image):
         customer_hist_base = self.create_hist_pic(customer_image)

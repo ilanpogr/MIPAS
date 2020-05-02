@@ -33,7 +33,7 @@ class ImageMatchingUtils:
 
                 for algorithm, weight in initial_algorithms:
                     algorithm_score = algorithm.calculate_score(customer_image[1], store_image[1])
-                    combined_score += algorithm_score * weight
+                    combined_score += algorithm_score * float(weight)
 
                 if combined_score >= initial_threshold:
                     initial_score_passed_list.append(
@@ -42,7 +42,7 @@ class ImageMatchingUtils:
         return initial_score_passed_list
 
     @staticmethod
-    def get_combined_in_depth_score(self, image_pair_batch: List[List[Tuple]],
+    def get_combined_in_depth_score(image_pair_batch: List[List[Tuple]],
                                     in_depth_algorithms: List[Tuple[comp_algorithm, Decimal]],
                                     initial_score_weight: Decimal,
                                     in_depth_threshold: Decimal) -> List[InDepthIPair]:
@@ -52,20 +52,23 @@ class ImageMatchingUtils:
         # calculate the final score for each image pair
         for image_pair in image_pair_batch:
             combined_in_depth_score = 0.0
-            customer_image, store_image = self.get_images(image_pair)
-            initial_score = image_pair[3][0]
+            customer_image, store_image = ImageMatchingUtils.get_images(image_pair)
+            initial_score = image_pair[2][0]
+            customer_image_path = image_pair[2][1]
+            store_image_path = image_pair[2][2]
 
             # get the weighted score for each in depth algorithm
             for algorithm, weight in in_depth_algorithms:
                 algorithm_score = algorithm.calculate_score(customer_image[1], store_image[1])
-                combined_in_depth_score += algorithm_score * weight
+                combined_in_depth_score += algorithm_score * float(weight)
 
             # calculate the final score gathered from the weighted initial score and weighted combined in depth score
-            combined_final_score = initial_score_weight * initial_score + \
-                                   (Decimal('1') - initial_score_weight) * combined_in_depth_score
+            combined_final_score = float(initial_score_weight) * initial_score + \
+                                   float((Decimal('1') - initial_score_weight)) * combined_in_depth_score
 
             if combined_final_score >= in_depth_threshold:
-                in_depth_passed_list.append(InDepthIPair(customer_image[0], store_image[0], combined_final_score))
+                in_depth_passed_list.append(InDepthIPair(customer_image_path,customer_image[0],store_image_path,
+                                                         store_image[0], combined_final_score))
 
         # sort the in depth final list by final score
         in_depth_passed_list.sort(key=lambda x: x.final_score, reverse=True)
