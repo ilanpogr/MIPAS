@@ -241,6 +241,11 @@ found products will be compared to given dataset</string>
                        </item>
                        <item>
                         <property name="text">
+                         <string>Continue Previous Store Search</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
                          <string>Search Found Stores</string>
                         </property>
                        </item>

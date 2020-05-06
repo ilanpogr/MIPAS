@@ -125,6 +125,7 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
+        self.comboBox.addItem("")
         self.gridLayout_5.addWidget(self.comboBox, 0, 0, 1, 1)
         self.gridLayout_4.addWidget(self.frame_4, 1, 2, 1, 1)
         self.gridLayout_3.addWidget(self.frame_2, 0, 0, 1, 1)
@@ -169,12 +170,13 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Merchant\'s Intellectual Property Authentication System"))
         self.start_btn.setText(_translate("MainWindow", "START"))
         self.label_3.setText(_translate("MainWindow", "Shop Searching Method"))
-        self.label_4.setText(_translate("MainWindow", "Choose an option how to perform the next shop searching,\n"
+        self.label_4.setText(_translate("MainWindow", "Choose an option how to perform the next shop search\n"
 "after chosen method -\n"
 "found products will be compared to given dataset"))
         self.comboBox.setItemText(0, _translate("MainWindow", "Start New Search"))
-        self.comboBox.setItemText(1, _translate("MainWindow", "Search Found Stores"))
-        self.comboBox.setItemText(2, _translate("MainWindow", "Compare Only With What I Got"))
+        self.comboBox.setItemText(1, _translate("MainWindow", "Continue Previous Store Search"))
+        self.comboBox.setItemText(2, _translate("MainWindow", "Search Found Stores"))
+        self.comboBox.setItemText(3, _translate("MainWindow", "Compare Only With What I Got"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.home_tab), _translate("MainWindow", "Home"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.hitory_tab), _translate("MainWindow", "History"))
         self.menuAbout.setTitle(_translate("MainWindow", "About"))
