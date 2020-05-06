@@ -17,8 +17,10 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             super(MipasApp, self).__init__(parent)
         self.setupUi(self)
         connectElements.connect_main_window_elements(self)
-
-        self.thread_pool = QThreadPool()
+    #     self.threadpool = QThreadPool()
+    #
+    # def get_progress_callback(self, progress_callback):
+    #     return progress_callback
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
