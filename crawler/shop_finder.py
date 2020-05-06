@@ -19,8 +19,8 @@ http = httplib2.Http()
 search_page_counter = 1
 search_page_last = 250
 stores_dict = {}
-store_category = 'jewelry'
-sub_category = ['necklaces', 'earrings', 'bracelets', 'rings']
+store_category = ''
+sub_category = []
 file_name = 'stores_dict.csv'
 
 
@@ -132,8 +132,10 @@ def search_for_stores_with_url(url):
         get_stores_from_products_page(data)
 
 
-def search_for_stores():
-    global search_page_counter
+def search_for_stores(user_store_category, user_sub_category):
+    global search_page_counter, store_category, sub_category
+    store_category = user_store_category
+    sub_category = user_sub_category.split(",")
     get_stores_dict_from_file()
     main_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
         category=store_category)
@@ -150,5 +152,5 @@ def search_for_stores():
 SCRIPT METHOD CALL - can be deleted after integration.
 ------------------------------------'''
 
-search_for_stores()
-save_stores_dict_to_csv_as_backup()
+# search_for_stores()
+# save_stores_dict_to_csv_as_backup()

@@ -1,3 +1,5 @@
+from PyQt5.QtCore import QThreadPool
+
 from ui_files import mainWindow, connectElements
 from ui_files.welcome import welcomeSettings_v2
 import configUtils
@@ -8,12 +10,15 @@ import sys
 
 
 class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
-    def __init__(self, parent=None, welcome=False):
+    def __init__(self, parent=None, welcome=False, *args, **kwargs):
         if not welcome:
-            super(MipasApp, self).__init__()
+            super(MipasApp, self).__init__(*args, **kwargs)
         else:
             super(MipasApp, self).__init__(parent)
         self.setupUi(self)
+        connectElements.connect_main_window_elements(self)
+
+        self.thread_pool = QThreadPool()
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):

@@ -1,6 +1,8 @@
 from configparser import ConfigParser
 from os import path
 
+_properties_file_path = "./resources/properties.ini"
+
 
 def is_all_settings_configured(welcome_screen):
     if not welcome_screen.store_names.text() or not welcome_screen.store_main_category.text() or \
@@ -12,7 +14,7 @@ def is_all_settings_configured(welcome_screen):
 
 
 def is_settings_file_exists():
-    _settings_file = "resources/properties.ini"
+    _settings_file = _properties_file_path
     return path.exists(_settings_file)
 
 
@@ -42,11 +44,14 @@ def create_config_file(platform, store_name, main_category, sub_categories, data
         'sub_categories': sub_categories,
         'dataset_path': dataset_path
     }
-    with open('./resources/properties.ini', 'w') as f:
+    with open(_properties_file_path, "w") as f:
         config.write(f)
 
 
-
+def get_property(prop):
+    config = ConfigParser()
+    config.read(_properties_file_path)
+    return config.get('settings', prop)
 
 
 

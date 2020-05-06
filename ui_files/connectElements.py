@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets, QtCore
 from pathlib import Path
+import controllers.runController as RunController
 
 
 def connect_welcome_buttons(welcome_screen):
@@ -26,3 +27,14 @@ def _open_file_dialog(welcome_screen):
 def retranslate_welcome_ui(welcome_screen):
     _translate = QtCore.QCoreApplication.translate
     welcome_screen.setWindowTitle("MIPAS - Configure Settings")
+
+
+def connect_main_window_elements(main_screen):
+    main_screen.setWindowTitle("MIPAS")
+    _translate = QtCore.QCoreApplication.translate
+    main_screen.method_label.setText(_translate("MainWindow", main_screen.comboBox.currentText()))
+    main_screen.start_btn.clicked.connect(lambda: (
+        main_screen.stackedWidget.setCurrentIndex(1),
+        RunController.start_button_clicked(main_screen)))
+
+
