@@ -19,9 +19,9 @@ GLOBAL VARS
 
 http = httplib2.Http()
 
-stores_dict_file_name = 'stores_dict.csv'
-downloaded_stores_file_name = 'downloaded_stores_dict.txt'
-init_path = 'photos/'
+stores_dict_file_name = 'resources/app_files/stores_dict.csv'
+downloaded_stores_file_name = 'resources/app_files/downloaded_stores_dict.txt'
+init_path = 'resources/photos/'
 search_page_counter = 0
 num_of_updates = 0
 
@@ -212,8 +212,8 @@ def get_products_from_updated_page(data, store_name, current_url):
         global num_of_updates
         store_path = init_path + store_name
         new_images = False
-        products_a_links_in_page = SoupStrainer('a', {'class':re.compile('listing-link')})
-        products_links_elements = BeautifulSoup(data, 'lxml', parse_only=products_a_links_in_page).findAll('a')
+        products_a_links_in_page = SoupStrainer('a', {'class': re.compile('listing-link')})
+        products_links_elements = BeautifulSoup(data, 'html.parser', parse_only=products_a_links_in_page).findAll('a')
         for a in products_links_elements:
             img = a.find('img')
             pruduct_url = ''
@@ -250,7 +250,7 @@ def get_products_from_updated_page(data, store_name, current_url):
         return new_images
 
 
-def download_new_products_if_found(store_name, store_url):
+def download_new_products_if_found(store_name, store_url, signal_status, status):
     global search_page_counter
     search_page_counter = 0
     data = make_http_req(store_url)
@@ -258,12 +258,17 @@ def download_new_products_if_found(store_name, store_url):
         failed_updated_stores.add(store_url)
         return
     search_page_counter = 1
+    current_status = status + "\nChecking if have new products"
+    signal_status.emit(current_status)
     found_new_pictures = False
     found_new_images = get_products_from_updated_page(data, store_name, store_url)
+    if found_new_images:
+        current_status = status + "\nDownloading only new products from known store: " + store_name
+        signal_status.emit(current_status)
     num_of_pages = get_number_of_pages_in_store(data)
     if num_of_pages is not None:
         page_url_sefix = '&page={page_num}#items'
-        for i in range (2, num_of_pages + 1):
+        for i in range(2, num_of_pages + 1):
             if found_new_images:
                 page_url = store_url + page_url_sefix.format(page_num=i)
                 search_page_counter = i
@@ -271,12 +276,12 @@ def download_new_products_if_found(store_name, store_url):
                 up_to_date = get_products_from_updated_page(data, store_name, page_url)
             else:
                 return
-    save_products_img_url_dict(name)
+    save_products_img_url_dict(store_name)
 
 
 def get_number_of_pages_in_store(data):
     pages_a_links = SoupStrainer('a', {'data-page': re.compile('^[0-9]*$')})
-    link_elements = BeautifulSoup(data, 'lxml', parse_only=pages_a_links).findAll('span')
+    link_elements = BeautifulSoup(data, 'html.parser', parse_only=pages_a_links).findAll('span')
     pages = set()
     for span in link_elements:
         if re.match(r'^[0-9]*$', span.text) and span.text != '':
@@ -302,29 +307,30 @@ def download_image(resp, content, store_name, img_url, product_url):
     resp, content = http.request(img_url)
     #     print(convert_time(time.time() - before_time))
     if resp.status == 200:
-        rest = img_url.split('?version', 1)[0].split(full_image_size_str)[1]
-        full_file_name = 'highQ_' + rest
-        file_path = init_path + store_name + '/' + full_file_name
-        new_image_size = get_pxl_width_pxl_height_by_common_division_close_to_o_pixels(content, resp)
-        if new_image_size is None or is_smaller_then_min_size(new_image_size):
-            if new_image_size is not None and new_image_size[0] == new_image_size[1]:
-                new_image_size = (o_pixels, o_pixels)
-                img = Image.open(BytesIO(content))
-                img.thumbnail(new_image_size)
-                img.save(file_path)
-                if (is_file_exist(full_file_name, store_path)):
-                    product_img_url_dict[full_file_name] = product_url
-            else:
-                with open(file_path, 'wb') as f:
-                    f.write(content)
-                if (is_file_exist(full_file_name, store_path)):
-                    product_img_url_dict[full_file_name] = product_url
-        else:
-            img = Image.open(BytesIO(content))
-            img.thumbnail(new_image_size)
-            img.save(file_path)
-            if (is_file_exist(full_file_name, store_path)):
-                product_img_url_dict[full_file_name] = product_url
+        # rest = img_url.split('?version', 1)[0].split(full_image_size_str)[1]
+        # full_file_name = 'highQ_' + rest
+        # file_path = init_path + store_name + '/' + full_file_name
+        # new_image_size = get_pxl_width_pxl_height_by_common_division_close_to_o_pixels(content, resp)
+        # if new_image_size is None or is_smaller_then_min_size(new_image_size):
+        #     if new_image_size is not None and new_image_size[0] == new_image_size[1]:
+        #         new_image_size = (o_pixels, o_pixels)
+        #         img = Image.open(BytesIO(content))
+        #         img.thumbnail(new_image_size)
+        #         img.save(file_path)
+        #         if (is_file_exist(full_file_name, store_path)):
+        #             product_img_url_dict[full_file_name] = product_url
+        #     else:
+        #         with open(file_path, 'wb') as f:
+        #             f.write(content)
+        #         if (is_file_exist(full_file_name, store_path)):
+        #             product_img_url_dict[full_file_name] = product_url
+        # else:
+        #     img = Image.open(BytesIO(content))
+        #     img.thumbnail(new_image_size)
+        #     img.save(file_path)
+        #     if (is_file_exist(full_file_name, store_path)):
+        #         product_img_url_dict[full_file_name] = product_url
+        pass
     else:
         print('§§§§§§§§§§§§§§§§§§§§§§§')
         print('RESPONSE ISSUE')
@@ -338,7 +344,7 @@ def get_products_from_page(data, store_name, current_url):
     if data is not None:
         got_data = True;
         products_a_links_in_page = SoupStrainer('a', {'class': re.compile('listing-link')})
-        products_links_elements = BeautifulSoup(data, 'lxml', parse_only=products_a_links_in_page).findAll('a')
+        products_links_elements = BeautifulSoup(data, 'html.parser', parse_only=products_a_links_in_page).findAll('a')
         for a in products_links_elements:
             img = a.find('img')
             pruduct_url = ''
@@ -367,13 +373,15 @@ def get_products_from_page(data, store_name, current_url):
     return got_data
 
 
-def download_all_products_from_store(store_name, store_url):
+def download_all_products_from_store(store_name, store_url, signal_status, status):
     global search_page_counter
     search_page_counter = 0
     data = make_http_req(store_url)
     if data is None:
         failed_stores.add(store_url)
         return
+    current_status = status + "\nDownloading page #1"
+    signal_status.emit(current_status)
     search_page_counter = 1
     get_products_from_page(data, store_name, store_url)
     num_of_pages = get_number_of_pages_in_store(data)
@@ -381,6 +389,8 @@ def download_all_products_from_store(store_name, store_url):
     if num_of_pages is not None:
         page_url_sefix = '&page={page_num}#items'
         for i in range(2, num_of_pages + 1):
+            current_status = status + "\nDownloading page #" + str(i)
+            signal_status.emit(current_status)
             page_url = store_url + page_url_sefix.format(page_num=i)
             search_page_counter = i
             data = make_http_req(page_url)
@@ -388,44 +398,56 @@ def download_all_products_from_store(store_name, store_url):
             if (not got_data):
                 got_data = data_res
     if got_data:
-        save_products_img_url_dict(name)
+        save_products_img_url_dict(store_name)
 
 
 '''------------------------------------
-SCRIPT METHOD CALL - can be deleted after integration.
+MAIN METHOD CALL
 ------------------------------------'''
 
-start_time = time.ctime()
-program_initial_print(start_time)
-start_time = time.time()
-get_all_stores_urls()
-get_all_downloaded_stores()
-if not os.path.exists(init_path.replace('/', '')):
-    os.makedirs(init_path.replace('/', ''))
 
-i = 0
-for name, url in stores.items():
-    i += 1
-    if url in downloaded_stores:
-        #         url = url + '&sort_order=date_desc'
-        #         print('************************************************************************************')
-        #         print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-        #         print('************************************************************************************')
-
-        #         download_new_products_if_found(name, url)
-        #         save_products_img_url_dict(name)
-
-        #         print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
-        #         print('************************************************************************************')
-        #         print_output_for_debug(start_time)
-        #         num_of_updates = 0
-        continue
+def download_products_for_all_stores(signal_process, signal_status):
+    global store_products, num_of_updates
+    start_time = time.ctime()
+    program_initial_print(start_time)
+    start_time = time.time()
+    get_all_stores_urls()
+    if not os.path.exists(downloaded_stores_file_name):
+        with open(downloaded_stores_file_name, "w") as file:
+            pass
     else:
-        print('************************************************************************************')
-        print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-        print('************************************************************************************')
-        download_all_products_from_store(name, url)
-        append_store_to_cache(url)
-        print_output_for_debug(start_time)
-    store_products = set()
-    product_img_url_dict.clear()
+        get_all_downloaded_stores()
+    if not os.path.exists(init_path):
+        os.makedirs(init_path)
+    i = 0
+    for name, url in stores.items():
+        i += 1
+        current_status = str(i) + "/" + str(len(stores)) + "\nDownloading products for store: " + name
+        signal_status.emit(current_status)  # signal task
+        if url in downloaded_stores:
+            url = url + '&sort_order=date_desc'
+            # print('************************************************************************************')
+            # print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
+            # print('************************************************************************************')
+            #
+            # download_new_products_if_found(name, url, signal_status, current_status)
+            # save_products_img_url_dict(name)
+            # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
+            # print('************************************************************************************')
+            # print_output_for_debug(start_time)
+            # num_of_updates = 0
+            time.sleep(0.001)  # todo - remove sleep and uncomment above lines
+            signal_process.emit(i/len(stores) * 100)
+        else:
+            if i == 1:
+                print('************************************************************************************')
+                print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
+                print('************************************************************************************')
+                download_all_products_from_store(name, url, signal_status, current_status)
+                append_store_to_cache(url)
+                print_output_for_debug(start_time)
+            time.sleep(0.001)   # todo - remove sleep and uncomment above lines
+            signal_process.emit(i/len(stores) * 100)
+
+        store_products = set()
+        product_img_url_dict.clear()
