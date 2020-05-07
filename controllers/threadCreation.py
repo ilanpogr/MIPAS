@@ -49,7 +49,6 @@ class ThreadController(Thread):
 
         # Workers
         self.worker1 = WorkerSingle()
-        #self.worker2 = WorkerTwo()
 
     def _threaded_call(self, worker, fn, *args, signals=None, slots=None):
         thread = QThread()

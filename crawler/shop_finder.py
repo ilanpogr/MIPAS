@@ -134,7 +134,7 @@ def search_for_stores_with_url(url, signal_process, signal_status, status):
         current_status = status + " - " + str(_) + "/" + str(search_page_last)
         signal_status.emit(current_status)  # signal task
         full_url = url + str(search_page_counter)
-        time.sleep(0.0125)  # todo - remove sleep and uncomment next lines
+        time.sleep(0.005)  # todo - remove sleep and uncomment next lines
         # data = get_next_page_search_shops(full_url)
         # get_stores_from_products_page(data)
         pages_counter += 1
@@ -162,9 +162,3 @@ def search_for_stores(user_store_category, user_sub_category, signal_process, si
     # save_stores_dict_to_csv() # todo - uncomment next lines
     # save_stores_dict_to_csv_as_backup()
 
-
-'''------------------------------------
-SCRIPT METHOD CALL - can be deleted after integration.
-------------------------------------'''
-# todo - delete this section
-# search_for_stores()
