@@ -5,7 +5,8 @@ from ui_files import mainWindow, connectElements
 from ui_files.welcome import welcomeSettings_v2
 import configUtils
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QLabel
+from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtWidgets import QMainWindow
 
 import sys
 
@@ -17,13 +18,19 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         else:
             super(MipasApp, self).__init__(parent)
         self.setupUi(self)
+        self._translate = QCoreApplication.translate
         connectElements.connect_main_window_elements(self)
         self.run_option = 0
-
         self.controller = ThreadController(self)
 
     def update_progress_bar(self, value):
         self.progressBar.setValue(value)
+
+    def update_status(self, value):
+        self.status_label.setText(self._translate("MainWindow", value))
+
+    def update_task(self, value):
+        self.task_label.setText(self._translate("MainWindow", value))
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):

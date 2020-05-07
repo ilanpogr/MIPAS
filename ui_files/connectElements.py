@@ -32,12 +32,10 @@ def change_run_method(main_screen):
     state = main_screen.comboBox.currentText()
     if state == "Start New Search":
         main_screen.run_option = 0
-    elif state == "Continue Previous Store Search":
+    elif state == "Search Found Stores From Previous Run":
         main_screen.run_option = 1
-    elif state == "Search Found Stores":
-        main_screen.run_option = 2
     elif state == "Compare Only With What I Got":
-        main_screen.run_option = 3
+        main_screen.run_option = 2
 
 
 def connect_main_window_elements(main_screen):
