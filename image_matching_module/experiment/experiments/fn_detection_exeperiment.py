@@ -9,7 +9,7 @@ class FNDetectionExperiment:
     """class that represents an experiment for getting the false negative results of each algorithm"""
 
     @staticmethod
-    def run_fn_detection_experiment(self, path_to_csv_files,
+    def run_fn_detection_experiment(path_to_csv_files,
                                     initial_algorithms_weights_thresholds,
                                     in_depth_algorithm_weight_threshold,
                                     combined_initial_threshold, combined_in_depth_threshold,
@@ -42,7 +42,7 @@ class FNDetectionExperiment:
                     for algorithm, weight, threshold in initial_algorithms_weights_thresholds:
                         algorithm_column_name = algorithm.get_algorithm_name() + "_actual"
                         algorithm_score = row[algorithm_column_name]
-                        combined_initial_score += combined_initial_score + algorithm_score * weight
+                        combined_initial_score += combined_initial_score + algorithm_score * float(weight)
                         # check if its a False Negative results
                         if algorithm_score < threshold:
                             FNDetectionExperiment.add_store_images_to_fn_list(algorithm,
@@ -51,16 +51,17 @@ class FNDetectionExperiment:
                     # check if the image pair is a FN in the combined initial algorithms score
                     if combined_initial_score < combined_initial_threshold:
                         # create both directories (if they don't exist)
-                        full_customer_image_dir_path = '/initials_combined/' + customer_image_directory_name
-                        Path('/initials_combined/').mkdir(exist_ok=True)
+                        full_customer_image_dir_path = 'initials_combined/' + customer_image_directory_name
+                        Path('initials_combined/').mkdir(exist_ok=True)
                         Path(full_customer_image_dir_path).mkdir(exist_ok=True)
                         # add the customer image's name to a text file in the folder (create it if it doesn't exist)
                         with open(full_customer_image_dir_path + '/store_files.txt', 'a') as store_files:
-                            store_files.write(store_image_name)
+                            store_files.write(store_image_name + "\n")
                     # check if the image pair is a FN in each in depth algorithm
                     for algorithm, weight, threshold in in_depth_algorithm_weight_threshold:
+                        algorithm_column_name = algorithm.get_algorithm_name() + "_actual"
                         algorithm_score = row[algorithm_column_name]
-                        combined_in_depth_score += combined_in_depth_score + algorithm_score * weight
+                        combined_in_depth_score += combined_in_depth_score + algorithm_score * float(weight)
                         # check if its a False Negative results
                         if algorithm_score < threshold:
                             FNDetectionExperiment.add_store_images_to_fn_list(algorithm,
@@ -74,12 +75,12 @@ class FNDetectionExperiment:
                     # check if the image pair is a FN in the total in depth score
                     if total_in_depth_score < combined_in_depth_threshold:
                         # create both directories (if they don't exist)
-                        full_customer_image_dir_path = '/in_depth_combined/' + customer_image_directory_name
-                        Path('/in_depth_combined/').mkdir(exist_ok=True)
+                        full_customer_image_dir_path = 'in_depth_combined/' + customer_image_directory_name
+                        Path('in_depth_combined/').mkdir(exist_ok=True)
                         Path(full_customer_image_dir_path).mkdir(exist_ok=True)
                         # add the customer image's name to a text file in the folder (create it if it doesn't exist)
                         with open(full_customer_image_dir_path + '/store_files.txt', 'a') as store_files:
-                            store_files.write(store_image_name)
+                            store_files.write(store_image_name + "\n")
 
             finish_file_time = time.time()
             print("finished file number:", file_number)
@@ -95,10 +96,10 @@ class FNDetectionExperiment:
     @staticmethod
     def add_store_images_to_fn_list(algorithm, customer_image_directory_name, store_image_name):
         # create both directories (if they don't exist)
-        full_customer_image_dir_path = '/' + algorithm.get_algorithm_name() + '/' \
+        full_customer_image_dir_path = algorithm.get_algorithm_name() + '/' \
                                        + customer_image_directory_name
-        Path('/' + algorithm.get_algorithm_name()).mkdir(exist_ok=True)
+        Path(algorithm.get_algorithm_name()).mkdir(exist_ok=True)
         Path(full_customer_image_dir_path).mkdir(exist_ok=True)
         # add the customer image's name to a text file in the folder (create it if doesn't exist)
         with open(full_customer_image_dir_path + '/store_files.txt', 'a') as store_files:
-            store_files.write(store_image_name)
+            store_files.write(store_image_name + "\n")
