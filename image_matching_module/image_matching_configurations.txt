@@ -1,0 +1,6 @@
+batch_size:100
+initial_threshold:0.87
+in_depth_threshold:0.64
+initial_score_weight:0.5
+initial_algorithms_and_weights:bhattacharyya,0.7;correlation,0.25;intersection,0.05
+in_depth_algorithms_and_weights:orb_feature,1.0

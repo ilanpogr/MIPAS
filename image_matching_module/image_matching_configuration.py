@@ -5,6 +5,9 @@ from image_matching_module.algorithms.bhattacharyya_comparison_algorithm import 
 from image_matching_module.algorithms.correlation_comparison_algorithm import CorrelationComparisonAlgorithm
 from image_matching_module.algorithms.intersection_comparison_algorithm import IntersectionComparisonAlgorithm
 from image_matching_module.algorithms.orb_feature_comparisson_algorithm import ORBFeatureComparisonAlgorithm
+from image_matching_module import reading_module
+
+
 
 
 class ImageMatchingConfiguration:
@@ -29,16 +32,26 @@ class ImageMatchingConfiguration:
     """
 
     # TODO: need to everything from the configuration file.
+
+
+    def create_algorithms_wieghts(self, alg_names_dict, initial_algorithms_and_weights_dict):
+        algorithms_weights_list = []
+        for key, value in initial_algorithms_and_weights_dict.items():
+            algorithms_weights_list.append((alg_names_dict[key] ,Decimal(value)))
+        return algorithms_weights_list
+
     def __init__(self):
         alg_names_dict = {'bhattacharyya': BhattacharyyaComparisonAlgorithm(),
                           'correlation': CorrelationComparisonAlgorithm(),
                           'intersection': IntersectionComparisonAlgorithm(),
                           'orb_feature': ORBFeatureComparisonAlgorithm()}
-        self.batch_size = self.__read_batch_size()
-        self.initial_threshold, self.in_depth_threshold = self.__read_thresholds()
-        self.initial_score_weight = self.__read_initial_score_weight()
-        self.initial_algorithms_weights = self.__read_initial_algorithms_and_weights(alg_names_dict)
-        self.in_depth_algorithms_weights = self.__read_in_depth_algorithms_and_weights(alg_names_dict)
+        batch_size,initial_threshold, in_depth_threshold, initial_score_weight,  initial_algorithms_and_weights_dict, in_depth_algorithms_and_weights_dict = reading_module.ReadingModule.read_config_file("image_matching_configurations.txt")
+        self.batch_size = int(batch_size)
+        self.initial_threshold = Decimal(initial_threshold)
+        self.in_depth_threshold = Decimal(in_depth_threshold)
+        self.initial_score_weight = Decimal(initial_score_weight)
+        self.initial_algorithms_weights = self.create_algorithms_wieghts(alg_names_dict, initial_algorithms_and_weights_dict)
+        self.in_depth_algorithms_weights = self.create_algorithms_wieghts(alg_names_dict,in_depth_algorithms_and_weights_dict)
 
     def __read_batch_size(self) -> int:
         """

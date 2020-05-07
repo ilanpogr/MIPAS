@@ -5,6 +5,9 @@ import cv2
 from PIL import Image
 
 
+
+
+
 class ReadingModule:
     """
     This class in change of all the reading functionality of the system.
@@ -123,3 +126,41 @@ class ReadingModule:
                 prev_store_results.add(line)
         csv_file.close()
         return prev_store_results
+
+    @staticmethod
+    def init_algorithm_and_weights_dict(algorithms_and_weights_list):
+        algorithms_and_weights_dict = {}
+        for algorithm_and_weight in algorithms_and_weights_list:
+            algorithm , weight = algorithm_and_weight.split(",")
+            if "\n" in weight:
+                weight = weight.strip()
+            algorithms_and_weights_dict[algorithm] = weight
+        return algorithms_and_weights_dict
+
+    @staticmethod
+    def read_config_file(file_name):
+        script_dir = os.path.dirname(__file__)
+        abs_file_path = os.path.join(script_dir, file_name)
+        with open(abs_file_path,'r') as config_file:
+
+            line = config_file.readline()
+            batch_size = line.split(":")[1].strip()
+
+            line = config_file.readline()
+            initial_threshold = line.split(":")[1].strip()
+
+            line = config_file.readline()
+            in_depth_threshold = line.split(":")[1].strip()
+
+            line = config_file.readline()
+            initial_score_weight = line.split(":")[1].strip()
+
+            line = config_file.readline()
+            initial_algorithms_and_weights_list = line.split(":")[1].split(";")
+            initial_algorithms_and_weights_dict = ReadingModule.init_algorithm_and_weights_dict(initial_algorithms_and_weights_list)
+
+            line = config_file.readline()
+            in_depth_algorithms_and_weights_list = line.split(":")[1].split(";")
+            in_depth_algorithms_and_weights_dict = ReadingModule.init_algorithm_and_weights_dict(in_depth_algorithms_and_weights_list)
+
+            return batch_size,initial_threshold, in_depth_threshold, initial_score_weight,  initial_algorithms_and_weights_dict, in_depth_algorithms_and_weights_dict
