@@ -6,6 +6,7 @@ from image_matching_module.writing_module import WritingModule as WM
 from image_matching_module.image_matching_configuration import ImageMatchingConfiguration as IMC
 from typing import List, Tuple
 
+import time
 
 class ImageMatching:
     """
@@ -22,7 +23,7 @@ class ImageMatching:
         a class that holds all the settings for the image matching module.
     """
 
-    def __init__(self, customer_path: str, stores_path: str, configurations: IMC):
+    def __init__(self, customer_path: str, stores_path: str):
         """
         :param customer_path: a string that contains the path for the folder containing
         all the customer images.
@@ -32,9 +33,9 @@ class ImageMatching:
         """
         self.__customer_path = customer_path
         self.__stores_path = stores_path
-        self.__settings = configurations
+        self.__settings = IMC()
 
-    def run_matching_for_all_stores(self):
+    def run_matching_for_all_stores(self, signal_process, signal_status):
         """
         Run image comparison for all the customer's images with all stores and write the results to the
         final results file.
@@ -42,8 +43,15 @@ class ImageMatching:
         customer_images_paths = RM.get_images_names_in_folder(self.__customer_path)
         store_paths = RM.reading_all_folders_paths_in_given_path(self.__stores_path)
 
+        counter = 0
         for store_path in store_paths:
+            counter += 1
+            store_name = store_path.split("/")[-1]
+            current_status = str(counter) + "/" + str(len(store_paths)) + \
+                             "\nComparing your images with products from store: " + store_name
+            signal_status.emit(current_status)  # signal task
             self.run_matching_for_store(customer_images_paths, store_path)
+            signal_process.emit(counter/len(store_paths)*100)
 
     def run_matching_for_store(self, customer_images_paths: List[Tuple[str, str]], store_path: str):
         """
@@ -108,6 +116,7 @@ class ImageMatching:
             # get all customer images for this batch
             customer_images_batch = RM.reading_all_images_from_given_tuple_path_list(customer_images_batch)
             for store_images_batch in store_images_batches:
+                print("here")
                 # get all store images for this batch
                 store_images_batch = RM.reading_all_images_from_given_tuple_path_list(store_images_batch)
 
@@ -138,6 +147,7 @@ class ImageMatching:
         # run in-depth comparison algorithms on pairs
         total_in_depth_results = []
         for image_pair_batch in image_pairs_batches:
+            print("here")
             image_pairs_list = []
             # image_pairs_list structure -> [ [ (c1_name, c1_image), (s1_name, s1_image)
             #                                   (cs1_initial_score, c1_image_path, s1_image_path) ],

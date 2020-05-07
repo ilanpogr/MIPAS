@@ -19,9 +19,11 @@ http = httplib2.Http()
 search_page_counter = 1
 search_page_last = 250
 stores_dict = {}
-store_category = 'jewelry'
-sub_category = ['necklaces', 'earrings', 'bracelets', 'rings']
-file_name = 'stores_dict.csv'
+store_category = ''
+sub_category = []
+file_name = 'resources/app_files/stores_dict.csv'
+search_iteration_counter = 0
+pages_counter = 0
 
 
 '''------------------------------------
@@ -125,30 +127,38 @@ def get_stores_from_products_page(data):
                 continue
 
 
-def search_for_stores_with_url(url):
+def search_for_stores_with_url(url, signal_process, signal_status, status):
+    global pages_counter, search_iteration_counter
+    search_iteration_counter += 1
     for _ in range(1, search_page_last + 1):
+        current_status = status + " - " + str(_) + "/" + str(search_page_last)
+        signal_status.emit(current_status)  # signal task
         full_url = url + str(search_page_counter)
-        data = get_next_page_search_shops(full_url)
-        get_stores_from_products_page(data)
+        time.sleep(0.005)  # todo - remove sleep and uncomment next lines
+        # data = get_next_page_search_shops(full_url)
+        # get_stores_from_products_page(data)
+        pages_counter += 1
+        num_of_categories = len(sub_category) + 1  # 1 - main category
+        signal_process.emit((pages_counter/(num_of_categories * search_page_last)) * 100)
 
 
-def search_for_stores():
-    global search_page_counter
+def search_for_stores(user_store_category, user_sub_category, signal_process, signal_status):
+    global search_page_counter, store_category, sub_category
+    current_status = "Searching by store's main category: " + store_category
+    signal_status.emit(current_status)  # signal task
+    store_category = user_store_category
+    sub_category = user_sub_category.split(",")
     get_stores_dict_from_file()
     main_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
         category=store_category)
-    search_for_stores_with_url(main_category_url_without_page_number)
+    search_for_stores_with_url(main_category_url_without_page_number, signal_process, signal_status, current_status)
     for sub_c in sub_category:
         search_page_counter = 1
         sub_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}/{sub_category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
             category=store_category, sub_category=sub_c)
-        search_for_stores_with_url(sub_category_url_without_page_number)
-    save_stores_dict_to_csv()
+        current_status = "Searching by store's sub-category: " + sub_c
+        signal_status.emit(current_status)  # signal task
+        search_for_stores_with_url(sub_category_url_without_page_number, signal_process, signal_status, current_status)
+    # save_stores_dict_to_csv() # todo - uncomment next lines
+    # save_stores_dict_to_csv_as_backup()
 
-
-'''------------------------------------
-SCRIPT METHOD CALL - can be deleted after integration.
-------------------------------------'''
-
-search_for_stores()
-save_stores_dict_to_csv_as_backup()
