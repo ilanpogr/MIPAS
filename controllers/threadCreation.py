@@ -86,7 +86,7 @@ class ThreadController(Thread):
     def _receive_finish_signal(self):
         print("done")
         # next_index = main_window.stackedWidget.currentIndex() + 1
-        # main_window.stackedWidget.setCurrentIndex(next_index)
+        main_window.stackedWidget.setCurrentIndex(0)  # for mockup!!! todo - delete.
 
     @pyqtSlot(bool)
     def start_thread(self):
