@@ -2,13 +2,11 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -122,6 +120,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addItem(spacerItem3, 2, 0, 1, 1)
         self.comboBox = QtWidgets.QComboBox(self.frame_4)
         self.comboBox.setObjectName("comboBox")
+        self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
@@ -274,8 +273,9 @@ class Ui_MainWindow(object):
 "after chosen method -\n"
 "found products will be compared to given dataset"))
         self.comboBox.setItemText(0, _translate("MainWindow", "Start New Search"))
-        self.comboBox.setItemText(1, _translate("MainWindow", "Search Found Stores From Previous Run"))
-        self.comboBox.setItemText(2, _translate("MainWindow", "Compare Only With What I Got"))
+        self.comboBox.setItemText(1, _translate("MainWindow", "Continue Previous Store Search"))
+        self.comboBox.setItemText(2, _translate("MainWindow", "Search Found Stores"))
+        self.comboBox.setItemText(3, _translate("MainWindow", "Compare Only With What I Got"))
         self.label_5.setText(_translate("MainWindow", "Chosen Shop Searching Method:"))
         self.method_label.setText(_translate("MainWindow", "... method chosen by user ..."))
         self.status_label.setText(_translate("MainWindow", "... current status ..."))
@@ -286,3 +286,4 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.hitory_tab), _translate("MainWindow", "History"))
         self.menuAbout.setTitle(_translate("MainWindow", "About"))
         self.actionAbout_us.setText(_translate("MainWindow", "About us"))
+

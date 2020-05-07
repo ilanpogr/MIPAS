@@ -16,6 +16,12 @@ def connect_welcome_buttons(welcome_screen):
     welcome_screen.dataset_path.clicked.connect(lambda: _open_file_dialog(welcome_screen))
     retranslate_welcome_ui(welcome_screen)
 
+    # for mockup!
+    welcome_screen.store_names.setText("ArtisanEffect,ArtisanFeel")
+    welcome_screen.store_main_category.setText("jewelry")
+    welcome_screen.store_sub_categories.setText("necklaces,earrings,bracelets,rings")
+    welcome_screen.path_str.setText("/Users/ipogrebinsky/Documents/School/Final Project/Artisan Pictures_mini")
+
 
 def _open_file_dialog(welcome_screen):
     directory = str(QtWidgets.QFileDialog.getExistingDirectory(caption="Select Folder With All Your Pictures", directory=str(Path.home())))

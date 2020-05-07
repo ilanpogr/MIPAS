@@ -307,29 +307,30 @@ def download_image(resp, content, store_name, img_url, product_url):
     resp, content = http.request(img_url)
     #     print(convert_time(time.time() - before_time))
     if resp.status == 200:
-        rest = img_url.split('?version', 1)[0].split(full_image_size_str)[1]
-        full_file_name = 'highQ_' + rest
-        file_path = init_path + store_name + '/' + full_file_name
-        new_image_size = get_pxl_width_pxl_height_by_common_division_close_to_o_pixels(content, resp)
-        if new_image_size is None or is_smaller_then_min_size(new_image_size):
-            if new_image_size is not None and new_image_size[0] == new_image_size[1]:
-                new_image_size = (o_pixels, o_pixels)
-                img = Image.open(BytesIO(content))
-                img.thumbnail(new_image_size)
-                img.save(file_path)
-                if (is_file_exist(full_file_name, store_path)):
-                    product_img_url_dict[full_file_name] = product_url
-            else:
-                with open(file_path, 'wb') as f:
-                    f.write(content)
-                if (is_file_exist(full_file_name, store_path)):
-                    product_img_url_dict[full_file_name] = product_url
-        else:
-            img = Image.open(BytesIO(content))
-            img.thumbnail(new_image_size)
-            img.save(file_path)
-            if (is_file_exist(full_file_name, store_path)):
-                product_img_url_dict[full_file_name] = product_url
+        # rest = img_url.split('?version', 1)[0].split(full_image_size_str)[1]
+        # full_file_name = 'highQ_' + rest
+        # file_path = init_path + store_name + '/' + full_file_name
+        # new_image_size = get_pxl_width_pxl_height_by_common_division_close_to_o_pixels(content, resp)
+        # if new_image_size is None or is_smaller_then_min_size(new_image_size):
+        #     if new_image_size is not None and new_image_size[0] == new_image_size[1]:
+        #         new_image_size = (o_pixels, o_pixels)
+        #         img = Image.open(BytesIO(content))
+        #         img.thumbnail(new_image_size)
+        #         img.save(file_path)
+        #         if (is_file_exist(full_file_name, store_path)):
+        #             product_img_url_dict[full_file_name] = product_url
+        #     else:
+        #         with open(file_path, 'wb') as f:
+        #             f.write(content)
+        #         if (is_file_exist(full_file_name, store_path)):
+        #             product_img_url_dict[full_file_name] = product_url
+        # else:
+        #     img = Image.open(BytesIO(content))
+        #     img.thumbnail(new_image_size)
+        #     img.save(file_path)
+        #     if (is_file_exist(full_file_name, store_path)):
+        #         product_img_url_dict[full_file_name] = product_url
+        pass
     else:
         print('§§§§§§§§§§§§§§§§§§§§§§§')
         print('RESPONSE ISSUE')
@@ -438,12 +439,13 @@ def download_products_for_all_stores(signal_process, signal_status):
             time.sleep(0.001)  # todo - remove sleep and uncomment above lines
             signal_process.emit(i/len(stores) * 100)
         else:
-            # print('************************************************************************************')
-            # print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-            # print('************************************************************************************')
-            # download_all_products_from_store(name, url, signal_status, current_status)
-            # append_store_to_cache(url)
-            # print_output_for_debug(start_time)
+            if i == 1:
+                print('************************************************************************************')
+                print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
+                print('************************************************************************************')
+                download_all_products_from_store(name, url, signal_status, current_status)
+                append_store_to_cache(url)
+                print_output_for_debug(start_time)
             time.sleep(0.001)   # todo - remove sleep and uncomment above lines
             signal_process.emit(i/len(stores) * 100)
 

@@ -21,7 +21,7 @@ class ReadingModule:
         a string representing the extension of csv files.
     """
 
-    image_extensions = {".jpg", ".JPG", ".png", ".PNG", ".JPEG"}
+    image_extensions = {".jpg", ".JPG", ".png", ".PNG", ".JPEG", ".jpeg"}
     csv_extensions = ".csv"
 
     @staticmethod

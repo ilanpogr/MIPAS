@@ -25,6 +25,8 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
 
     def update_progress_bar(self, value):
         self.progressBar.setValue(value)
+        if value >= 100:
+            self.progressBar.setValue(0)
 
     def update_status(self, value):
         self.status_label.setText(self._translate("MainWindow", value))
