@@ -9,6 +9,13 @@ class ReadingModule:
     """
     This class in change of all the reading functionality of the system.
     All reading of csv file and images.
+
+    Attributes
+    ----------
+    image_extensions : set
+        a set representing the extensions of images files.
+    csv_extensions : str
+        a string representing the extension of csv files.
     """
 
     image_extensions = {".jpg", ".JPG", ".png", ".PNG", ".JPEG"}
