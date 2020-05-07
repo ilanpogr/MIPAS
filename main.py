@@ -1,10 +1,11 @@
-from PyQt5.QtCore import QThreadPool
+
+from controllers.threadCreation import ThreadController
 
 from ui_files import mainWindow, connectElements
 from ui_files.welcome import welcomeSettings_v2
 import configUtils
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QLabel
 
 import sys
 
@@ -17,10 +18,12 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             super(MipasApp, self).__init__(parent)
         self.setupUi(self)
         connectElements.connect_main_window_elements(self)
-    #     self.threadpool = QThreadPool()
-    #
-    # def get_progress_callback(self, progress_callback):
-    #     return progress_callback
+        self.run_option = 0
+
+        self.controller = ThreadController(self)
+
+    def update_progress_bar(self, value):
+        self.progressBar.setValue(value)
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):

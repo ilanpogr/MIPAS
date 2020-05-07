@@ -22,6 +22,8 @@ stores_dict = {}
 store_category = ''
 sub_category = []
 file_name = 'resources/app_files/stores_dict.csv'
+search_iteration_counter = 0
+pages_counter = 0
 
 
 '''------------------------------------
@@ -125,29 +127,33 @@ def get_stores_from_products_page(data):
                 continue
 
 
-def search_for_stores_with_url(url, progress_callback):
-    # for _ in range(1, search_page_last + 1):
-    for i in range(1, 11):  # todo - remove and uncomment previous row
+def search_for_stores_with_url(url, signal):
+    global pages_counter, search_iteration_counter
+    search_iteration_counter += 1
+    for _ in range(1, search_page_last + 1):
         full_url = url + str(search_page_counter)
-        data = get_next_page_search_shops(full_url)
-        get_stores_from_products_page(data)
-        progress_callback.emit((i/search_page_last))
+        time.sleep(0.1)  # todo - remove sleep and uncomment next lines
+        # data = get_next_page_search_shops(full_url)
+        # get_stores_from_products_page(data)
+        pages_counter += 1
+        num_of_categories = len(sub_category) + 1  # 1 - main category
+        signal.emit((pages_counter/(num_of_categories * search_page_last)) * 100)
 
 
-def search_for_stores(user_store_category, user_sub_category, progress_callback):
+def search_for_stores(user_store_category, user_sub_category, signal):
     global search_page_counter, store_category, sub_category
     store_category = user_store_category
     sub_category = user_sub_category.split(",")
     get_stores_dict_from_file()
     main_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
         category=store_category)
-    search_for_stores_with_url(main_category_url_without_page_number, progress_callback)
-    # for sub_c in sub_category:  todo - remove comments here
-    #     search_page_counter = 1
-    #     sub_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}/{sub_category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
-    #         category=store_category, sub_category=sub_c)
-    #     search_for_stores_with_url(sub_category_url_without_page_number, progress_callback)
-    # save_stores_dict_to_csv()
+    search_for_stores_with_url(main_category_url_without_page_number, signal)
+    for sub_c in sub_category:
+        search_page_counter = 1
+        sub_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}/{sub_category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
+            category=store_category, sub_category=sub_c)
+        search_for_stores_with_url(sub_category_url_without_page_number, signal)
+    # save_stores_dict_to_csv() # todo - uncomment next lines
     # save_stores_dict_to_csv_as_backup()
 
 
