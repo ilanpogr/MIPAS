@@ -2,14 +2,14 @@ import itertools
 import os
 import time
 import pandas as pd
-from image_matching_module.reading_module import ReadingModule
+from image_matching_module.reading_utils import ReadingUtils
 
 
 class ComparisonExperiment:
     """class that represents an image_matching_module on image matching algorithms"""
 
     def __init__(self, path_to_origin, path_to_compared):
-        self.reader = ReadingModule()
+        self.reader = ReadingUtils()
         self.origin_path = path_to_origin
         self.compared_path = path_to_compared
         self.actual_score_dict = {}
@@ -157,17 +157,3 @@ class ComparisonExperiment:
         for i in range(0, len(image_list), 52):
             list_of_batchers.append(image_list[i:i + 52])
         return list_of_batchers
-
-    # def create_data_frame(self, algorithms):
-    #     """create a new data frame with the following columns:\n
-    #     customer_image | to_compare_image | algorithm1_difference | .. | algorithmN_difference | actual_score"""
-    #     df_columns = []
-    #     df_columns.append("customer_image")
-    #     df_columns.append("to_compare_image")
-    #     for algorithm in algorithms:
-    #         name = algorithm.get_algorithm_name()
-    #         df_columns.append(name + "_difference")
-    #     df_columns.append("actual_score")
-    #     df = pd.DataFrame(columns=df_columns)
-    #     self.column_names = df_columns
-    #     return df

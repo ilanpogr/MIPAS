@@ -1,5 +1,5 @@
 from decimal import Decimal
-from image_matching_module.reading_module import ReadingModule as RM
+from image_matching_module.reading_utils import ReadingUtils as RU
 import pandas as pd
 import time
 from pathlib import Path
@@ -20,7 +20,7 @@ class FNDetectionExperiment:
         starting_time = time.time()
         print("started FN detection experiment")
 
-        csv_paths_list = RM.read_all_csv_paths_from_path(path_to_csv_files)
+        csv_paths_list = RU.read_all_csv_paths_from_path(path_to_csv_files)
         file_number = 1
 
         for csv_path in csv_paths_list:

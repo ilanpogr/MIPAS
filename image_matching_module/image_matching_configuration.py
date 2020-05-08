@@ -5,9 +5,7 @@ from image_matching_module.algorithms.bhattacharyya_comparison_algorithm import 
 from image_matching_module.algorithms.correlation_comparison_algorithm import CorrelationComparisonAlgorithm
 from image_matching_module.algorithms.intersection_comparison_algorithm import IntersectionComparisonAlgorithm
 from image_matching_module.algorithms.orb_feature_comparisson_algorithm import ORBFeatureComparisonAlgorithm
-from image_matching_module import reading_module
-
-
+from image_matching_module.reading_utils import ReadingUtils as RU
 
 
 class ImageMatchingConfiguration:
@@ -31,77 +29,26 @@ class ImageMatchingConfiguration:
         a list of tuples containing an algorithm and its weight for the in depth score filtering.
     """
 
-    # TODO: need to everything from the configuration file.
-
-
-    def create_algorithms_wieghts(self, alg_names_dict, initial_algorithms_and_weights_dict):
-        algorithms_weights_list = []
-        for key, value in initial_algorithms_and_weights_dict.items():
-            algorithms_weights_list.append((alg_names_dict[key] ,Decimal(value)))
-        return algorithms_weights_list
-
     def __init__(self):
         alg_names_dict = {'bhattacharyya': BhattacharyyaComparisonAlgorithm(),
                           'correlation': CorrelationComparisonAlgorithm(),
                           'intersection': IntersectionComparisonAlgorithm(),
                           'orb_feature': ORBFeatureComparisonAlgorithm()}
-        batch_size,initial_threshold, in_depth_threshold, initial_score_weight,  initial_algorithms_and_weights_dict, in_depth_algorithms_and_weights_dict = reading_module.ReadingModule.read_config_file("image_matching_configurations.txt")
+        batch_size, initial_threshold, in_depth_threshold, initial_score_weight, \
+        initial_algorithms_and_weights_dict, in_depth_algorithms_and_weights_dict = \
+            RU.read_config_file("image_matching_configurations.txt")
         self.batch_size = int(batch_size)
         self.initial_threshold = Decimal(initial_threshold)
         self.in_depth_threshold = Decimal(in_depth_threshold)
         self.initial_score_weight = Decimal(initial_score_weight)
-        self.initial_algorithms_weights = self.create_algorithms_wieghts(alg_names_dict, initial_algorithms_and_weights_dict)
-        self.in_depth_algorithms_weights = self.create_algorithms_wieghts(alg_names_dict,in_depth_algorithms_and_weights_dict)
+        self.initial_algorithms_weights = ImageMatchingConfiguration.create_algorithms_weights(alg_names_dict,
+                                                                                               initial_algorithms_and_weights_dict)
+        self.in_depth_algorithms_weights = ImageMatchingConfiguration.create_algorithms_weights(alg_names_dict,
+                                                                                                in_depth_algorithms_and_weights_dict)
 
-    def __read_batch_size(self) -> int:
-        """
-        Reads the batch size from the configuration file.
-
-        :return: the batch size from the configuration file.
-        """
-        return 100
-
-    def __read_thresholds(self) -> [Decimal, Decimal]:
-        """
-        Reads the initial and in-depth thresholds from the configuration file.
-
-        :return: the initial threshold and the in-depth threshold.
-        """
-        return Decimal('0.87'), Decimal('0.64')
-
-    def __read_initial_score_weight(self) -> Decimal:
-        """
-        Reads the initial score weight (as part of the in-depth filtering) from the
-        configurations file.
-
-        :return: the initial score weight for the in-depth filtering.
-        """
-        return Decimal('0.5')
-
-    def __read_initial_algorithms_and_weights(self,
-                                              alg_names_dict: Dict[str, algorithm]) -> List[Tuple[algorithm, Decimal]]:
-        """
-        Reads the initial algorithms names and weights from the configuration file
-        and returns a list with the actual algorithms and their respective weights
-        in tuples.
-
-        :param alg_names_dict: a dictionary for getting an actual algorithm instance
-        given the algorithm's name.
-        :return: a list with the actual algorithms and their respective weights, in tuples.
-        """
-        return [(alg_names_dict['bhattacharyya'], Decimal('0.7')),
-                (alg_names_dict['correlation'], Decimal('0.25')),
-                (alg_names_dict['intersection'], Decimal('0.05'))]
-
-    def __read_in_depth_algorithms_and_weights(self,
-                                               alg_names_dict: Dict[str, algorithm]) -> List[Tuple[algorithm, Decimal]]:
-        """
-        Reads the in depth algorithms names and weights from the configuration file
-        and returns a list with the actual algorithms and their respective weights
-        in tuples.
-
-        :param alg_names_dict: a dictionary for getting an actual algorithm instance
-        given the algorithm's name.
-        :return: a list with the actual algorithms and their respective weights, in tuples.
-        """
-        return [(alg_names_dict['orb_feature'], Decimal('1.0'))]
+    @staticmethod
+    def create_algorithms_weights(alg_names_dict, initial_algorithms_and_weights_dict):
+        algorithms_weights_list = []
+        for key, value in initial_algorithms_and_weights_dict.items():
+            algorithms_weights_list.append((alg_names_dict[key], Decimal(value)))
+        return algorithms_weights_list

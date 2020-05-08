@@ -1,12 +1,11 @@
 from image_matching_module.image_matching_utils import ImageMatchingUtils as IMU
 from image_matching_module.in_depth_image_pair import InDepthImagePair as InDepthIP
 from image_matching_module.initial_image_pair import InitialImagePair as InitialIP
-from image_matching_module.reading_module import ReadingModule as RM
-from image_matching_module.writing_module import WritingModule as WM
+from image_matching_module.reading_utils import ReadingUtils as RU
+from image_matching_module.writing_utils import WritingUtils as WU
 from image_matching_module.image_matching_configuration import ImageMatchingConfiguration as IMC
 from typing import List, Tuple
 
-import time
 
 class ImageMatching:
     """
@@ -29,19 +28,18 @@ class ImageMatching:
         all the customer images.
         :param stores_path: a string that contains the path for the folder containing
         all folders for all the stores to compare with.
-        :param configurations: a class that holds all the settings for the image matching module.
         """
         self.__customer_path = customer_path
         self.__stores_path = stores_path
-        self.__settings = IMC()
+        self.__configurations = IMC()
 
     def run_matching_for_all_stores(self, signal_process, signal_status):
         """
         Run image comparison for all the customer's images with all stores and write the results to the
         final results file.
         """
-        customer_images_paths = RM.get_images_names_in_folder(self.__customer_path)
-        store_paths = RM.reading_all_folders_paths_in_given_path(self.__stores_path)
+        customer_images_paths = RU.get_images_names_in_folder(self.__customer_path)
+        store_paths = RU.reading_all_folders_paths_in_given_path(self.__stores_path)
 
         counter = 0
         for store_path in store_paths:
@@ -51,7 +49,7 @@ class ImageMatching:
                              "\nComparing your images with products from store: " + store_name
             signal_status.emit(current_status)  # signal task
             self.run_matching_for_store(customer_images_paths, store_path)
-            signal_process.emit(counter/len(store_paths)*100)
+            signal_process.emit(counter / len(store_paths) * 100)
 
     def run_matching_for_store(self, customer_images_paths: List[Tuple[str, str]], store_path: str):
         """
@@ -66,10 +64,10 @@ class ImageMatching:
         # if we want to run image matching only for a single store we don't get the customer
         # images paths beforehand
         if customer_images_paths is None:
-            customer_images_paths = RM.get_images_names_in_folder(self.__customer_path)
+            customer_images_paths = RU.get_images_names_in_folder(self.__customer_path)
 
         # get image paths of all images of the store
-        store_images_paths = RM.get_images_names_in_folder(store_path)
+        store_images_paths = RU.get_images_names_in_folder(store_path)
 
         # run initial image matching on all store images
         initial_results = self.run_initial_filtering(customer_images_paths, store_images_paths)
@@ -78,16 +76,16 @@ class ImageMatching:
         in_depth_results = self.run_in_depth_filtering(initial_results)
 
         # write results to store results file (overwrite old file if exists)
-        WM.write_store_results_to_file(store_path, in_depth_results)
+        WU.write_store_results_to_file(store_path, in_depth_results)
 
         # get list of previous store results, if exists
-        prev_store_results = RM.get_prev_store_results(store_path)
+        prev_store_results = RU.get_prev_store_results(store_path)
 
         # merge results with total results file (create one if doesn't exist)
         if prev_store_results is None:
-            WM.update_final_results_file(self.__stores_path, in_depth_results)
+            WU.update_final_results_file(self.__stores_path, in_depth_results)
         else:
-            WM.update_final_results_file(self.__stores_path, in_depth_results, prev_store_results)
+            WU.update_final_results_file(self.__stores_path, in_depth_results, prev_store_results)
 
     def run_initial_filtering(self, customer_images_paths: List[Tuple[str, str]],
                               store_images_paths: List[Tuple[str, str]]) -> List[InitialIP]:
@@ -107,25 +105,24 @@ class ImageMatching:
         store_path = store_images_paths[0][0]
 
         # divide customer and image paths to batches
-        customer_images_batches = IMU.divide_images_to_batches(customer_images_paths, self.__settings.batch_size)
-        store_images_batches = IMU.divide_images_to_batches(store_images_paths, self.__settings.batch_size)
+        customer_images_batches = IMU.divide_images_to_batches(customer_images_paths, self.__configurations.batch_size)
+        store_images_batches = IMU.divide_images_to_batches(store_images_paths, self.__configurations.batch_size)
 
         # run initial comparison algorithms
         total_initial_results = []
         for customer_images_batch in customer_images_batches:
             # get all customer images for this batch
-            customer_images_batch = RM.reading_all_images_from_given_tuple_path_list(customer_images_batch)
+            customer_images_batch = RU.reading_all_images_from_given_tuple_path_list(customer_images_batch)
             for store_images_batch in store_images_batches:
-                print("here")
                 # get all store images for this batch
-                store_images_batch = RM.reading_all_images_from_given_tuple_path_list(store_images_batch)
+                store_images_batch = RU.reading_all_images_from_given_tuple_path_list(store_images_batch)
 
                 # get combined weighted score of all initial comparison algorithms for all image pairs
                 # that passed the initial threshold
                 initial_batch_results = IMU.get_combined_initial_score(customer_path, customer_images_batch, store_path,
                                                                        store_images_batch,
-                                                                       self.__settings.initial_algorithms_weights,
-                                                                       self.__settings.initial_threshold)
+                                                                       self.__configurations.initial_algorithms_weights,
+                                                                       self.__configurations.initial_threshold)
                 # add the batch's results to the total initial results list
                 total_initial_results.extend(initial_batch_results)
         return total_initial_results
@@ -142,12 +139,11 @@ class ImageMatching:
         """
 
         # divide initial results to batches
-        image_pairs_batches = IMU.divide_images_to_batches(initial_results, self.__settings.batch_size)
+        image_pairs_batches = IMU.divide_images_to_batches(initial_results, self.__configurations.batch_size)
 
         # run in-depth comparison algorithms on pairs
         total_in_depth_results = []
         for image_pair_batch in image_pairs_batches:
-            print("here")
             image_pairs_list = []
             # image_pairs_list structure -> [ [ (c1_name, c1_image), (s1_name, s1_image)
             #                                   (cs1_initial_score, c1_image_path, s1_image_path) ],
@@ -160,7 +156,7 @@ class ImageMatching:
                                      (image_pair.store_image_path, image_pair.store_image_name)]
 
                 # get customer and store images
-                image_pair_data = RM.reading_all_images_from_given_tuple_path_list(image_pair_tuples)
+                image_pair_data = RU.reading_all_images_from_given_tuple_path_list(image_pair_tuples)
                 # add the initial score, the customer image path and the store image path for the current image pair
                 image_pair_data.append((image_pair.initial_score, image_pair.customer_image_path,
                                         image_pair.store_image_path))
@@ -170,9 +166,9 @@ class ImageMatching:
             # get combined weighted score of all in depth comparison algorithms for all image pairs
             # that passed the in depth threshold
             in_depth_batch_results = IMU.get_combined_in_depth_score(image_pairs_list,
-                                                                     self.__settings.in_depth_algorithms_weights,
-                                                                     self.__settings.initial_score_weight,
-                                                                     self.__settings.in_depth_threshold)
+                                                                     self.__configurations.in_depth_algorithms_weights,
+                                                                     self.__configurations.initial_score_weight,
+                                                                     self.__configurations.in_depth_threshold)
             # add the batch's results to the total in depth results list
             total_in_depth_results.extend(in_depth_batch_results)
 

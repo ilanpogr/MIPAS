@@ -1,27 +1,18 @@
 import os
 from typing import List, Tuple, Set
-
 import cv2
 from PIL import Image
 
 
-
-
-
-class ReadingModule:
+class ReadingUtils:
     """
     This class in change of all the reading functionality of the system.
     All reading of csv file and images.
-
-    Attributes
-    ----------
-    image_extensions : set
-        a set representing the extensions of images files.
-    csv_extensions : str
-        a string representing the extension of csv files.
     """
 
+    # a set representing the extensions of images files
     image_extensions = {".jpg", ".JPG", ".png", ".PNG", ".JPEG", ".jpeg"}
+    # a string representing the extension of csv files
     csv_extensions = ".csv"
 
     @staticmethod
@@ -56,7 +47,7 @@ class ReadingModule:
         """
         all_images = []
         for image_path in tuple_path_list:
-            all_images.append((image_path[1], ReadingModule.reading_image_from_tuple_path_open_cv(image_path)))
+            all_images.append((image_path[1], ReadingUtils.reading_image_from_tuple_path_open_cv(image_path)))
         return all_images
 
     @staticmethod
@@ -70,7 +61,7 @@ class ReadingModule:
         images = []
         for r, d, f in os.walk(path):
             for file in f:
-                for ext in ReadingModule.image_extensions:
+                for ext in ReadingUtils.image_extensions:
                     if ext in file:
                         to_add = os.path.join(r), file
                         images.append(to_add)
@@ -87,7 +78,7 @@ class ReadingModule:
         csv_files_paths = []
         for r, d, f in os.walk(path_to_csv_files):
             for file in f:
-                if ReadingModule.csv_extensions in file:
+                if ReadingUtils.csv_extensions in file:
                     to_add = os.path.join(r) + file
                     csv_files_paths.append(to_add)
         return csv_files_paths
@@ -157,10 +148,10 @@ class ReadingModule:
 
             line = config_file.readline()
             initial_algorithms_and_weights_list = line.split(":")[1].split(";")
-            initial_algorithms_and_weights_dict = ReadingModule.init_algorithm_and_weights_dict(initial_algorithms_and_weights_list)
+            initial_algorithms_and_weights_dict = ReadingUtils.init_algorithm_and_weights_dict(initial_algorithms_and_weights_list)
 
             line = config_file.readline()
             in_depth_algorithms_and_weights_list = line.split(":")[1].split(";")
-            in_depth_algorithms_and_weights_dict = ReadingModule.init_algorithm_and_weights_dict(in_depth_algorithms_and_weights_list)
+            in_depth_algorithms_and_weights_dict = ReadingUtils.init_algorithm_and_weights_dict(in_depth_algorithms_and_weights_list)
 
             return batch_size,initial_threshold, in_depth_threshold, initial_score_weight,  initial_algorithms_and_weights_dict, in_depth_algorithms_and_weights_dict
