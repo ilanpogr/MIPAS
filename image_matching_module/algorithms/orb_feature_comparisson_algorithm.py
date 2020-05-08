@@ -6,7 +6,7 @@ class ORBFeatureComparisonAlgorithm(FeatureComparisonAlgorithm):
 
     def __init__(self):
         FeatureComparisonAlgorithm.__init__(self,"orb_features")
-        self.orb = cv2.ORB_create(nfeatures=5000,scaleFactor=1.3,nlevels=8, edgeThreshold=60, firstLevel=0, WTA_K=3)
+        self.orb = cv2.ORB_create(nfeatures=1000,scaleFactor=1.3,nlevels=8, edgeThreshold=60, firstLevel=0, WTA_K=3)
         self.bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
     def calculate_features_matches(self,description1, description2, description3):

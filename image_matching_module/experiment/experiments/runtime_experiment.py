@@ -37,6 +37,7 @@ class RunTimeExperiment:
         customer_images = RU.reading_all_images_from_given_tuple_path_list(customer_images_batch)
         store_images = RU.reading_all_images_from_given_tuple_path_list(store_images_batch)
         for num_of_repeat in num_of_repeats:
+            dict_for_df = {'algorithms': [], 'average_runtime': []}
             print("start with num_of_repeats:", num_of_repeat)
             for algorithm in algorithms:
                 # run the code as the inputted number of repeats times
