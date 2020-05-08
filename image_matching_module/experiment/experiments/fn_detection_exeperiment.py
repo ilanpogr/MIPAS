@@ -1,8 +1,10 @@
-from decimal import Decimal
 from image_matching_module.reading_utils import ReadingUtils as RU
-import pandas as pd
-import time
 from pathlib import Path
+import pandas as pd
+from decimal import Decimal
+from typing import List
+import time
+import os
 
 
 class FNDetectionExperiment:
@@ -103,3 +105,57 @@ class FNDetectionExperiment:
         # add the customer image's name to a text file in the folder (create it if doesn't exist)
         with open(full_customer_image_dir_path + '/store_files.txt', 'a') as store_files:
             store_files.write(store_image_name + "\n")
+
+    @staticmethod
+    def get_list_of_files(dir_name: str):
+        # create a list of file and sub directories
+        # names in the given directory
+        list_of_file = os.listdir(dir_name)
+        all_files = list()
+        # Iterate over all the entries
+        for entry in list_of_file:
+            # Create full path
+            full_path = os.path.join(dir_name, entry)
+            # If entry is a directory then get the list of files in this directory
+            if os.path.isdir(full_path):
+                all_files = all_files + FNDetectionExperiment.get_list_of_files(full_path)
+            else:
+                all_files.append(full_path)
+        return all_files
+
+    @staticmethod
+    def get_count_of_fn_types(path_to_fn_results: str, algorithm_names: List[str], results_path: str):
+        dict_for_df = {'algorithm': [], 'vintage1': [], 'vintage2': [], 'vintage3': [], 'cropped': [],
+                       'greyscale': [], 'withText': [], 'watermark': [], 'rotate': [], 'mirrored': [], 'median': []}
+        for algorithm_name in algorithm_names:
+            dict_for_df['algorithm'].append(algorithm_name)
+            manipulation_dict = {'vintage1': 0, 'vintage2': 0, 'vintage3': 0, 'cropped': 0, 'greyscale': 0,
+                                 'withText': 0, 'watermark': 0, 'rotate': 0, 'mirrored': 0, 'median': 0}
+            list_of_files_paths = FNDetectionExperiment.get_list_of_files(path_to_fn_results + '\\' + algorithm_name)
+            for file_path in list_of_files_paths:
+                with open(file_path) as txt_file:
+                    line = txt_file.readline()
+                    while line:
+                        edited_line = line.strip('\n').split('.')[0]
+                        edited_line = edited_line.lstrip('0123456789')
+                        if 'vintage' not in edited_line:
+                            edited_line = edited_line.rstrip('0123456789')
+                        if 'mirrored' in edited_line:
+                            edited_line = 'mirrored'
+                        manipulation_dict[edited_line] = manipulation_dict[edited_line] + 1
+                        line = txt_file.readline()
+
+            for key, value in manipulation_dict.items():
+                dict_for_df[key].append(value)
+
+        # create a DataFrame from the dictionary
+        df = pd.DataFrame(dict_for_df)
+
+        # write the results into a csv file
+        df.to_csv(results_path + '/fn_experiment_results.csv', index=False, header=True)
+
+
+list_of_files = FNDetectionExperiment.get_list_of_files(
+    'C:\\Users\\Shalev\\Desktop\\University\\שנה ד\' - סמסטר ב\'\\סמינר - פרויקט מסכם 2\\ניסוי\\results\\FnResults')
+for file in list_of_files:
+    print(file)

@@ -85,8 +85,15 @@ def test_image_matching():
     image_maching = ImageMatching("F:/avi/test_image_maching/customer","F:/avi/test_image_maching/stores",ImageMatchingConfiguration(),)
     image_maching.run_matching_for_all_stores()
 
+def get_fn_results():
+    algorithm_names = ['bhattacharyya', 'correlation', 'in_depth_combined', 'initials_combined', 'intersection',
+                       'orb_features']
+    FNDetectionExperiment.get_count_of_fn_types('C:\\Users\\Shalev\\Desktop\\University\\שנה ד\' - סמסטר ב\'\\סמינר - פרויקט מסכם 2\\ניסוי\\results\\FnResults',
+                                                algorithm_names,
+                                                'C:\\Users\\Shalev\\Desktop\\University\\שנה ד\' - סמסטר ב\'\\סמינר - פרויקט מסכם 2\\ניסוי\\results')
 
 
 if __name__ == '__main__':
-    main()
+    # main()
     #test_image_matching()
+    get_fn_results()
