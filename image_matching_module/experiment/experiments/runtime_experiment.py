@@ -18,12 +18,12 @@ class RunTimeExperiment:
         """
         Runs the runtime experiment for all given algorithms.
 
-        :param algorithms: a list of comparison
-        :param results_path:
-        :param path_to_customer_images:
-        :param path_to_store_images:
-        :param num_of_repeats:
-        :return:
+        :param algorithms: a list of actual comparison algorithms like: [BhattacharyyaComparisonAlgorithm(),
+                                                                        IntersectionComparisonAlgorithm(),..]
+        :param results_path: the path of the folder which you want the csv of the experiment's results to be saved
+        :param path_to_customer_images: the path to the customer's images folder
+        :param path_to_store_images: the path to the store's images folder
+        :param num_of_repeats: the number of repeats you want to check on average
         """
 
         dict_for_df = {'algorithms': [], 'average_runtime': []}
