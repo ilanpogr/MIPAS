@@ -154,8 +154,3 @@ class FNDetectionExperiment:
         # write the results into a csv file
         df.to_csv(results_path + '/fn_experiment_results.csv', index=False, header=True)
 
-
-list_of_files = FNDetectionExperiment.get_list_of_files(
-    'C:\\Users\\Shalev\\Desktop\\University\\שנה ד\' - סמסטר ב\'\\סמינר - פרויקט מסכם 2\\ניסוי\\results\\FnResults')
-for file in list_of_files:
-    print(file)

@@ -8,12 +8,11 @@ from image_matching_module.experiment.experiments.comparison_experiment import C
 from image_matching_module.algorithms.intersection_comparison_algorithm import IntersectionComparisonAlgorithm
 from image_matching_module.experiment.experiments.fn_detection_exeperiment import FNDetectionExperiment
 from image_matching_module.experiment.experiments.precision_recall_experiment import PrecisionRecallExperiment
+from image_matching_module.experiment.experiments.runtime_experiment import RunTimeExperiment
 import itertools
 from itertools import chain, permutations
 from image_matching_module.image_matching import ImageMatching
 from image_matching_module.image_matching_configuration import ImageMatchingConfiguration
-from image_matching_module.writing_utils import WritingUtils
-from image_matching_module.reading_utils import ReadingUtils
 def main():
 
     experiment = ComparisonExperiment("/Users/avig/myStuff/final_project/test1", "/Users/avig/myStuff/final_project/test2")
@@ -26,7 +25,7 @@ def main():
     precision_recall_experiment = PrecisionRecallExperiment()
     fn_experiment = FNDetectionExperiment()
 
-    algorithms = [chi_squre,correlation,intersection,bhattacharyya,random]
+    algorithms = [correlation,intersection,bhattacharyya,orb_features]
     # thresholds = [0.65,0.66,0.67,0.68,0.69,0.7,0.71,0.72,0.73,0.74,0.75,0.76,0.77,0.78,0.79,0.8,0.81,0.82,0.83,0.84,0.85,0.86,0.87,0.88,0.89,0.9]
     thresholds = []
     i = Decimal('0.30')
@@ -64,8 +63,14 @@ def main():
     csv_path = "F:/avi/finalProjectResults/AllResultsMac/"
 
 
-    fn_experiment.run_fn_detection_experiment(csv_path,initials_algorithms_weights_threshold,in_depth_algorithms_weights_threshod
-                                             ,combained_initial_threshold,combained_in_depth_threshold,combined_initial_score_weight)
+    #fn_experiment.run_fn_detection_experiment(csv_path,initials_algorithms_weights_threshold,in_depth_algorithms_weights_threshod
+                                             #,combained_initial_threshold,combained_in_depth_threshold,combined_initial_score_weight)
+
+    results_path = "/Users/avig/myStuff/final_project/RuntimeResults/"
+    customer = "/Users/avig/myStuff/final_project/customer/"
+    store = "/Users/avig/myStuff/final_project/stores/"
+    num_of_repeats = [100,1000]
+    RunTimeExperiment.run_runtime_experiment(algorithms,results_path,customer,store,num_of_repeats)
 
 
 def get_all_permutations(numbers):
@@ -94,6 +99,6 @@ def get_fn_results():
 
 
 if __name__ == '__main__':
-    # main()
+    main()
     #test_image_matching()
-    get_fn_results()
+    #get_fn_results()
