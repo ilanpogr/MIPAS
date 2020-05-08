@@ -1,4 +1,4 @@
-import image_matching_module.reading_module
+import image_matching_module.reading_utils
 from image_matching_module.oldstuff import manipulation_module
 
 

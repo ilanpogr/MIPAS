@@ -5,7 +5,7 @@ from image_matching_module.algorithms.bhattacharyya_comparison_algorithm import 
 from image_matching_module.algorithms.correlation_comparison_algorithm import CorrelationComparisonAlgorithm
 from image_matching_module.algorithms.intersection_comparison_algorithm import IntersectionComparisonAlgorithm
 from image_matching_module.algorithms.orb_feature_comparisson_algorithm import ORBFeatureComparisonAlgorithm
-from image_matching_module.reading_module import ReadingModule as RM
+from image_matching_module.reading_utils import ReadingUtils as RU
 
 
 class ImageMatchingConfiguration:
@@ -36,7 +36,7 @@ class ImageMatchingConfiguration:
                           'orb_feature': ORBFeatureComparisonAlgorithm()}
         batch_size, initial_threshold, in_depth_threshold, initial_score_weight, \
         initial_algorithms_and_weights_dict, in_depth_algorithms_and_weights_dict = \
-            RM.read_config_file("image_matching_configurations.txt")
+            RU.read_config_file("image_matching_configurations.txt")
         self.batch_size = int(batch_size)
         self.initial_threshold = Decimal(initial_threshold)
         self.in_depth_threshold = Decimal(in_depth_threshold)

@@ -12,8 +12,8 @@ import itertools
 from itertools import chain, permutations
 from image_matching_module.image_matching import ImageMatching
 from image_matching_module.image_matching_configuration import ImageMatchingConfiguration
-from image_matching_module.writing_module import WritingModule
-from image_matching_module.reading_module import ReadingModule
+from image_matching_module.writing_utils import WritingUtils
+from image_matching_module.reading_utils import ReadingUtils
 def main():
 
     experiment = ComparisonExperiment("/Users/avig/myStuff/final_project/test1", "/Users/avig/myStuff/final_project/test2")

@@ -1,4 +1,4 @@
-from image_matching_module.reading_module import ReadingModule
+from image_matching_module.reading_utils import ReadingUtils
 import pandas as pd
 import os
 import time
@@ -8,7 +8,7 @@ class PrecisionRecallExperiment:
     """class that represents an image_matching_module measuring the precision and recall"""
 
     def __init__(self):
-        self.reader = ReadingModule()
+        self.reader = ReadingUtils()
 
     def run_multiple_simple_experiments(self, path_to_csv_files, algorithms, thresholds):
         """runs multiple experiments that calculates the precision and recall of the comparison algorithms' results"""

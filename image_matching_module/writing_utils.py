@@ -5,7 +5,7 @@ import csv
 from image_matching_module.in_depth_image_pair import InDepthImagePair as InDepthIP
 
 
-class WritingModule:
+class WritingUtils:
 
     @staticmethod
     def writing_vintage_to_path(tuple_image_path_and_name: Tuple[str, str], index: int, vintage_im, filter_name: str):
@@ -156,7 +156,7 @@ class WritingModule:
         file_name_tmp = stores_path + "/final_results_tmp.csv"
         in_depth_results_index = 0
         first = True
-        WritingModule.write_column_names(stores_path)
+        WritingUtils.write_column_names(stores_path)
         with open(file_name, newline='') as csvfile:
             line = csvfile.readline()
             while line and in_depth_results_index < len(in_depth_results):
@@ -173,18 +173,18 @@ class WritingModule:
                 spllited_line = line.split(",")
                 old_score = spllited_line[4]
                 if float(old_score) > in_depth_results[in_depth_results_index]:
-                    WritingModule.write_spllitted_line_to_csv(spllited_line, file_name_tmp)
+                    WritingUtils.write_spllitted_line_to_csv(spllited_line, file_name_tmp)
                     line = csvfile.readline()
                 else:
-                    WritingModule.write_object_to_csv(in_depth_results[in_depth_results_index], file_name_tmp)
+                    WritingUtils.write_object_to_csv(in_depth_results[in_depth_results_index], file_name_tmp)
                     in_depth_results_index += 1
             while line and line != '"\n':
                 line = line.rstrip()
                 spllited_line = line.split(",")
-                WritingModule.write_spllitted_line_to_csv(spllited_line, file_name_tmp)
+                WritingUtils.write_spllitted_line_to_csv(spllited_line, file_name_tmp)
                 line = csvfile.readline()
             while in_depth_results_index < len(in_depth_results):
-                WritingModule.write_object_to_csv(in_depth_results[in_depth_results_index], file_name_tmp)
+                WritingUtils.write_object_to_csv(in_depth_results[in_depth_results_index], file_name_tmp)
                 in_depth_results_index += 1
         csvfile.close()
         os.remove(file_name)
@@ -204,12 +204,12 @@ class WritingModule:
         file_name = stores_path + "/final_results.csv"
         if os.path.isfile(file_name):
             if prev_store_results is None:
-                WritingModule.merge_final_results_file_and_new_results(stores_path, in_depth_results)
+                WritingUtils.merge_final_results_file_and_new_results(stores_path, in_depth_results)
             else:
-                WritingModule.merge_final_results_file_and_new_results(stores_path, in_depth_results,
-                                                                       prev_store_results)
+                WritingUtils.merge_final_results_file_and_new_results(stores_path, in_depth_results,
+                                                                      prev_store_results)
         else:
-            WritingModule.write_final_results_file(stores_path, in_depth_results)
+            WritingUtils.write_final_results_file(stores_path, in_depth_results)
 
     @staticmethod
     def write_spllitted_line_to_csv(splitted_line: List[str], file_name_tmp):

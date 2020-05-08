@@ -25,7 +25,7 @@ class ImageMatchingUtils:
         return customer_image, store_image
 
     @staticmethod
-    def divide_images_to_batches(images_list: List[str], batch_size: int) -> List[List[str]]:
+    def divide_images_to_batches(images_list: List[Tuple[str, str]], batch_size: int) -> List[List[Tuple[str, str]]]:
         """
         Divides a given images list to batches with a given batch size.
         

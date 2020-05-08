@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 
 import image_matching_module.reading_files_module
-import image_matching_module.writing_module
+import image_matching_module.writing_utils
 
 
 #vintage filter
