@@ -45,6 +45,7 @@ def create_config_file(platform, store_name, main_category, sub_categories, data
         'dataset_path': dataset_path,
         'multi_threading_downloaded_stores': 'resources/app_files/downloaded_stores_multi_threading.txt',
         'multi_threading_end_of_file': '~~~',
+        'stores_dict': 'resources/app_files/stores_dict.csv'
     }
     with open(_properties_file_path, "w") as f:
         config.write(f)

@@ -1,5 +1,5 @@
 from readerwriterlock import rwlock
-
+import os
 
 class Singleton(type):
     _instances = {}
@@ -21,8 +21,12 @@ class LockManager(metaclass=Singleton):
         with self.a_reader_lock:
             f = open(file)
             lines = f.readlines()
+            print("NUM OF LINES IN FILE: " + str(len(lines)))
             print("FINISHED reading file...")
-            return lines[line_index]
+            if line_index > len(lines):
+                return None
+            else:
+                return lines[line_index]
 
     def write(self, file, content):
         with self.a_writer_lock:

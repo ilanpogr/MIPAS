@@ -22,6 +22,15 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.run_option = 0
         self.controller = ThreadController(self)
 
+    def idle_download_products(self):
+        self.update_task_pd("NOT EXECUTED")
+        self.update_status_pd("Products Downloader from stores wasn't chosen by user")
+        self.update_status_pd("Products Downloader from stores wasn't chosen by user")
+
+    def idle_im(self):
+        self.update_task_im("IDLE")
+        self.update_status_im("Waiting for store's products to be downloaded")
+
     def finished_crawler(self):
         self.update_status_pd("DONE")
         self.update_task_pd("Finished Downloading All Products For All Stores")
@@ -64,6 +73,9 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.im_progressBar.setValue(0)
         self.im_progressBar_2.setValue(0)
         self.stackedWidget.setCurrentIndex(2)
+
+    def show_results(self):
+        self.stackedWidget.setCurrentIndex(3)
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):

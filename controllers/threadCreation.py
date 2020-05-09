@@ -22,7 +22,9 @@ class Thread(QObject):
 
 class WorkerCrawler(Worker):
     finished = pyqtSignal()
-    finished_store_searching = pyqtSignal()
+    started = pyqtSignal()
+    download_products_not_chosen = pyqtSignal()
+    start_image_matching = pyqtSignal()
     progress_changed = pyqtSignal(int)
     progress_pd_changed = pyqtSignal(int)
     status_sf_changed = pyqtSignal(str)
@@ -34,11 +36,7 @@ class WorkerCrawler(Worker):
     def __init__(self):
         super().__init__()
 
-    @pyqtSlot(str)
-    def execute(self):
-        global main_window
-        _translate = QCoreApplication.translate
-        step = main_window.run_option
+    def connect_signals(self):
         self.progress_changed.connect(main_window.update_progress_bar_sf)
         self.progress_pd_changed.connect(main_window.update_progress_bar_pd)
         self.status_sf_changed.connect(main_window.update_status_sf)
@@ -47,15 +45,25 @@ class WorkerCrawler(Worker):
         self.task_pd_changed.connect(main_window.update_task_pd)
         self.switch_screen.connect(main_window.switch_to_parallel_screen)
         self.finished.connect(main_window.finished_crawler)
+        self.started.connect(main_window.idle_im)
+        self.download_products_not_chosen.connect(main_window.idle_download_products)
+
+    @pyqtSlot(str)
+    def execute(self):
+        global main_window
+        step = main_window.run_option
+        self.connect_signals()
         if step == 0:
             Controller.search_stores(self.progress_changed, self.status_sf_changed, self.task_sf_changed)
             step += 1
-            self.finished_store_searching.emit()
         self.switch_screen.emit()
         if step == 1:
-            Controller.download_products(self.progress_pd_changed, self.status_pd_changed, self.task_pd_changed)
+            self.started.emit()
+            Controller.download_products(self.progress_pd_changed, self.status_pd_changed, self.task_pd_changed,
+                                         self.start_image_matching)
             step += 1
-        # NEXT TODO - RUN PRODUCT DOWNLOADER AND THEN CREATE PARALLEL READER WRITER FOR IM
+        else:
+            self.download_products_not_chosen.emit()
         self.finished.emit()
         self.thread.quit()
 
@@ -69,15 +77,15 @@ class WorkerImageMatcher(Worker):
     def __init__(self):
         super().__init__()
 
-    @pyqtSlot(str)
-    def execute(self):
-        global main_window
-        _translate = QCoreApplication.translate
+    def connect_signals(self):
         self.progress_changed.connect(main_window.update_progress_bar_im)
         self.status_changed.connect(main_window.update_status_im)
         self.task_changed.connect(main_window.update_task_im)
-        # NEXT TODO - implement second thread
 
+    @pyqtSlot(str)
+    def execute(self):
+        global main_window
+        Controller.compare_images(self.progress_changed, self.status_changed, self.task_changed)
         self.finished.emit()
         self.thread.quit()
 
@@ -93,6 +101,8 @@ class ThreadController(Thread):
         # Workers
         self.worker_crawler = WorkerCrawler()
         self.worker_im = WorkerImageMatcher()
+        self.all_modules_finished = 0
+        self.starting_step = main_window.run_option
 
     def _threaded_call(self, worker, fn, *args, signals=None, slots=None):
         thread = QThread()
@@ -129,18 +139,19 @@ class ThreadController(Thread):
 
     @pyqtSlot()
     def _receive_finish_signal(self):
-        pass
-        # print("done")
-        # next_index = main_window.stackedWidget.currentIndex() + 1
-        # main_window.stackedWidget.setCurrentIndex(0)  # for mockup!!! todo - delete.
+        self.all_modules_finished += 1
+        if (self.starting_step <= 1 and self.all_modules_finished == 2) or \
+                (self.starting_step == 1 and self.all_modules_finished == 1):
+            main_window.show_results(main_window)
 
     @pyqtSlot(bool)
     def start_thread(self):
-        signals = {self.worker_crawler.finished_store_searching: self.finished_looking_for_stores}
+        signals = {self.worker_crawler.start_image_matching: self.start_image_matching_thread,
+                   self.worker_crawler.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_crawler, self.worker_crawler.execute, signals=signals)
 
     @pyqtSlot()
-    def finished_looking_for_stores(self):
+    def start_image_matching_thread(self):
         signals = {self.worker_im.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_im, self.worker_im.execute, signals=signals)
 

@@ -418,7 +418,7 @@ MAIN METHOD CALL
 ------------------------------------'''
 
 
-def download_products_for_all_stores(signal_process, signal_status, user_stores):
+def download_products_for_all_stores(signal_process, signal_status, user_stores, signal_start_image_matching):
     global store_products, num_of_updates
     start_time = time.ctime()
     program_initial_print(start_time)
@@ -437,6 +437,8 @@ def download_products_for_all_stores(signal_process, signal_status, user_stores)
     i = 0
     for name, url in stores.items():
         i += 1
+        if i == 2:
+            signal_start_image_matching.emit()
         if name not in user_stores:
             current_status = str(i) + "/" + str(len(stores)) + "\nDownloading products for store: " + name
             signal_status.emit(current_status)  # signal task
