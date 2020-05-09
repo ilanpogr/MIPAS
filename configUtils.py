@@ -42,7 +42,9 @@ def create_config_file(platform, store_name, main_category, sub_categories, data
         'store_name': store_name,
         'main_category': main_category,
         'sub_categories': sub_categories,
-        'dataset_path': dataset_path
+        'dataset_path': dataset_path,
+        'multi_threading_downloaded_stores': 'resources/app_files/downloaded_stores_multi_threading.txt',
+        'multi_threading_end_of_file': '~~~',
     }
     with open(_properties_file_path, "w") as f:
         config.write(f)

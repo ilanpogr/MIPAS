@@ -2,11 +2,15 @@ import configUtils
 from crawler.shop_finder import search_for_stores
 from crawler.product_downloader import download_products_for_all_stores
 from image_matching_module.image_matching import ImageMatching
+import os
 
 downloaded_products_path = "resources/photos"
 
 
 def search_stores(signal_process, signal_status, signal_task):
+    multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
+    if os.path.exists(multi_threading_downloaded_stores):
+        os.remove(multi_threading_downloaded_stores)
     signal_task.emit("Searching Relevant Stores In Platform")
     user_main_category = configUtils.get_property('main_category')
     user_sub_categories = configUtils.get_property('sub_categories')

@@ -1,4 +1,3 @@
-
 from controllers.threadCreation import ThreadController
 
 from ui_files import mainWindow, connectElements
@@ -92,11 +91,9 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     if configUtils.is_settings_file_exists():
-        print("PROPERTIES FOUND...")
         mipas_app = MipasApp()
         mipas_app.show()
     else:
-        print("PROPERTIES NOT FOUND...")
         window = Welcome()
         window.show()
     sys.exit(app.exec_())

@@ -1,3 +1,6 @@
+import configUtils
+import controllers.ReaderWriterLockManager as LockManager
+
 import re
 import httplib2
 import random
@@ -24,6 +27,11 @@ downloaded_stores_file_name = 'resources/app_files/downloaded_stores_dict.txt'
 init_path = 'resources/photos/'
 search_page_counter = 0
 num_of_updates = 0
+
+multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')[1:-1]
+multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')[1:-1]
+lock_manager = LockManager.LockManager()
+
 
 stores = {}
 downloaded_stores = set()
@@ -151,6 +159,10 @@ PRODUCTS DOWNLOADER FROM STORES
 def append_store_to_cache(current_url):
     with open(downloaded_stores_file_name, 'a') as f:
         f.write(current_url + '\n')
+
+
+def append_store_to_multi_threading(store_name):
+    lock_manager.write(multi_threading_downloaded_stores, store_name)
         
 
 def save_products_img_url_dict(store_name):
@@ -383,9 +395,8 @@ def download_all_products_from_store(store_name, store_url, signal_status, statu
     current_status = status + "\nDownloading page #1"
     signal_status.emit(current_status)
     search_page_counter = 1
-    get_products_from_page(data, store_name, store_url)
+    got_data = get_products_from_page(data, store_name, store_url)
     num_of_pages = get_number_of_pages_in_store(data)
-    got_data = False
     if num_of_pages is not None:
         page_url_sefix = '&page={page_num}#items'
         for i in range(2, num_of_pages + 1):
@@ -395,9 +406,10 @@ def download_all_products_from_store(store_name, store_url, signal_status, statu
             search_page_counter = i
             data = make_http_req(page_url)
             data_res = get_products_from_page(data, store_name, page_url)
-            if (not got_data):
+            if not got_data:
                 got_data = data_res
     if got_data:
+        append_store_to_multi_threading(store_name)
         save_products_img_url_dict(store_name)
 
 
@@ -412,6 +424,9 @@ def download_products_for_all_stores(signal_process, signal_status, user_stores)
     program_initial_print(start_time)
     start_time = time.time()
     get_all_stores_urls()
+    if not os.path.exists(multi_threading_downloaded_stores):
+        with open(multi_threading_downloaded_stores, "w") as file:
+            pass
     if not os.path.exists(downloaded_stores_file_name):
         with open(downloaded_stores_file_name, "w") as file:
             pass
@@ -436,11 +451,13 @@ def download_products_for_all_stores(signal_process, signal_status, user_stores)
                 # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
                 # print('************************************************************************************')
                 # print_output_for_debug(start_time)
-                # num_of_updates = 0
+                # if num_of_updates != 0:
+                #     append_store_to_multi_threading(name)
+                #     num_of_updates = 0
                 time.sleep(0.001)  # todo - remove sleep and uncomment above lines ---- DEMO
                 signal_process.emit(i/len(stores) * 100)
             else:
-                if i == 1:  # todo - remove if ---- DEMO
+                if i <= 3:  # todo - remove if ---- DEMO
                     print('************************************************************************************')
                     print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                     print('************************************************************************************')
@@ -449,6 +466,6 @@ def download_products_for_all_stores(signal_process, signal_status, user_stores)
                     print_output_for_debug(start_time)
                 time.sleep(0.001)   # todo - remove sleep and uncomment above lines ---- DEMO
                 signal_process.emit(i/len(stores) * 100)
-
             store_products = set()
             product_img_url_dict.clear()
+    append_store_to_multi_threading(multi_threading_end_of_file)

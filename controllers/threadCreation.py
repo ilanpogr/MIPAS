@@ -129,9 +129,10 @@ class ThreadController(Thread):
 
     @pyqtSlot()
     def _receive_finish_signal(self):
-        print("done")
+        pass
+        # print("done")
         # next_index = main_window.stackedWidget.currentIndex() + 1
-        main_window.stackedWidget.setCurrentIndex(0)  # for mockup!!! todo - delete.
+        # main_window.stackedWidget.setCurrentIndex(0)  # for mockup!!! todo - delete.
 
     @pyqtSlot(bool)
     def start_thread(self):
@@ -140,8 +141,7 @@ class ThreadController(Thread):
 
     @pyqtSlot()
     def finished_looking_for_stores(self):
-        print("finished downloading products")
-        # signals = {self.worker_im.finished: self._receive_finish_signal}
-        # self._threaded_call(self.worker_im, self.worker_im.execute, signals=signals)
+        signals = {self.worker_im.finished: self._receive_finish_signal}
+        self._threaded_call(self.worker_im, self.worker_im.execute, signals=signals)
 
 
