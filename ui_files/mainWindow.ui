@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>820</width>
+    <width>1000</width>
     <height>553</height>
    </rect>
   </property>
@@ -14,9 +14,12 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_19">
+    <item row="0" column="0">
      <widget class="QFrame" name="frame">
+      <property name="styleSheet">
+       <string notr="true">border:0</string>
+      </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -82,6 +85,9 @@
             <kerning>true</kerning>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <attribute name="title">
            <string>Home</string>
           </attribute>
@@ -95,6 +101,9 @@
               <layout class="QGridLayout" name="gridLayout_3">
                <item row="1" column="0">
                 <widget class="QFrame" name="frame_5">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -131,6 +140,23 @@
                       <kerning>true</kerning>
                      </font>
                     </property>
+                    <property name="styleSheet">
+                     <string notr="true">QPushButton#start_btn {
+	border-style: outset;
+	border-width: 2px;
+	border-radius: 30px;
+	border: 2px solid gray;
+	padding: 0 8px;
+	background: #7FFF00;
+	min-width: 10em;
+	min-height: 3em;
+}
+
+QPushButton#start_btn:pressed {
+	background-color:#6B8E23;
+	border-style: inset;
+}</string>
+                    </property>
                     <property name="text">
                      <string>START</string>
                     </property>
@@ -154,6 +180,9 @@
                </item>
                <item row="0" column="0">
                 <widget class="QFrame" name="frame_2">
+                 <property name="styleSheet">
+                  <string notr="true">border:0</string>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -163,6 +192,9 @@
                  <layout class="QGridLayout" name="gridLayout_4">
                   <item row="1" column="0">
                    <widget class="QFrame" name="frame_3">
+                    <property name="styleSheet">
+                     <string notr="true">border:0</string>
+                    </property>
                     <property name="frameShape">
                      <enum>QFrame::StyledPanel</enum>
                     </property>
@@ -212,6 +244,9 @@ found products will be compared to given dataset</string>
                   </item>
                   <item row="1" column="2">
                    <widget class="QFrame" name="frame_4">
+                    <property name="styleSheet">
+                     <string notr="true">border:0</string>
+                    </property>
                     <property name="frameShape">
                      <enum>QFrame::StyledPanel</enum>
                     </property>
@@ -241,12 +276,7 @@ found products will be compared to given dataset</string>
                        </item>
                        <item>
                         <property name="text">
-                         <string>Continue Previous Store Search</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Search Found Stores</string>
+                         <string>Search Found Stores From Previous Run</string>
                         </property>
                        </item>
                        <item>
@@ -268,6 +298,9 @@ found products will be compared to given dataset</string>
               <layout class="QGridLayout" name="gridLayout_6">
                <item row="0" column="0">
                 <widget class="QFrame" name="frame_6">
+                 <property name="styleSheet">
+                  <string notr="true">border:0</string>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -277,6 +310,9 @@ found products will be compared to given dataset</string>
                  <layout class="QVBoxLayout" name="verticalLayout_4">
                   <item>
                    <widget class="QFrame" name="frame_7">
+                    <property name="styleSheet">
+                     <string notr="true">border:0</string>
+                    </property>
                     <property name="frameShape">
                      <enum>QFrame::StyledPanel</enum>
                     </property>
@@ -286,6 +322,9 @@ found products will be compared to given dataset</string>
                     <layout class="QHBoxLayout" name="horizontalLayout">
                      <item>
                       <widget class="QFrame" name="frame_9">
+                       <property name="styleSheet">
+                        <string notr="true">border:0</string>
+                       </property>
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
                        </property>
@@ -310,6 +349,9 @@ found products will be compared to given dataset</string>
                      </item>
                      <item>
                       <widget class="QFrame" name="frame_10">
+                       <property name="styleSheet">
+                        <string notr="true">border:0</string>
+                       </property>
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
                        </property>
@@ -350,6 +392,9 @@ found products will be compared to given dataset</string>
                   </item>
                   <item>
                    <widget class="QFrame" name="frame_8">
+                    <property name="styleSheet">
+                     <string notr="true">border:0</string>
+                    </property>
                     <property name="frameShape">
                      <enum>QFrame::StyledPanel</enum>
                     </property>
@@ -359,6 +404,9 @@ found products will be compared to given dataset</string>
                     <layout class="QGridLayout" name="gridLayout_9">
                      <item row="0" column="0">
                       <widget class="QFrame" name="frame_11">
+                       <property name="styleSheet">
+                        <string notr="true">border:0</string>
+                       </property>
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
                        </property>
@@ -449,6 +497,9 @@ found products will be compared to given dataset</string>
                      </item>
                      <item row="1" column="0">
                       <widget class="QFrame" name="frame_12">
+                       <property name="styleSheet">
+                        <string notr="true">border:0</string>
+                       </property>
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
                        </property>
@@ -474,7 +525,351 @@ found products will be compared to given dataset</string>
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="end_run"/>
+             <widget class="QWidget" name="multi_run">
+              <layout class="QGridLayout" name="gridLayout_12">
+               <item row="1" column="0">
+                <widget class="QFrame" name="frame_14">
+                 <property name="styleSheet">
+                  <string notr="true">border:0</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_17">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_7">
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                      <weight>50</weight>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Products Download - Current Task:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="pd_task_label">
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>... current task ...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="2">
+                   <spacer name="horizontalSpacer_7">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_9">
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                      <weight>50</weight>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Products Download - Status:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="pd_status_label">
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>... current status ...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="2">
+                   <spacer name="horizontalSpacer_6">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QFrame" name="frame_20">
+                 <property name="styleSheet">
+                  <string notr="true">border:0</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_20">
+                  <item row="1" column="0">
+                   <widget class="QProgressBar" name="im_progressBar_2">
+                    <property name="value">
+                     <number>24</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QFrame" name="frame_13">
+                 <property name="styleSheet">
+                  <string notr="true">border:0</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_13">
+                  <item row="1" column="0">
+                   <widget class="QFrame" name="frame_15">
+                    <property name="styleSheet">
+                     <string notr="true">border:0</string>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_14">
+                     <item row="1" column="0">
+                      <widget class="QProgressBar" name="im_progressBar">
+                       <property name="value">
+                        <number>24</number>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QFrame" name="frame_16">
+                 <property name="styleSheet">
+                  <string notr="true">border:0</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <item>
+                   <widget class="QFrame" name="frame_17">
+                    <property name="styleSheet">
+                     <string notr="true">border:0</string>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_15">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_10">
+                       <property name="font">
+                        <font>
+                         <pointsize>12</pointsize>
+                        </font>
+                       </property>
+                       <property name="text">
+                        <string>Chosen Shop Searching Method:</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QFrame" name="frame_18">
+                    <property name="styleSheet">
+                     <string notr="true">border:0</string>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_16">
+                     <item row="0" column="1">
+                      <spacer name="horizontalSpacer_8">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="method_label_2">
+                       <property name="font">
+                        <font>
+                         <pointsize>12</pointsize>
+                        </font>
+                       </property>
+                       <property name="text">
+                        <string>... method chosen by user ...</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QFrame" name="frame_19">
+                 <property name="styleSheet">
+                  <string notr="true">border:0</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_18">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_11">
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                      <weight>50</weight>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Image Matching - Current Task:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_12">
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                      <weight>50</weight>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Image Matching - Status:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="2">
+                   <spacer name="horizontalSpacer_10">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="im_status_label">
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>... current status ...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="2">
+                   <spacer name="horizontalSpacer_9">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="im_task_label">
+                    <property name="font">
+                     <font>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>... current task ...</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <spacer name="verticalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="summary"/>
             </widget>
            </item>
           </layout>
@@ -496,7 +891,7 @@ found products will be compared to given dataset</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>820</width>
+     <width>1000</width>
      <height>21</height>
     </rect>
    </property>
