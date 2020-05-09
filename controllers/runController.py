@@ -56,7 +56,8 @@ def compare_images(signal_process, signal_status, signal_task):
             elif current_store is None:
                 continue
             else:  # todo - implement correctly image matching in multi-threading
+                store_path = "resources/photos/" + current_store
                 signal_task.emit("Comparing Images For Store: " + current_store +
                                  " --> " + str(next_store_index + 1) + "/" + str(total_num_of_stores))
-                image_matcher.run_matching_for_all_stores(signal_process, signal_status)
+                image_matcher.run_matching_for_store(user_photos_path, store_path, signal_process, signal_status)
                 next_store_index += 1
