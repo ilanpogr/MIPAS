@@ -406,7 +406,7 @@ MAIN METHOD CALL
 ------------------------------------'''
 
 
-def download_products_for_all_stores(signal_process, signal_status):
+def download_products_for_all_stores(signal_process, signal_status, user_stores):
     global store_products, num_of_updates
     start_time = time.ctime()
     program_initial_print(start_time)
@@ -422,32 +422,35 @@ def download_products_for_all_stores(signal_process, signal_status):
     i = 0
     for name, url in stores.items():
         i += 1
-        current_status = str(i) + "/" + str(len(stores)) + "\nDownloading products for store: " + name
-        signal_status.emit(current_status)  # signal task
-        if url in downloaded_stores:
-            url = url + '&sort_order=date_desc'
-            # print('************************************************************************************')
-            # print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-            # print('************************************************************************************')
-            #
-            # download_new_products_if_found(name, url, signal_status, current_status)
-            # save_products_img_url_dict(name)
-            # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
-            # print('************************************************************************************')
-            # print_output_for_debug(start_time)
-            # num_of_updates = 0
-            time.sleep(0.001)  # todo - remove sleep and uncomment above lines
-            signal_process.emit(i/len(stores) * 100)
-        else:
-            if i == 1:
-                print('************************************************************************************')
-                print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-                print('************************************************************************************')
-                download_all_products_from_store(name, url, signal_status, current_status)
-                append_store_to_cache(url)
-                print_output_for_debug(start_time)
-            time.sleep(0.001)   # todo - remove sleep and uncomment above lines
-            signal_process.emit(i/len(stores) * 100)
+        if name not in user_stores:
+            current_status = str(i) + "/" + str(len(stores)) + "\nDownloading products for store: " + name
+            signal_status.emit(current_status)  # signal task
+            if url in downloaded_stores:
+                url = url + '&sort_order=date_desc'
+                # print('************************************************************************************')
+                # print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
+                # print('************************************************************************************')
+                #
+                # download_new_products_if_found(name, url, signal_status, current_status)
+                # save_products_img_url_dict(name)
+                # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
+                # print('************************************************************************************')
+                # print_output_for_debug(start_time)
+                # num_of_updates = 0
+                time.sleep(0.001)  # todo - remove sleep and uncomment above lines ---- DEMO
+                signal_process.emit(i/len(stores) * 100)
+            else:
+                if i == 1:  # todo - remove if ---- DEMO
+                    print('************************************************************************************')
+                    print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
+                    print('************************************************************************************')
+                    download_all_products_from_store(name, url, signal_status, current_status)
+                    append_store_to_cache(url)
+                    print_output_for_debug(start_time)
+                time.sleep(0.001)   # todo - remove sleep and uncomment above lines ---- DEMO
+                signal_process.emit(i/len(stores) * 100)
 
-        store_products = set()
-        product_img_url_dict.clear()
+            store_products = set()
+            product_img_url_dict.clear()
+        else:
+            print(name)

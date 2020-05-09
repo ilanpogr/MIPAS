@@ -13,7 +13,8 @@ def search_stores(signal_process, signal_status):
 
 
 def download_products(signal_process, signal_status):
-    download_products_for_all_stores(signal_process, signal_status)
+    user_stores = configUtils.get_property('store_name').split(',')
+    download_products_
 
 
 def compare_images(signal_process, signal_status):
