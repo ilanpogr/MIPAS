@@ -28,8 +28,8 @@ init_path = 'resources/photos/'
 search_page_counter = 0
 num_of_updates = 0
 
-multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')[1:-1]
-multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')[1:-1]
+multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
+multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')
 lock_manager = LockManager.LockManager()
 
 
