@@ -85,6 +85,7 @@ class WorkerImageMatcher(Worker):
     @pyqtSlot(str)
     def execute(self):
         global main_window
+        self.connect_signals()
         Controller.compare_images(self.progress_changed, self.status_changed, self.task_changed)
         self.finished.emit()
         self.thread.quit()

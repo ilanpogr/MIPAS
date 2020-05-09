@@ -33,7 +33,7 @@ class ImageMatching:
         self.__stores_path = stores_path
         self.__configurations = IMC()
 
-    def run_matching_for_all_stores(self, signal_process, signal_status):
+    def run_matching_for_all_stores(self, signal_process, signal_status, signal_task):
         """
         Run image comparison for all the customer's images with all stores and write the results to the
         final results file.
@@ -48,10 +48,10 @@ class ImageMatching:
             current_status = str(counter) + "/" + str(len(store_paths)) + \
                              "\nComparing your images with products from store: " + store_name
             signal_status.emit(current_status)  # signal task
-            self.run_matching_for_store(customer_images_paths, store_path)
+            self.run_matching_for_store(customer_images_paths, store_path, signal_process, signal_status, signal_task)
             signal_process.emit(counter / len(store_paths) * 100)
 
-    def run_matching_for_store(self, customer_images_paths: List[Tuple[str, str]], store_path: str, signal_process, signal_status):
+    def run_matching_for_store(self, customer_images_paths: List[Tuple[str, str]], store_path: str, signal_process, signal_status, signal_task):
         """
         Run image comparison for all the customer's images with a given store and write the results to the
         final results file.
@@ -93,6 +93,7 @@ class ImageMatching:
         else:
             WU.update_final_results_file(self.__stores_path, in_depth_results, prev_store_results)
 
+        signal_task.emit("IDLE")
         signal_status.emit("Waiting for next store's products")
         signal_process.emit(100)
 
