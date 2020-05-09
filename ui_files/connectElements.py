@@ -16,7 +16,7 @@ def connect_welcome_buttons(welcome_screen):
     welcome_screen.dataset_path.clicked.connect(lambda: _open_file_dialog(welcome_screen))
     retranslate_welcome_ui(welcome_screen)
 
-    # for mockup!  ---- DEMO
+    # todo - for mock-up!  ---- DEMO
     welcome_screen.store_names.setText("Store-A,Store-B")
     welcome_screen.store_main_category.setText("jewelry")
     welcome_screen.store_sub_categories.setText("necklaces,earrings,bracelets,rings")
