@@ -35,6 +35,7 @@ def retranslate_welcome_ui(welcome_screen):
 
 
 def change_run_method(main_screen):
+    _translate = QtCore.QCoreApplication.translate
     state = main_screen.comboBox.currentText()
     if state == "Start New Search":
         main_screen.run_option = 0
@@ -42,6 +43,8 @@ def change_run_method(main_screen):
         main_screen.run_option = 1
     elif state == "Compare Only With What I Got":
         main_screen.run_option = 2
+    main_screen.method_label.setText(_translate("MainWindow", state))
+    main_screen.method_label_2.setText(_translate("MainWindow", state))
 
 
 def connect_main_window_elements(main_screen):
@@ -49,6 +52,7 @@ def connect_main_window_elements(main_screen):
     main_screen.progressBar.setValue(0)
     _translate = QtCore.QCoreApplication.translate
     main_screen.method_label.setText(_translate("MainWindow", main_screen.comboBox.currentText()))
+    main_screen.method_label_2.setText(_translate("MainWindow", main_screen.comboBox.currentText()))
     main_screen.comboBox.currentIndexChanged.connect(lambda: change_run_method(main_screen))
     main_screen.start_btn.clicked.connect(lambda: main_screen.stackedWidget.setCurrentIndex(1))
 

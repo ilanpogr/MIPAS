@@ -23,16 +23,48 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.run_option = 0
         self.controller = ThreadController(self)
 
-    def update_progress_bar(self, value):
+    def finished_crawler(self):
+        self.update_status_pd("DONE")
+        self.update_task_pd("Finished Downloading All Products For All Stores")
+        self.im_progressBar_2.setValue(100)
+
+    def update_progress_bar_sf(self, value):
         self.progressBar.setValue(value)
         if value >= 100:
             self.progressBar.setValue(0)
 
-    def update_status(self, value):
+    def update_progress_bar_pd(self, value):  # todo - change in designer the progressBar ID!
+        self.im_progressBar_2.setValue(value)
+        if value >= 100:
+            self.im_progressBar_2.setValue(0)
+
+    def update_progress_bar_im(self, value):
+        self.im_progressBar.setValue(value)
+        if value >= 100:
+            self.im_progressBar.setValue(0)
+
+    def update_status_sf(self, value):
         self.status_label.setText(self._translate("MainWindow", value))
 
-    def update_task(self, value):
+    def update_task_sf(self, value):
         self.task_label.setText(self._translate("MainWindow", value))
+
+    def update_status_pd(self, value):
+        self.pd_status_label.setText(self._translate("MainWindow", value))
+
+    def update_task_pd(self, value):
+        self.pd_task_label.setText(self._translate("MainWindow", value))
+
+    def update_status_im(self, value):
+        self.im_status_label.setText(self._translate("MainWindow", value))
+
+    def update_task_im(self, value):
+        self.im_task_label.setText(self._translate("MainWindow", value))
+
+    def switch_to_parallel_screen(self):
+        self.im_progressBar.setValue(0)
+        self.im_progressBar_2.setValue(0)
+        self.stackedWidget.setCurrentIndex(2)
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):

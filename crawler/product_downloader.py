@@ -452,5 +452,3 @@ def download_products_for_all_stores(signal_process, signal_status, user_stores)
 
             store_products = set()
             product_img_url_dict.clear()
-        else:
-            print(name)

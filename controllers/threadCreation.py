@@ -1,7 +1,9 @@
 from functools import partial
 
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot, QCoreApplication
-from controllers.runController import start_button_clicked
+import controllers.runController as Controller
+
+import time
 
 main_window = None
 
@@ -18,7 +20,47 @@ class Thread(QObject):
         self._main = _main
 
 
-class WorkerSingle(Worker):
+class WorkerCrawler(Worker):
+    finished = pyqtSignal()
+    finished_store_searching = pyqtSignal()
+    progress_changed = pyqtSignal(int)
+    progress_pd_changed = pyqtSignal(int)
+    status_sf_changed = pyqtSignal(str)
+    status_pd_changed = pyqtSignal(str)
+    task_sf_changed = pyqtSignal(str)
+    task_pd_changed = pyqtSignal(str)
+    switch_screen = pyqtSignal()
+
+    def __init__(self):
+        super().__init__()
+
+    @pyqtSlot(str)
+    def execute(self):
+        global main_window
+        _translate = QCoreApplication.translate
+        step = main_window.run_option
+        self.progress_changed.connect(main_window.update_progress_bar_sf)
+        self.progress_pd_changed.connect(main_window.update_progress_bar_pd)
+        self.status_sf_changed.connect(main_window.update_status_sf)
+        self.status_pd_changed.connect(main_window.update_status_pd)
+        self.task_sf_changed.connect(main_window.update_task_sf)
+        self.task_pd_changed.connect(main_window.update_task_pd)
+        self.switch_screen.connect(main_window.switch_to_parallel_screen)
+        self.finished.connect(main_window.finished_crawler)
+        if step == 0:
+            Controller.search_stores(self.progress_changed, self.status_sf_changed, self.task_sf_changed)
+            step += 1
+            self.finished_store_searching.emit()
+        self.switch_screen.emit()
+        if step == 1:
+            Controller.download_products(self.progress_pd_changed, self.status_pd_changed, self.task_pd_changed)
+            step += 1
+        # NEXT TODO - RUN PRODUCT DOWNLOADER AND THEN CREATE PARALLEL READER WRITER FOR IM
+        self.finished.emit()
+        self.thread.quit()
+
+
+class WorkerImageMatcher(Worker):
     finished = pyqtSignal()
     progress_changed = pyqtSignal(int)
     status_changed = pyqtSignal(str)
@@ -31,10 +73,11 @@ class WorkerSingle(Worker):
     def execute(self):
         global main_window
         _translate = QCoreApplication.translate
-        self.progress_changed.connect(main_window.update_progress_bar)
-        self.status_changed.connect(main_window.update_status)
-        self.task_changed.connect(main_window.update_task)
-        start_button_clicked(self.progress_changed, self.status_changed, self.task_changed, main_window.run_option)
+        self.progress_changed.connect(main_window.update_progress_bar_im)
+        self.status_changed.connect(main_window.update_status_im)
+        self.task_changed.connect(main_window.update_task_im)
+        # NEXT TODO - implement second thread
+
         self.finished.emit()
         self.thread.quit()
 
@@ -48,7 +91,8 @@ class ThreadController(Thread):
         self._main.start_btn.clicked.connect(self.start_thread)
 
         # Workers
-        self.worker1 = WorkerSingle()
+        self.worker_crawler = WorkerCrawler()
+        self.worker_im = WorkerImageMatcher()
 
     def _threaded_call(self, worker, fn, *args, signals=None, slots=None):
         thread = QThread()
@@ -62,6 +106,7 @@ class ThreadController(Thread):
         # Error is thrown about Worker having thread (0x0) if you don't do this
         worker.moveToThread(QThread.currentThread())
         # move to newly created thread
+        worker.moveToThread(thread)
         worker.moveToThread(thread)
         # Can now apply cross-thread signals/slots
         if signals:
@@ -90,6 +135,13 @@ class ThreadController(Thread):
 
     @pyqtSlot(bool)
     def start_thread(self):
-        signals = {self.worker1.finished: self._receive_finish_signal}
-        self._threaded_call(self.worker1, self.worker1.execute, signals=signals)
+        signals = {self.worker_crawler.finished_store_searching: self.finished_looking_for_stores}
+        self._threaded_call(self.worker_crawler, self.worker_crawler.execute, signals=signals)
+
+    @pyqtSlot()
+    def finished_looking_for_stores(self):
+        print("finished downloading products")
+        # signals = {self.worker_im.finished: self._receive_finish_signal}
+        # self._threaded_call(self.worker_im, self.worker_im.execute, signals=signals)
+
 
