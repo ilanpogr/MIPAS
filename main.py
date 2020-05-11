@@ -1,12 +1,12 @@
 from controllers.threadCreation import ThreadController
+from resultsTable.Table import PandasModel
 
 from ui_files import mainWindow, connectElements
 from ui_files.welcome import welcomeSettings_v2
 import configUtils
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtWidgets import QMainWindow
-
+from PyQt5.QtWidgets import QMainWindow, QAbstractScrollArea, QDesktopWidget, QHeaderView
 import sys
 
 
@@ -17,6 +17,15 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         else:
             super(MipasApp, self).__init__(parent)
         self.setupUi(self)
+
+        # table generator
+        self.results_table = QtWidgets.QTableView(self.summary)
+        self.results_layout.addWidget(self.results_table)
+        self.results_table_history = QtWidgets.QTableView(self.hitory_tab)
+        self.results_layout_2.addWidget(self.results_table_history)
+        connectElements.connect_results_to_table(self.results_table_history)
+
+        connectElements.set_initial_screen(self)
         self._translate = QCoreApplication.translate
         connectElements.connect_main_window_elements(self)
         self.run_option = 0
@@ -74,6 +83,9 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
 
     def show_results(self):
         self.stackedWidget.setCurrentIndex(3)
+        df = connectElements.get_results_as_df()
+        connectElements.connect_results_to_table(self.results_table)
+        connectElements.connect_results_to_table(self.results_table_history)
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):

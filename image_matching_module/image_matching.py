@@ -45,8 +45,8 @@ class ImageMatching:
         for store_path in store_paths:
             counter += 1
             store_name = store_path.split("/")[-1]
-            current_status = str(counter) + "/" + str(len(store_paths)) + \
-                             "\nComparing your images with products from store: " + store_name
+            current_status = "Comparing Images For Store: " + store_name + " - " + \
+                             str(counter) + "/" + str(len(store_paths))
             signal_status.emit(current_status)  # signal task
             self.run_matching_for_store(customer_images_paths, store_path, signal_process, signal_status, signal_task)
             signal_process.emit(counter / len(store_paths) * 100)

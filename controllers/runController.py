@@ -43,22 +43,28 @@ def compare_images(signal_process, signal_status, signal_task):
     image_matcher = ImageMatching(user_photos_path, downloaded_products_path)
     next_store_index = 0
     lock_manager = LockManager.LockManager()
-    done = False
-    while not done:
+    while True:
         if not os.path.exists(multi_threading_downloaded_stores):
             continue
         elif os.stat(multi_threading_downloaded_stores).st_size == 0:
             continue
         else:
             current_store = lock_manager.read(multi_threading_downloaded_stores, next_store_index)
-            if current_store == multi_threading_end_file:
-                done = True
-            elif current_store is None:
+            if current_store is None:
                 continue
+            current_store = current_store.strip('\n')
+            if current_store == multi_threading_end_file:
+                break
             else:  # todo - implement correctly image matching in multi-threading
                 store_path = "resources/photos/" + current_store
-                store_path = store_path.strip("\n")
                 signal_task.emit("Comparing Images For Store: " + current_store.strip("\n") + " - " +
                                  str(next_store_index + 1) + "/" + str(total_num_of_stores))
                 image_matcher.run_matching_for_store(None, store_path, signal_process, signal_status, signal_task)
                 next_store_index += 1
+
+
+def compare_images_all_stores(signal_process, signal_status, signal_task):
+    user_photos_path = configUtils.get_property('dataset_path')
+    stores_dict_path = configUtils.get_property('stores_dict')
+    image_matcher = ImageMatching(user_photos_path, downloaded_products_path)
+    image_matcher.run_matching_for_all_stores(signal_process, signal_status, signal_task)

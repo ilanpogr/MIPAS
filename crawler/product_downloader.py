@@ -459,7 +459,8 @@ def download_products_for_all_stores(signal_process, signal_status, user_stores,
                 time.sleep(0.001)  # todo - remove sleep and uncomment above lines ---- DEMO
                 signal_process.emit(i/len(stores) * 100)
             else:
-                if 700 <= i >= 702:  # todo - if condition only for ---- DEMO
+                # if 701 <= i >= 703:  # todo - if condition only for ---- DEMO
+                if 701 == i:  # delete!!!! TODO DELETE LINE!!!!
                     print('************************************************************************************')
                     print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                     print('************************************************************************************')

@@ -1,5 +1,36 @@
+import os
 from PyQt5 import QtWidgets, QtCore
 from pathlib import Path
+from PyQt5.QtWidgets import QDesktopWidget
+import resultsTable.resultsExctractor as resultsExtractor
+from resultsTable.Table import PandasModel
+
+results_file = "resources/photos/final_results.csv"
+
+
+def set_initial_screen(main_window):
+    main_window.stackedWidget.setCurrentIndex(0)
+    main_window.tabWidget.setCurrentIndex(0)
+
+    main_window.setFixedSize(1000, 700)
+    # geometry of the main window
+    qr = main_window.frameGeometry()
+    # center point of screen
+    cp = QDesktopWidget().availableGeometry().center()
+    # move rectangle's center point to screen's center point
+    qr.moveCenter(cp)
+    # top left of rectangle becomes top left of window centering it
+    main_window.move(qr.topLeft())
+
+
+def connect_results_to_table(table):
+    if os.path.isfile(results_file):
+        df = get_results_as_df()
+        model = PandasModel(df)
+        table.setModel(model)
+        table.horizontalHeader().setStretchLastSection(True)
+        table.horizontalHeader().setSectionResizeMode(1)
+
 
 
 def connect_welcome_buttons(welcome_screen):
@@ -55,5 +86,11 @@ def connect_main_window_elements(main_screen):
     main_screen.method_label_2.setText(_translate("MainWindow", main_screen.comboBox.currentText()))
     main_screen.comboBox.currentIndexChanged.connect(lambda: change_run_method(main_screen))
     main_screen.start_btn.clicked.connect(lambda: main_screen.stackedWidget.setCurrentIndex(1))
+
+
+def get_results_as_df():
+    results = resultsExtractor.ResultsExtractor(results_file)
+    return results.read_results()
+
 
 

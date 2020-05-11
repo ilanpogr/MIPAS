@@ -1,3 +1,4 @@
+import os
 from functools import partial
 
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot, QCoreApplication
@@ -83,10 +84,18 @@ class WorkerImageMatcher(Worker):
         self.task_changed.connect(main_window.update_task_im)
 
     @pyqtSlot(str)
-    def execute(self):
+    def execute_parallel(self):
         global main_window
         self.connect_signals()
         Controller.compare_images(self.progress_changed, self.status_changed, self.task_changed)
+        self.finished.emit()
+        self.thread.quit()
+
+    @pyqtSlot(str)
+    def execute(self):
+        global main_window
+        self.connect_signals()
+        Controller.compare_images_all_stores(self.progress_changed, self.status_changed, self.task_changed)
         self.finished.emit()
         self.thread.quit()
 
@@ -143,17 +152,23 @@ class ThreadController(Thread):
         self.all_modules_finished += 1
         if (self.starting_step <= 1 and self.all_modules_finished == 2) or \
                 (self.starting_step == 1 and self.all_modules_finished == 1):
-            main_window.show_results(main_window)
+            os.remove("resources/app_files/downloaded_stores_multi_threading.txt")
+            main_window.show_results()
 
     @pyqtSlot(bool)
     def start_thread(self):
         signals = {self.worker_crawler.start_image_matching: self.start_image_matching_thread,
+                   self.worker_crawler.download_products_not_chosen: self.alone_start_image_matching_thread,
                    self.worker_crawler.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_crawler, self.worker_crawler.execute, signals=signals)
 
     @pyqtSlot()
     def start_image_matching_thread(self):
         signals = {self.worker_im.finished: self._receive_finish_signal}
-        self._threaded_call(self.worker_im, self.worker_im.execute, signals=signals)
+        self._threaded_call(self.worker_im, self.worker_im.execute_parallel, signals=signals)
 
+    @pyqtSlot()
+    def alone_start_image_matching_thread(self):
+        signals = {self.worker_im.finished: self._receive_finish_signal}
+        self._threaded_call(self.worker_im, self.worker_im.execute, signals=signals)
 
