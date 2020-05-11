@@ -1,6 +1,10 @@
 import os
+
 from PyQt5 import QtWidgets, QtCore
 from pathlib import Path
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QBrush
 from PyQt5.QtWidgets import QDesktopWidget
 import resultsTable.resultsExctractor as resultsExtractor
 from resultsTable.Table import PandasModel
@@ -12,7 +16,7 @@ def set_initial_screen(main_window):
     main_window.stackedWidget.setCurrentIndex(0)
     main_window.tabWidget.setCurrentIndex(0)
 
-    main_window.setFixedSize(1000, 700)
+    main_window.resize(1000, 700)
     # geometry of the main window
     qr = main_window.frameGeometry()
     # center point of screen
@@ -29,8 +33,8 @@ def connect_results_to_table(table):
         model = PandasModel(df)
         table.setModel(model)
         table.horizontalHeader().setStretchLastSection(True)
-        table.horizontalHeader().setSectionResizeMode(1)
-
+        table.horizontalHeader().setSectionResizeMode(4)
+        table.doubleClicked.connect(resultsExtractor.ResultsExtractor.open_link)
 
 
 def connect_welcome_buttons(welcome_screen):
