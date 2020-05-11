@@ -179,6 +179,10 @@ class WritingUtils:
                     WritingUtils.write_object_to_csv(in_depth_results[in_depth_results_index], file_name_tmp)
                     in_depth_results_index += 1
             while line and line != '"\n':
+                if first:
+                    line = csvfile.readline()
+                    first = False
+                    continue
                 line = line.rstrip()
                 spllited_line = line.split(",")
                 WritingUtils.write_spllitted_line_to_csv(spllited_line, file_name_tmp)

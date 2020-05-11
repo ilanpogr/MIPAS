@@ -25,7 +25,8 @@ class ResultsExtractor:
             user_image_path = row["origin_image_path"] + "/" + user_image_name
             store_name = row["to_compare_image_path"].split("/")[-1]
             store_image_name = row["to_compare_image_name"]
-            product_url = self.get_product_url(row["to_compare_image_path"], store_image_name)
+            store_image_path = row["to_compare_image_path"]
+            product_url = self.get_product_url(store_image_path, store_image_name)
             store_image_path = row["to_compare_image_path"] + "/" + store_image_name
             res.loc[i] = [user_image_path] + [user_image_name] + [store_name] + \
                          [store_image_path] + [product_url]
