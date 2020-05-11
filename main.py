@@ -19,11 +19,11 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.setupUi(self)
 
         # table generator
-        self.results_table = QtWidgets.QTableView(self.summary)
-        self.results_layout.addWidget(self.results_table)
-        self.results_table_history = QtWidgets.QTableView(self.hitory_tab)
-        self.results_layout_2.addWidget(self.results_table_history)
-        connectElements.connect_results_to_table(self.results_table_history)
+        # self.results_table = QtWidgets.QTableView(self.summary)
+        # self.results_layout.addWidget(self.results_table)
+        # self.results_table_history = QtWidgets.QTableView(self.hitory_tab)
+        # self.results_layout_2.addWidget(self.results_table_history)
+        # connectElements.connect_results_to_table(self.results_table_history)
 
         connectElements.set_initial_screen(self)
         self._translate = QCoreApplication.translate

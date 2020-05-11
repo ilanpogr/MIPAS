@@ -13,17 +13,12 @@ results_file = "resources/photos/final_results.csv"
 
 
 def set_initial_screen(main_window):
-    main_window.stackedWidget.setCurrentIndex(0)
-    main_window.tabWidget.setCurrentIndex(0)
-
-    main_window.resize(1000, 700)
-    # geometry of the main window
+    # main_window.stackedWidget.setCurrentIndex(0)
+    # main_window.tabWidget.setCurrentIndex(0)
+    main_window.resize(700, 1000)
     qr = main_window.frameGeometry()
-    # center point of screen
     cp = QDesktopWidget().availableGeometry().center()
-    # move rectangle's center point to screen's center point
     qr.moveCenter(cp)
-    # top left of rectangle becomes top left of window centering it
     main_window.move(qr.topLeft())
 
 
@@ -84,12 +79,12 @@ def change_run_method(main_screen):
 
 def connect_main_window_elements(main_screen):
     main_screen.setWindowTitle("MIPAS")
-    main_screen.progressBar.setValue(0)
-    _translate = QtCore.QCoreApplication.translate
-    main_screen.method_label.setText(_translate("MainWindow", main_screen.comboBox.currentText()))
-    main_screen.method_label_2.setText(_translate("MainWindow", main_screen.comboBox.currentText()))
-    main_screen.comboBox.currentIndexChanged.connect(lambda: change_run_method(main_screen))
-    main_screen.start_btn.clicked.connect(lambda: main_screen.stackedWidget.setCurrentIndex(1))
+    # main_screen.progressBar.setValue(0)
+    # _translate = QtCore.QCoreApplication.translate
+    # main_screen.method_label.setText(_translate("MainWindow", main_screen.comboBox.currentText()))
+    # main_screen.method_label_2.setText(_translate("MainWindow", main_screen.comboBox.currentText()))
+    # main_screen.comboBox.currentIndexChanged.connect(lambda: change_run_method(main_screen))
+    # main_screen.start_btn.clicked.connect(lambda: main_screen.stackedWidget.setCurrentIndex(1))
 
 
 def get_results_as_df():
