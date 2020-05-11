@@ -33,7 +33,7 @@ def connect_results_to_table(table):
         model = PandasModel(df)
         table.setModel(model)
         table.horizontalHeader().setStretchLastSection(True)
-        table.horizontalHeader().setSectionResizeMode(4)
+        table.horizontalHeader().setSectionResizeMode(1)
         table.doubleClicked.connect(resultsExtractor.ResultsExtractor.open_link)
 
 

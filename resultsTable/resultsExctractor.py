@@ -9,7 +9,6 @@ class ResultsExtractor:
 
     def __init__(self, file_path):
         self.data = pd.read_csv(file_path)
-        print(self.data.to_string())
         self.user_image_path_col = "Your Image"
         self.user_image_name_col = "Your Image Name"
         self.store_name_col = "Suspected Store Name"
