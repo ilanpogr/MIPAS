@@ -33,7 +33,7 @@ class ImageMatching:
         self.__stores_path = stores_path
         self.__configurations = IMC()
 
-    def run_matching_for_all_stores(self, signal_process, signal_status, signal_task):
+    def run_matching_for_all_stores(self):
         """
         Run image comparison for all the customer's images with all stores and write the results to the
         final results file.
@@ -41,17 +41,10 @@ class ImageMatching:
         customer_images_paths = RU.get_images_names_in_folder(self.__customer_path)
         store_paths = RU.reading_all_folders_paths_in_given_path(self.__stores_path)
 
-        counter = 0
         for store_path in store_paths:
-            counter += 1
-            store_name = store_path.split("/")[-1]
-            current_status = "Comparing Images For Store: " + store_name + " - " + \
-                             str(counter) + "/" + str(len(store_paths))
-            signal_status.emit(current_status)  # signal task
-            self.run_matching_for_store(customer_images_paths, store_path, signal_process, signal_status, signal_task)
-            signal_process.emit(counter / len(store_paths) * 100)
+            self.run_matching_for_store(customer_images_paths, store_path)
 
-    def run_matching_for_store(self, customer_images_paths: List[Tuple[str, str]], store_path: str, signal_process, signal_status, signal_task):
+    def run_matching_for_store(self, customer_images_paths: List[Tuple[str, str]], store_path: str):
         """
         Run image comparison for all the customer's images with a given store and write the results to the
         final results file.
@@ -60,7 +53,6 @@ class ImageMatching:
          and the image's name for all the customer's images.
         :param store_path: a string that contains the path for the folder of the store.
         """
-        signal_process.emit(0)
 
         # if we want to run image matching only for a single store we don't get the customer
         # images paths beforehand
@@ -70,17 +62,12 @@ class ImageMatching:
         # get image paths of all images of the store
         store_images_paths = RU.get_images_names_in_folder(store_path)
 
-        signal_status.emit("Running initial filtering for store's images")
         # run initial image matching on all store images
         initial_results = self.run_initial_filtering(customer_images_paths, store_images_paths)
-        signal_process.emit(50)
 
-        signal_status.emit("Running in-depth filtering for store's images")
         # run in-depth image matching on all images that passed the initial filtering
         in_depth_results = self.run_in_depth_filtering(initial_results)
-        signal_process.emit(98)
 
-        signal_status.emit("Preforming final steps...")
         # write results to store results file (overwrite old file if exists)
         WU.write_store_results_to_file(store_path, in_depth_results)
 
@@ -92,11 +79,6 @@ class ImageMatching:
             WU.update_final_results_file(self.__stores_path, in_depth_results)
         else:
             WU.update_final_results_file(self.__stores_path, in_depth_results, prev_store_results)
-
-        signal_task.emit("IDLE")
-        signal_status.emit("Waiting for next store's products")
-        signal_process.emit(100)
-
 
     def run_initial_filtering(self, customer_images_paths: List[Tuple[str, str]],
                               store_images_paths: List[Tuple[str, str]]) -> List[InitialIP]:

@@ -10,17 +10,18 @@ import resultsTable.resultsExctractor as resultsExtractor
 from resultsTable.Table import PandasModel
 
 results_file = "resources/photos/final_results.csv"
+background_image = ":/resources/images/DIAMOND-BANNER.png"
 
 
 def set_initial_screen(main_window):
-    # main_window.stackedWidget.setCurrentIndex(0)
-    # main_window.tabWidget.setCurrentIndex(0)
-    main_window.resize(700, 1000)
+    main_window.setWindowTitle("MIPAS")
+    main_window.status_lbl.setText("IDLE")
+    main_window.resize(700, 350)
+    main_window.pushButton.setVisible(False)
     qr = main_window.frameGeometry()
     cp = QDesktopWidget().availableGeometry().center()
     qr.moveCenter(cp)
     main_window.move(qr.topLeft())
-
 
 def connect_results_to_table(table):
     if os.path.isfile(results_file):
@@ -75,16 +76,6 @@ def change_run_method(main_screen):
         main_screen.run_option = 2
     main_screen.method_label.setText(_translate("MainWindow", state))
     main_screen.method_label_2.setText(_translate("MainWindow", state))
-
-
-def connect_main_window_elements(main_screen):
-    main_screen.setWindowTitle("MIPAS")
-    # main_screen.progressBar.setValue(0)
-    # _translate = QtCore.QCoreApplication.translate
-    # main_screen.method_label.setText(_translate("MainWindow", main_screen.comboBox.currentText()))
-    # main_screen.method_label_2.setText(_translate("MainWindow", main_screen.comboBox.currentText()))
-    # main_screen.comboBox.currentIndexChanged.connect(lambda: change_run_method(main_screen))
-    # main_screen.start_btn.clicked.connect(lambda: main_screen.stackedWidget.setCurrentIndex(1))
 
 
 def get_results_as_df():

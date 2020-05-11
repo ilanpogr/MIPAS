@@ -34,10 +34,9 @@ def get_num_of_rows_from_file(stores_dict_path):
         return len(data)
 
 
-def compare_images(signal_process, signal_status, signal_task):
+def compare_images():
     user_photos_path = configUtils.get_property('dataset_path')
     stores_dict_path = configUtils.get_property('stores_dict')
-    total_num_of_stores = get_num_of_rows_from_file(stores_dict_path)
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
     multi_threading_end_file = configUtils.get_property('multi_threading_end_of_file')
     image_matcher = ImageMatching(user_photos_path, downloaded_products_path)
@@ -55,16 +54,13 @@ def compare_images(signal_process, signal_status, signal_task):
             current_store = current_store.strip('\n')
             if current_store == multi_threading_end_file:
                 break
-            else:  # todo - implement correctly image matching in multi-threading
+            else:
                 store_path = "resources/photos/" + current_store
-                signal_task.emit("Comparing Images For Store: " + current_store.strip("\n") + " - " +
-                                 str(next_store_index + 1) + "/" + str(total_num_of_stores))
-                image_matcher.run_matching_for_store(None, store_path, signal_process, signal_status, signal_task)
+                image_matcher.run_matching_for_store(None, store_path)
                 next_store_index += 1
 
 
-def compare_images_all_stores(signal_process, signal_status, signal_task):
+def compare_images_all_stores():
     user_photos_path = configUtils.get_property('dataset_path')
-    stores_dict_path = configUtils.get_property('stores_dict')
     image_matcher = ImageMatching(user_photos_path, downloaded_products_path)
-    image_matcher.run_matching_for_all_stores(signal_process, signal_status, signal_task)
+    image_matcher.run_matching_for_all_stores()
