@@ -13,15 +13,32 @@ results_file = "resources/photos/final_results.csv"
 background_image = ":/resources/images/DIAMOND-BANNER.png"
 
 
+def set_colors_to_elements(main_window):
+    # Frames borders
+    main_window.frame.setStyleSheet("border: 0")
+    # Title
+    main_window.label_5.setStyleSheet("color: #d4af37")
+    main_window.label_6.setStyleSheet("color: #d4af37")
+    # Title Frame
+    frame_image = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/frame_gold_5.png"
+    main_window.frame_2.setStyleSheet("QFrame#frame_2 { border-image: url(%s) 0 0 0 0 stretch stretch }" % frame_image)
+    # labels
+    main_window.label.setStyleSheet("color: #EEEEEE")
+    main_window.label_2.setStyleSheet("color: #EEEEEE")
+    main_window.matches_found.setStyleSheet("color: #EEEEEE")
+    main_window.label_3.setStyleSheet("color: #EEEEEE")
+
+
 def set_initial_screen(main_window):
     main_window.setWindowTitle("MIPAS")
-    main_window.status_lbl.setText("IDLE")
+    # main_window.status_lbl.setText("IDLE")
     main_window.resize(700, 350)
     main_window.pushButton.setVisible(False)
     qr = main_window.frameGeometry()
     cp = QDesktopWidget().availableGeometry().center()
     qr.moveCenter(cp)
     main_window.move(qr.topLeft())
+    set_colors_to_elements(main_window)
 
 def connect_results_to_table(table):
     if os.path.isfile(results_file):
@@ -65,17 +82,17 @@ def retranslate_welcome_ui(welcome_screen):
     welcome_screen.setWindowTitle("MIPAS - Configure Settings")
 
 
-def change_run_method(main_screen):
-    _translate = QtCore.QCoreApplication.translate
-    state = main_screen.comboBox.currentText()
-    if state == "Start New Search":
-        main_screen.run_option = 0
-    elif state == "Search Found Stores From Previous Run":
-        main_screen.run_option = 1
-    elif state == "Compare Only With What I Got":
-        main_screen.run_option = 2
-    main_screen.method_label.setText(_translate("MainWindow", state))
-    main_screen.method_label_2.setText(_translate("MainWindow", state))
+# def change_run_method(main_screen):
+#     _translate = QtCore.QCoreApplication.translate
+#     state = main_screen.comboBox.currentText()
+#     if state == "Start New Search":
+#         main_screen.run_option = 0
+#     elif state == "Search Found Stores From Previous Run":
+#         main_screen.run_option = 1
+#     elif state == "Compare Only With What I Got":
+#         main_screen.run_option = 2
+#     main_screen.method_label.setText(_translate("MainWindow", state))
+#     main_screen.method_label_2.setText(_translate("MainWindow", state))
 
 
 def get_results_as_df():

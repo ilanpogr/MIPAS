@@ -1,3 +1,5 @@
+import os
+
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.uic.properties import QtCore
 
@@ -28,11 +30,26 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         # connectElements.connect_results_to_table(self.results_table_history)
 
         connectElements.set_initial_screen(self)
+        self.check_results(self)
         self.controller = ThreadController(self)
 
+    def check_results(self):
+        results_path = "resources/photos/final_results.csv"
+        if os.path.exists(results_path):
+          pass
 
     def start_timer(self, value):
-        self.status_lbl.setText("Starting in {}".format(value))
+        self.label_3.setText("Starting in {}".format(value))
+
+    def update_matches(self, value):
+        if value is None:
+            self.matches_found.setText("None")
+            self.pushButton.setVisible(False)
+        else:
+            self.matches_found.setText(value)
+            if not self.pushButton.isVisible():
+                self.pushButton.setVisible(True)
+
     # def idle_download_products(self):
     #     self.update_task_pd("NOT EXECUTED")
     #     self.update_status_pd("Products Downloader from stores wasn't chosen by user")
@@ -84,10 +101,11 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
     #     self.stackedWidget.setCurrentIndex(2)
 
     def show_results(self):
-        self.stackedWidget.setCurrentIndex(3)
-        df = connectElements.get_results_as_df()
-        connectElements.connect_results_to_table(self.results_table)
-        connectElements.connect_results_to_table(self.results_table_history)
+        print("results method from main entered....")
+        # self.stackedWidget.setCurrentIndex(3)
+        # df = connectElements.get_results_as_df()
+        # connectElements.connect_results_to_table(self.results_table)
+        # connectElements.connect_results_to_table(self.results_table_history)
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
