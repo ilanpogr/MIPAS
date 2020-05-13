@@ -17,16 +17,18 @@ def set_colors_to_elements(main_window):
     # Frames borders
     main_window.frame.setStyleSheet("border: 0")
     # Title
-    main_window.label_5.setStyleSheet("color: #d4af37")
-    main_window.label_6.setStyleSheet("color: #d4af37")
+    main_window.label_5.setStyleSheet("color: #ffe34c")
+    main_window.label_6.setStyleSheet("color: #ffe34c")
     # Title Frame
-    frame_image = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/frame_gold_5.png"
-    main_window.frame_2.setStyleSheet("QFrame#frame_2 { border-image: url(%s) 0 0 0 0 stretch stretch }" % frame_image)
+    # frame_image = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/frame_gold_5.png"
+    # main_window.frame_2.setStyleSheet("QFrame#frame_2 { border-image: url(%s) 0 0 0 0 stretch stretch }" % frame_image)
     # labels
     main_window.label.setStyleSheet("color: #EEEEEE")
     main_window.label_2.setStyleSheet("color: #EEEEEE")
     main_window.matches_found.setStyleSheet("color: #EEEEEE")
     main_window.label_3.setStyleSheet("color: #EEEEEE")
+    # Button
+    set_button_stylesheet(main_window.pushButton)
 
 
 def set_initial_screen(main_window):
@@ -39,6 +41,7 @@ def set_initial_screen(main_window):
     qr.moveCenter(cp)
     main_window.move(qr.topLeft())
     set_colors_to_elements(main_window)
+
 
 def connect_results_to_table(table):
     if os.path.isfile(results_file):
@@ -72,7 +75,8 @@ def connect_welcome_buttons(welcome_screen):
 
 
 def _open_file_dialog(welcome_screen):
-    directory = str(QtWidgets.QFileDialog.getExistingDirectory(caption="Select Folder With All Your Pictures", directory=str(Path.home())))
+    directory = str(QtWidgets.QFileDialog.getExistingDirectory(caption="Select Folder With All Your Pictures",
+                                                               directory=str(Path.home())))
     if directory:
         welcome_screen.path_str.setText('{}'.format(directory))
 
@@ -100,4 +104,21 @@ def get_results_as_df():
     return results.read_results()
 
 
-
+def set_button_stylesheet(push_button):
+    texture_path = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/Prestige-texture.jpg"
+    push_button.setStyleSheet(
+        "QPushButton#pushButton { background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/Prestige-texture.jpg) 0 0 0 0 stretch stretch; "
+        "border-style: outset; "
+        "border-width: 2px; "
+        "border-radius: 10px; "
+        "border-color: beige; "
+        "color: #722f37; "
+        "font: bold 14px; "
+        "min-width: 10em; "
+        "padding: 6px; } "
+        "QPushButton#pushButton:hover { color: black; "
+        "border-width: 3px;"
+        "border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);}"
+        "QPushButton#pushButton:pressed {"
+        "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);"
+        "background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/Prestige-texture_dark.jpg)}")

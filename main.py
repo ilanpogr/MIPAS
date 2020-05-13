@@ -1,17 +1,13 @@
 import os
 
-from PyQt5.QtGui import QPainter, QPixmap
-from PyQt5.uic.properties import QtCore
-
 from controllers.threadCreation import ThreadController
-from resultsTable.Table import PandasModel
+from controllers.ReaderWriterLockManager import LockManager
 
 from ui_files import mainWindow, connectElements
 from ui_files.welcome import welcomeSettings_v2
 import configUtils
-from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtCore import QCoreApplication, Qt
-from PyQt5.QtWidgets import QMainWindow, QAbstractScrollArea, QDesktopWidget, QHeaderView, QWidget
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QMainWindow
 import sys
 
 
@@ -30,13 +26,18 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         # connectElements.connect_results_to_table(self.results_table_history)
 
         connectElements.set_initial_screen(self)
-        self.check_results(self)
+        self.check_results()
         self.controller = ThreadController(self)
 
     def check_results(self):
         results_path = "resources/photos/final_results.csv"
         if os.path.exists(results_path):
-          pass
+            lock_manager = LockManager()
+            lines = lock_manager.read_results(results_path)
+            if len(lines) > 1:
+                self.update_matches(len(lines) - 1)
+            else:
+                self.update_matches(None)
 
     def start_timer(self, value):
         self.label_3.setText("Starting in {}".format(value))
@@ -46,7 +47,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             self.matches_found.setText("None")
             self.pushButton.setVisible(False)
         else:
-            self.matches_found.setText(value)
+            self.matches_found.setText(str(value))
             if not self.pushButton.isVisible():
                 self.pushButton.setVisible(True)
 
@@ -100,7 +101,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
     #     self.im_progressBar_2.setValue(0)
     #     self.stackedWidget.setCurrentIndex(2)
 
-    def show_results(self):
+    def show_results_as_table(self):
         print("results method from main entered....")
         # self.stackedWidget.setCurrentIndex(3)
         # df = connectElements.get_results_as_df()
@@ -121,7 +122,8 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
 
     def finish_settings_configuration(self):
         if configUtils.is_all_settings_configured(self):
-            configUtils.create_config_file("Etsy", self.store_names.text(), self.store_main_category.text(), self.store_sub_categories.text(), self.path_str.text())
+            configUtils.create_config_file("Etsy", self.store_names.text(), self.store_main_category.text(),
+                                           self.store_sub_categories.text(), self.path_str.text())
             self.hide()
             self.__start_app()
 
@@ -139,4 +141,3 @@ if __name__ == '__main__':
         window = Welcome()
         window.show()
     sys.exit(app.exec_())
-

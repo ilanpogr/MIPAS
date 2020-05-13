@@ -13,8 +13,12 @@ class Singleton(type):
 class LockManager(metaclass=Singleton):
     def __init__(self):
         self.a = rwlock.RWLockFairD()
+        self.b = rwlock.RWLockFairD()
         self.a_reader_lock = self.a.gen_rlock()
         self.a_writer_lock = self.a.gen_wlock()
+
+        self.b_reader_lock = self.b.gen_rlock()
+        self.b_writer_lock = self.b.gen_wlock()
 
     def read(self, file, line_index):
         with self.a_reader_lock:
@@ -29,3 +33,13 @@ class LockManager(metaclass=Singleton):
         with self.a_writer_lock:
             with open(file, 'a') as f:
                 f.write(content + '\n')
+
+    def read_results(self, file):
+        with self.b_reader_lock:
+            f = open(file)
+            return f.readlines()
+
+    def save_results(self, file,tmp_file):
+        with self.b_writer_lock:
+            os.remove(file)
+            os.rename(file, tmp_file)
