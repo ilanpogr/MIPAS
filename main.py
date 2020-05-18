@@ -1,12 +1,15 @@
-from controllers.threadCreation import ThreadController
+import os
 
+from PyQt5.QtCore import QSize
+
+from controllers.threadCreation import ThreadController
+from controllers.ReaderWriterLockManager import LockManager
+from resultsTable import Table
 from ui_files import mainWindow, connectElements
 from ui_files.welcome import welcomeSettings_v2
 import configUtils
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtWidgets import QMainWindow
-
 import sys
 
 
@@ -17,63 +20,47 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         else:
             super(MipasApp, self).__init__(parent)
         self.setupUi(self)
-        self._translate = QCoreApplication.translate
-        connectElements.connect_main_window_elements(self)
-        self.run_option = 0
+        self.pushButton.clicked.connect(self.on_result_button_clicked)
+        self.results_dialog = None
+        connectElements.set_initial_screen(self)
+        self.last_num_of_results = 0
+        self.current_num_of_results = 0
+        self.check_results()
         self.controller = ThreadController(self)
 
-    def idle_download_products(self):
-        self.update_task_pd("NOT EXECUTED")
-        self.update_status_pd("Products Downloader from stores wasn't chosen by user")
-        self.update_status_pd("Products Downloader from stores wasn't chosen by user")
+    def check_results(self):
+        results_path = "resources/photos/final_results.csv"
+        if os.path.exists(results_path):
+            lock_manager = LockManager()
+            lines = lock_manager.read_results(results_path)
+            if len(lines) > 1:
+                self.update_matches(len(lines) - 1)
+                self.current_num_of_results = len(lines) - 1
+            else:
+                self.update_matches(None)
+                self.current_num_of_results = 0
 
-    def idle_im(self):
-        self.update_task_im("IDLE")
-        self.update_status_im("Waiting for store's products to be downloaded")
+    def start_timer(self, value):
+        self.label_3.setText("Starting in {}".format(value))
 
-    def finished_crawler(self):
-        self.update_status_pd("DONE")
-        self.update_task_pd("Finished Downloading All Products For All Stores")
-        self.im_progressBar_2.setValue(100)
+    def update_matches(self, value):
+        if value is None:
+            self.matches_found.setText("None")
+            self.pushButton.setVisible(False)
+        else:
+            self.matches_found.setText(str(value))
+            if not self.pushButton.isVisible():
+                self.pushButton.setVisible(True)
 
-    def update_progress_bar_sf(self, value):
-        self.progressBar.setValue(value)
-        if value >= 100:
-            self.progressBar.setValue(0)
-
-    def update_progress_bar_pd(self, value):  # todo - change in designer the progressBar ID!
-        self.im_progressBar_2.setValue(value)
-        if value >= 100:
-            self.im_progressBar_2.setValue(0)
-
-    def update_progress_bar_im(self, value):
-        self.im_progressBar.setValue(value)
-
-    def update_status_sf(self, value):
-        self.status_label.setText(self._translate("MainWindow", value))
-
-    def update_task_sf(self, value):
-        self.task_label.setText(self._translate("MainWindow", value))
-
-    def update_status_pd(self, value):
-        self.pd_status_label.setText(self._translate("MainWindow", value))
-
-    def update_task_pd(self, value):
-        self.pd_task_label.setText(self._translate("MainWindow", value))
-
-    def update_status_im(self, value):
-        self.im_status_label.setText(self._translate("MainWindow", value))
-
-    def update_task_im(self, value):
-        self.im_task_label.setText(self._translate("MainWindow", value))
-
-    def switch_to_parallel_screen(self):
-        self.im_progressBar.setValue(0)
-        self.im_progressBar_2.setValue(0)
-        self.stackedWidget.setCurrentIndex(2)
-
-    def show_results(self):
-        self.stackedWidget.setCurrentIndex(3)
+    def on_result_button_clicked(self):
+        if self.last_num_of_results != self.current_num_of_results:
+            self.last_num_of_results = self.current_num_of_results
+            data = connectElements.get_data_for_table()
+            self.results_dialog = Table.Results(data)
+            size = self.results_dialog.geometry()
+            self.results_dialog.resize(size.width(), 800)
+        self.results_dialog.statusBar().showMessage("")
+        self.results_dialog.show()
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
@@ -89,7 +76,8 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
 
     def finish_settings_configuration(self):
         if configUtils.is_all_settings_configured(self):
-            configUtils.create_config_file("Etsy", self.store_names.text(), self.store_main_category.text(), self.store_sub_categories.text(), self.path_str.text())
+            configUtils.create_config_file("Etsy", self.store_names.text(), self.store_main_category.text(),
+                                           self.store_sub_categories.text(), self.path_str.text())
             self.hide()
             self.__start_app()
 
@@ -107,4 +95,3 @@ if __name__ == '__main__':
         window = Welcome()
         window.show()
     sys.exit(app.exec_())
-

@@ -45,7 +45,10 @@ def create_config_file(platform, store_name, main_category, sub_categories, data
         'dataset_path': dataset_path,
         'multi_threading_downloaded_stores': 'resources/app_files/downloaded_stores_multi_threading.txt',
         'multi_threading_end_of_file': '~~~',
-        'stores_dict': 'resources/app_files/stores_dict.csv'
+        'stores_dict': 'resources/app_files/stores_dict.csv',
+        'images_delimiter': '$,,$',
+        'table_size_x': '0',
+        'table_size_y': '0',
     }
     with open(_properties_file_path, "w") as f:
         config.write(f)
@@ -55,6 +58,15 @@ def get_property(prop):
     config = ConfigParser()
     config.read(_properties_file_path)
     return config.get('settings', prop)
+
+
+def set_property(prop, value):
+    parser = ConfigParser()
+    parser.read('properties.ini')
+    parser.set('settings', prop, value)
+    with open("properties.ini", "w") as configfile:
+        parser.write(configfile)
+
 
 
 

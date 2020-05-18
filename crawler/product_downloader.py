@@ -28,8 +28,8 @@ init_path = 'resources/photos/'
 search_page_counter = 0
 num_of_updates = 0
 
-multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
-multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')
+multi_threading_downloaded_stores = ""
+multi_threading_end_of_file = ""
 lock_manager = LockManager.LockManager()
 
 
@@ -419,7 +419,9 @@ MAIN METHOD CALL
 
 
 def download_products_for_all_stores(signal_process, signal_status, user_stores, signal_start_image_matching):
-    global store_products, num_of_updates
+    global store_products, num_of_updates, multi_threading_downloaded_stores, multi_threading_end_of_file
+    multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
+    multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')
     start_time = time.ctime()
     program_initial_print(start_time)
     start_time = time.time()
@@ -459,7 +461,7 @@ def download_products_for_all_stores(signal_process, signal_status, user_stores,
                 time.sleep(0.001)  # todo - remove sleep and uncomment above lines ---- DEMO
                 signal_process.emit(i/len(stores) * 100)
             else:
-                if 700 <= i >= 702:  # todo - if condition only for ---- DEMO
+                if i < 3:  # todo - if condition only for ---- DEMO
                     print('************************************************************************************')
                     print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                     print('************************************************************************************')
