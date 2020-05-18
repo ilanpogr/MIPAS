@@ -164,8 +164,3 @@ class ThreadController(Thread):
         signals = {self.worker_im.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_im, self.worker_im.execute_parallel, signals=signals)
 
-    # @pyqtSlot()
-    # def alone_start_image_matching_thread(self):
-    #     signals = {self.worker_im.finished: self._receive_finish_signal}
-    #     self._threaded_call(self.worker_im, self.worker_im.execute, signals=signals)
-
