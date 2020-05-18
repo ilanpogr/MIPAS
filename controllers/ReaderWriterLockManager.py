@@ -1,6 +1,7 @@
 from readerwriterlock import rwlock
 import os
 
+
 class Singleton(type):
     _instances = {}
 

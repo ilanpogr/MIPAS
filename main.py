@@ -2,7 +2,7 @@ import os
 
 from controllers.threadCreation import ThreadController
 from controllers.ReaderWriterLockManager import LockManager
-
+from resultsTable import Table
 from ui_files import mainWindow, connectElements
 from ui_files.welcome import welcomeSettings_v2
 import configUtils
@@ -18,14 +18,11 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         else:
             super(MipasApp, self).__init__(parent)
         self.setupUi(self)
-        # table generator
-        # self.results_table = QtWidgets.QTableView(self.summary)
-        # self.results_layout.addWidget(self.results_table)
-        # self.results_table_history = QtWidgets.QTableView(self.hitory_tab)
-        # self.results_layout_2.addWidget(self.results_table_history)
-        # connectElements.connect_results_to_table(self.results_table_history)
-
+        self.pushButton.clicked.connect(self.on_result_button_clicked)
+        self.results_dialog = None
         connectElements.set_initial_screen(self)
+        self.last_num_of_results = 0
+        self.current_num_of_results = 0
         self.check_results()
         self.controller = ThreadController(self)
 
@@ -36,8 +33,10 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             lines = lock_manager.read_results(results_path)
             if len(lines) > 1:
                 self.update_matches(len(lines) - 1)
+                self.current_num_of_results = len(lines) - 1
             else:
                 self.update_matches(None)
+                self.current_num_of_results = 0
 
     def start_timer(self, value):
         self.label_3.setText("Starting in {}".format(value))
@@ -51,62 +50,12 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             if not self.pushButton.isVisible():
                 self.pushButton.setVisible(True)
 
-    # def idle_download_products(self):
-    #     self.update_task_pd("NOT EXECUTED")
-    #     self.update_status_pd("Products Downloader from stores wasn't chosen by user")
-    #     self.update_status_pd("Products Downloader from stores wasn't chosen by user")
-    #
-    # def idle_im(self):
-    #     self.update_task_im("IDLE")
-    #     self.update_status_im("Waiting for store's products to be downloaded")
-    #
-    # def finished_crawler(self):
-    #     self.update_status_pd("DONE")
-    #     self.update_task_pd("Finished Downloading All Products For All Stores")
-    #     self.im_progressBar_2.setValue(100)
-    #
-    # def update_progress_bar_sf(self, value):
-    #     self.progressBar.setValue(value)
-    #     if value >= 100:
-    #         self.progressBar.setValue(0)
-    #
-    # def update_progress_bar_pd(self, value):  # todo - change in designer the progressBar ID!
-    #     self.im_progressBar_2.setValue(value)
-    #     if value >= 100:
-    #         self.im_progressBar_2.setValue(0)
-    #
-    # def update_progress_bar_im(self, value):
-    #     self.im_progressBar.setValue(value)
-    #
-    # def update_status_sf(self, value):
-    #     self.status_label.setText(self._translate("MainWindow", value))
-    #
-    # def update_task_sf(self, value):
-    #     self.task_label.setText(self._translate("MainWindow", value))
-    #
-    # def update_status_pd(self, value):
-    #     self.pd_status_label.setText(self._translate("MainWindow", value))
-    #
-    # def update_task_pd(self, value):
-    #     self.pd_task_label.setText(self._translate("MainWindow", value))
-    #
-    # def update_status_im(self, value):
-    #     self.im_status_label.setText(self._translate("MainWindow", value))
-    #
-    # def update_task_im(self, value):
-    #     self.im_task_label.setText(self._translate("MainWindow", value))
-    #
-    # def switch_to_parallel_screen(self):
-    #     self.im_progressBar.setValue(0)
-    #     self.im_progressBar_2.setValue(0)
-    #     self.stackedWidget.setCurrentIndex(2)
-
-    def show_results_as_table(self):
-        print("results method from main entered....")
-        # self.stackedWidget.setCurrentIndex(3)
-        # df = connectElements.get_results_as_df()
-        # connectElements.connect_results_to_table(self.results_table)
-        # connectElements.connect_results_to_table(self.results_table_history)
+    def on_result_button_clicked(self):
+        if self.last_num_of_results != self.current_num_of_results:
+            self.last_num_of_results = self.current_num_of_results
+            data = connectElements.get_data_for_table()
+            self.results_dialog = Table.Results(data)
+        self.results_dialog.showMaximized()
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):

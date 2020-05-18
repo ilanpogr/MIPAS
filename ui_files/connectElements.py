@@ -3,11 +3,8 @@ import os
 from PyQt5 import QtWidgets, QtCore
 from pathlib import Path
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QBrush
 from PyQt5.QtWidgets import QDesktopWidget
 import resultsTable.resultsExctractor as resultsExtractor
-from resultsTable.Table import PandasModel
 
 results_file = "resources/photos/final_results.csv"
 background_image = ":/resources/images/DIAMOND-BANNER.png"
@@ -19,9 +16,6 @@ def set_colors_to_elements(main_window):
     # Title
     main_window.label_5.setStyleSheet("color: #ffe34c")
     main_window.label_6.setStyleSheet("color: #ffe34c")
-    # Title Frame
-    # frame_image = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/frame_gold_5.png"
-    # main_window.frame_2.setStyleSheet("QFrame#frame_2 { border-image: url(%s) 0 0 0 0 stretch stretch }" % frame_image)
     # labels
     main_window.label.setStyleSheet("color: #EEEEEE")
     main_window.label_2.setStyleSheet("color: #EEEEEE")
@@ -43,14 +37,10 @@ def set_initial_screen(main_window):
     set_colors_to_elements(main_window)
 
 
-def connect_results_to_table(table):
+def get_data_for_table():
     if os.path.isfile(results_file):
-        df = get_results_as_df()
-        model = PandasModel(df)
-        table.setModel(model)
-        table.horizontalHeader().setStretchLastSection(True)
-        table.horizontalHeader().setSectionResizeMode(1)
-        table.doubleClicked.connect(resultsExtractor.ResultsExtractor.open_link)
+        results = resultsExtractor.ResultsExtractor(results_file)
+        return results.read_results()
 
 
 def connect_welcome_buttons(welcome_screen):
@@ -97,11 +87,6 @@ def retranslate_welcome_ui(welcome_screen):
 #         main_screen.run_option = 2
 #     main_screen.method_label.setText(_translate("MainWindow", state))
 #     main_screen.method_label_2.setText(_translate("MainWindow", state))
-
-
-def get_results_as_df():
-    results = resultsExtractor.ResultsExtractor(results_file)
-    return results.read_results()
 
 
 def set_button_stylesheet(push_button):

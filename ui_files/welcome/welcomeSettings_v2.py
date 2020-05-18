@@ -13,12 +13,31 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(643, 406)
+        MainWindow.resize(643, 250)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.stackedWidget = QtWidgets.QStackedWidget(self.centralwidget)
+        MainWindow.setStyleSheet("#MainWindow { background-color: #222222; }")
+        self.stackedWidget.setStyleSheet("QFrame { border: 0}"
+                                         "QLabel {color: #EEEEEE }"
+                                         "QPushButton { background-color: #8d2663; "
+                                         "color: white;"
+                                         "font-size: 12px;"
+                                         "}"
+                                         "QPushButton:pressed { background-color: #701e4f; "
+                                         "color: #DCDCDC;"
+                                         "font-size: 12px;"
+                                         "}"
+                                         "QToolButton { background-color: #8d2663; "
+                                         "color: white;"
+                                         "font-size: 12px;"
+                                         "}"
+                                         "QToolButton:pressed { background-color: #701e4f; "
+                                         "color: #DCDCDC;"
+                                         "font-size: 12px;"
+                                         "}")
         self.stackedWidget.setObjectName("stackedWidget")
         self.welcome = QtWidgets.QWidget()
         self.welcome.setObjectName("welcome")
