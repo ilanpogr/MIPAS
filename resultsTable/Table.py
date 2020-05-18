@@ -89,6 +89,9 @@ class Results(QMainWindow):
                 self.statusBar().showMessage("Unable to save '" + file_name + "'")
                 pass
 
+    def closeEvent(self, event):
+        self.close()
+
 
 class TableModel(QAbstractTableModel):
 
