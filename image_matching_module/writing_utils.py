@@ -3,6 +3,7 @@ import cv2
 import os
 import csv
 from image_matching_module.in_depth_image_pair import InDepthImagePair as InDepthIP
+from controllers.ReaderWriterLockManager import LockManager
 
 
 class WritingUtils:
@@ -180,8 +181,8 @@ class WritingUtils:
                     in_depth_results_index += 1
             while line and line != '"\n':
                 if first:
-                    line = csvfile.readline()
                     first = False
+                    line = csvfile.readline()
                     continue
                 line = line.rstrip()
                 spllited_line = line.split(",")
@@ -191,8 +192,12 @@ class WritingUtils:
                 WritingUtils.write_object_to_csv(in_depth_results[in_depth_results_index], file_name_tmp)
                 in_depth_results_index += 1
         csvfile.close()
-        os.remove(file_name)
-        os.rename(file_name_tmp, file_name)
+        lock_manager = LockManager()
+        lock_manager.save_results(file_name,file_name_tmp)
+        # os.remove(file_name)
+        # os.rename(file_name_tmp, file_name)
+
+
 
     @staticmethod
     def update_final_results_file(stores_path: str, in_depth_results: List[InDepthIP], prev_store_results=None):
