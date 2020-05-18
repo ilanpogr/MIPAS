@@ -1,5 +1,7 @@
 import os
 
+from PyQt5.QtCore import QSize
+
 from controllers.threadCreation import ThreadController
 from controllers.ReaderWriterLockManager import LockManager
 from resultsTable import Table
@@ -55,7 +57,10 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             self.last_num_of_results = self.current_num_of_results
             data = connectElements.get_data_for_table()
             self.results_dialog = Table.Results(data)
-        self.results_dialog.showMaximized()
+            size = self.results_dialog.geometry()
+            self.results_dialog.resize(size.width(), 800)
+        self.results_dialog.statusBar().showMessage("")
+        self.results_dialog.show()
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
