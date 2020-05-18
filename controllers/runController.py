@@ -11,20 +11,18 @@ import os
 downloaded_products_path = "resources/photos"
 
 
-def search_stores(signal_process, signal_status, signal_task):
+def search_stores():
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
     if os.path.exists(multi_threading_downloaded_stores):
         os.remove(multi_threading_downloaded_stores)
-    signal_task.emit("Searching Relevant Stores In Platform")
     user_main_category = configUtils.get_property('main_category')
     user_sub_categories = configUtils.get_property('sub_categories')
-    search_for_stores(user_main_category, user_sub_categories, signal_process, signal_status)
+    search_for_stores(user_main_category, user_sub_categories)
 
 
-def download_products(signal_process, signal_status, signal_task, signal_start_image_matching):
-    signal_task.emit("Download Products From Stores")
+def download_products(signal_start_image_matching, signal_status_download):
     user_stores = configUtils.get_property('store_name').split(',')
-    download_products_for_all_stores(signal_process, signal_status, user_stores, signal_start_image_matching)
+    download_products_for_all_stores(user_stores, signal_start_image_matching, signal_status_download)
 
 
 def get_num_of_rows_from_file(stores_dict_path):
@@ -34,7 +32,7 @@ def get_num_of_rows_from_file(stores_dict_path):
         return len(data)
 
 
-def compare_images():
+def compare_images(signal_up_to_date):
     user_photos_path = configUtils.get_property('dataset_path')
     stores_dict_path = configUtils.get_property('stores_dict')
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
@@ -53,11 +51,12 @@ def compare_images():
                 continue
             current_store = current_store.strip('\n')
             if current_store == multi_threading_end_file:
+                signal_up_to_date.emit(next_store_index + 1)
                 break
             else:
                 store_path = "resources/photos/" + current_store
-                image_matcher.run_matching_for_store(None, store_path)
-                next_store_index += 1
+            image_matcher.run_matching_for_store(None, store_path)
+            next_store_index += 1
 
 
 def compare_images_all_stores():

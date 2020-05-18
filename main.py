@@ -1,8 +1,9 @@
 import os
+from functools import partial
 
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QThreadPool, QThread
 
-from controllers.threadCreation import ThreadController
+from controllers.threadCreation import Worker, ThreadController
 from controllers.ReaderWriterLockManager import LockManager
 from resultsTable import Table
 from ui_files import mainWindow, connectElements
@@ -11,6 +12,8 @@ import configUtils
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow
 import sys
+import time
+
 
 
 class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
@@ -25,7 +28,10 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         connectElements.set_initial_screen(self)
         self.last_num_of_results = 0
         self.current_num_of_results = 0
+        self.task_changed = False
         self.check_results()
+        self.num_of_stores = None
+
         self.controller = ThreadController(self)
 
     def check_results(self):
@@ -42,6 +48,18 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
 
     def start_timer(self, value):
         self.label_3.setText("Starting in {}".format(value))
+
+    def change_task(self, value):
+        self.task_changed = value
+
+    def search_for_stores(self, value):
+        self.label_3.setText("Searching for shops in Etsy platform{}".format(value))
+
+    def explore_stores(self, value):
+        if self.num_of_stores is None:
+            self.num_of_stores = value.split('/')[1]
+        self.check_results()
+        self.label_3.setText("Exploring products for found store - {0}".format(value))
 
     def update_matches(self, value):
         if value is None:

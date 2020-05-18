@@ -262,7 +262,7 @@ def get_products_from_updated_page(data, store_name, current_url):
         return new_images
 
 
-def download_new_products_if_found(store_name, store_url, signal_status, status):
+def download_new_products_if_found(store_name, store_url):
     global search_page_counter
     search_page_counter = 0
     data = make_http_req(store_url)
@@ -270,24 +270,19 @@ def download_new_products_if_found(store_name, store_url, signal_status, status)
         failed_updated_stores.add(store_url)
         return
     search_page_counter = 1
-    current_status = status + "\nChecking if have new products"
-    signal_status.emit(current_status)
-    found_new_pictures = False
     found_new_images = get_products_from_updated_page(data, store_name, store_url)
     if found_new_images:
-        current_status = status + "\nDownloading only new products from known store: " + store_name
-        signal_status.emit(current_status)
-    num_of_pages = get_number_of_pages_in_store(data)
-    if num_of_pages is not None:
-        page_url_sefix = '&page={page_num}#items'
-        for i in range(2, num_of_pages + 1):
-            if found_new_images:
-                page_url = store_url + page_url_sefix.format(page_num=i)
-                search_page_counter = i
-                data = make_http_req(page_url)
-                up_to_date = get_products_from_updated_page(data, store_name, page_url)
-            else:
-                return
+        num_of_pages = get_number_of_pages_in_store(data)
+        if num_of_pages is not None:
+            page_url_sefix = '&page={page_num}#items'
+            for i in range(2, num_of_pages + 1):
+                if found_new_images:
+                    page_url = store_url + page_url_sefix.format(page_num=i)
+                    search_page_counter = i
+                    data = make_http_req(page_url)
+                    found_new_images = get_products_from_updated_page(data, store_name, page_url)
+                else:
+                    return
     save_products_img_url_dict(store_name)
 
 
@@ -385,23 +380,19 @@ def get_products_from_page(data, store_name, current_url):
     return got_data
 
 
-def download_all_products_from_store(store_name, store_url, signal_status, status):
+def download_all_products_from_store(store_name, store_url):
     global search_page_counter
     search_page_counter = 0
     data = make_http_req(store_url)
     if data is None:
         failed_stores.add(store_url)
         return
-    current_status = status + "\nDownloading page #1"
-    signal_status.emit(current_status)
     search_page_counter = 1
     got_data = get_products_from_page(data, store_name, store_url)
     num_of_pages = get_number_of_pages_in_store(data)
     if num_of_pages is not None:
         page_url_sefix = '&page={page_num}#items'
         for i in range(2, num_of_pages + 1):
-            current_status = status + "\nDownloading page #" + str(i)
-            signal_status.emit(current_status)
             page_url = store_url + page_url_sefix.format(page_num=i)
             search_page_counter = i
             data = make_http_req(page_url)
@@ -418,7 +409,7 @@ MAIN METHOD CALL
 ------------------------------------'''
 
 
-def download_products_for_all_stores(signal_process, signal_status, user_stores, signal_start_image_matching):
+def download_products_for_all_stores(user_stores, signal_start_image_matching, signal_status_download):
     global store_products, num_of_updates, multi_threading_downloaded_stores, multi_threading_end_of_file
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
     multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')
@@ -442,15 +433,14 @@ def download_products_for_all_stores(signal_process, signal_status, user_stores,
         if i == 2:
             signal_start_image_matching.emit()
         if name not in user_stores:
-            current_status = str(i) + "/" + str(len(stores)) + "\nDownloading products for store: " + name
-            signal_status.emit(current_status)  # signal task
             if url in downloaded_stores:
+                signal_status_download.emit("1/" + str(len(stores.items())))
                 url = url + '&sort_order=date_desc'
                 # print('************************************************************************************')
                 # print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                 # print('************************************************************************************')
                 #
-                # download_new_products_if_found(name, url, signal_status, current_status)
+                # download_new_products_if_found(name, url)
                 # save_products_img_url_dict(name)
                 # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
                 # print('************************************************************************************')
@@ -459,17 +449,15 @@ def download_products_for_all_stores(signal_process, signal_status, user_stores,
                 #     append_store_to_multi_threading(name)
                 #     num_of_updates = 0
                 time.sleep(0.001)  # todo - remove sleep and uncomment above lines ---- DEMO
-                signal_process.emit(i/len(stores) * 100)
             else:
                 if i < 3:  # todo - if condition only for ---- DEMO
                     print('************************************************************************************')
                     print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                     print('************************************************************************************')
-                    download_all_products_from_store(name, url, signal_status, current_status)
+                    download_all_products_from_store(name, url)
                     append_store_to_cache(url)
                     print_output_for_debug(start_time)
                 time.sleep(0.001)   # todo - remove sleep and uncomment above lines ---- DEMO
-                signal_process.emit(i/len(stores) * 100)
             store_products = set()
             product_img_url_dict.clear()
     append_store_to_multi_threading(multi_threading_end_of_file)
