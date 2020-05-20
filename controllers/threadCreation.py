@@ -2,6 +2,8 @@ import os
 from functools import partial
 
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QApplication
+
 import controllers.runController as Controller
 
 import time
@@ -108,6 +110,7 @@ class WorkerImageMatcher(Worker):
 class ThreadController(Thread):
     def __init__(self, _main):
         global main_window
+        QApplication.processEvents()
         super().__init__(_main)
         self.threads = {}
         main_window = _main
