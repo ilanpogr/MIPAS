@@ -136,15 +136,18 @@ def search_for_stores_with_url(url):
         # get_stores_from_products_page(data)
 
 
-def search_for_stores(user_store_category, user_sub_category):
+def search_for_stores(user_store_category, user_sub_category, signal_status_search):
     global search_page_counter, store_category, sub_category
     store_category = user_store_category
     sub_category = user_sub_category.split(",")
+    signal_status_search.emit("Main Category: " + store_category)
+
     get_stores_dict_from_file()
     main_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
         category=store_category)
     search_for_stores_with_url(main_category_url_without_page_number)
     for sub_c in sub_category:
+        signal_status_search.emit("Subcategory: " + sub_c)
         search_page_counter = 1
         sub_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}/{sub_category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
             category=store_category, sub_category=sub_c)

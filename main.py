@@ -31,6 +31,11 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.task_changed = False
         self.check_results()
         self.num_of_stores = None
+        self.current_store_number = None
+        self.first_run = True
+
+        self.im_done = False
+        self.id_done = False
 
         self.controller = ThreadController(self)
 
@@ -47,19 +52,26 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
                 self.current_num_of_results = 0
 
     def start_timer(self, value):
-        self.label_3.setText("Starting in {}".format(value))
+        if self.first_run:
+            self.label_3.setText("Starting in {}".format(value))
+        else:
+            self.label_3.setText("Starting another run in {}".format(value))
 
     def change_task(self, value):
+        if self.first_run:
+            self.first_run = False
         self.task_changed = value
 
     def search_for_stores(self, value):
-        self.label_3.setText("Searching for shops in Etsy platform{}".format(value))
+        self.label_3.setText("Searching for shops in Etsy platform:\n using {}".format(value))
 
     def explore_stores(self, value):
+        split = value.split('/')
         if self.num_of_stores is None:
-            self.num_of_stores = value.split('/')[1]
+            self.num_of_stores = split[1]
+        self.current_store_number = split[0]
         self.check_results()
-        self.label_3.setText("Exploring products for found store - {0}".format(value))
+        self.label_3.setText("Exploring products for found store - {0}/{1}".format(split[0], self.num_of_stores))
 
     def update_matches(self, value):
         if value is None:
@@ -105,6 +117,7 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
 
 
 if __name__ == '__main__':
+    time.sleep(20)  # <--- todo - only for video... delete
     app = QtWidgets.QApplication(sys.argv)
     if configUtils.is_settings_file_exists():
         mipas_app = MipasApp()

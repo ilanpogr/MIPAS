@@ -108,7 +108,7 @@ class TableModel(QAbstractTableModel):
                 return str(value)
 
         if role == Qt.DecorationRole and index.column() == 0:  # add image to cell
-            tmp_img_path = "resources/images/report"
+            tmp_img_path = "resources/images_app/report"
             if not os.path.exists(tmp_img_path):
                 os.makedirs(tmp_img_path)
 

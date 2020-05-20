@@ -409,7 +409,7 @@ MAIN METHOD CALL
 ------------------------------------'''
 
 
-def download_products_for_all_stores(user_stores, signal_start_image_matching, signal_status_download):
+def download_products_for_all_stores(user_stores, signal_start_image_matching, signal_status_download, signal_finished):
     global store_products, num_of_updates, multi_threading_downloaded_stores, multi_threading_end_of_file
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
     multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')
@@ -428,14 +428,14 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
     if not os.path.exists(init_path):
         os.makedirs(init_path)
     i = 0
+    signal_status_download.emit("1/" + str(len(stores.items())))
     for name, url in stores.items():
         i += 1
         if i == 2:
             signal_start_image_matching.emit()
         if name not in user_stores:
             if url in downloaded_stores:
-                signal_status_download.emit("1/" + str(len(stores.items())))
-                url = url + '&sort_order=date_desc'
+                url = url + '&sort_order=date_desc'  # todo -commented only for demo
                 # print('************************************************************************************')
                 # print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                 # print('************************************************************************************')
@@ -445,12 +445,16 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
                 # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
                 # print('************************************************************************************')
                 # print_output_for_debug(start_time)
-                # if num_of_updates != 0:
-                #     append_store_to_multi_threading(name)
-                #     num_of_updates = 0
+                if num_of_updates != 0:
+                    append_store_to_multi_threading(name)
+                    num_of_updates = 0
+
+                if i < 3:  # todo - if condition AND NEXT LINE only for ---- DEMO
+                    append_store_to_multi_threading(name)
                 time.sleep(0.001)  # todo - remove sleep and uncomment above lines ---- DEMO
             else:
                 if i < 3:  # todo - if condition only for ---- DEMO
+
                     print('************************************************************************************')
                     print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                     print('************************************************************************************')
@@ -461,3 +465,4 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
             store_products = set()
             product_img_url_dict.clear()
     append_store_to_multi_threading(multi_threading_end_of_file)
+    # signal_finished.emit()

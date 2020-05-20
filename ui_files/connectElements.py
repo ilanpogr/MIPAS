@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QDesktopWidget
 import resultsTable.resultsExctractor as resultsExtractor
 
 results_file = "resources/photos/final_results.csv"
-background_image = ":/resources/images/DIAMOND-BANNER.png"
+background_image = ":/resources/images_app/DIAMOND-BANNER.png"
 
 
 def set_colors_to_elements(main_window):
@@ -90,9 +90,9 @@ def retranslate_welcome_ui(welcome_screen):
 
 
 def set_button_stylesheet(push_button):
-    texture_path = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/Prestige-texture.jpg"
+    texture_path = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture.jpg"
     push_button.setStyleSheet(
-        "QPushButton#pushButton { background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/Prestige-texture.jpg) 0 0 0 0 stretch stretch; "
+        "QPushButton#pushButton { background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture.jpg) 0 0 0 0 stretch stretch; "
         "border-style: outset; "
         "border-width: 2px; "
         "border-radius: 10px; "
@@ -106,4 +106,4 @@ def set_button_stylesheet(push_button):
         "border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);}"
         "QPushButton#pushButton:pressed {"
         "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);"
-        "background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/Prestige-texture_dark.jpg)}")
+        "background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture_dark.jpg)}")

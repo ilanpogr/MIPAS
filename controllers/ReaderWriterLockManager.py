@@ -40,7 +40,7 @@ class LockManager(metaclass=Singleton):
             f = open(file)
             return f.readlines()
 
-    def save_results(self, file,tmp_file):
+    def save_results(self, file, tmp_file):
         with self.b_writer_lock:
             os.remove(file)
-            os.rename(file, tmp_file)
+            os.rename(tmp_file, file)

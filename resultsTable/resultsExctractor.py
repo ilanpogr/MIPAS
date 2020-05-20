@@ -49,7 +49,7 @@ class ResultsExtractor:
         if item.column() == 3:  # open product's URL in browser
             webbrowser.open(item.data())
         elif item.column() == 0:
-            path = "resources/images/report/" + str(item.row()) + ".jpg"
+            path = "resources/images_app/report/" + str(item.row()) + ".jpg"
             img = Image.open(path)
             img.show()
             pass
