@@ -21,9 +21,9 @@ def search_stores(signal_status_search):
     search_for_stores(user_main_category, user_sub_categories, signal_status_search)
 
 
-def download_products(signal_start_image_matching, signal_status_download, signal_finished):
+def download_products(signal_start_image_matching, signal_status_download):
     user_stores = configUtils.get_property('store_name').split(',')
-    download_products_for_all_stores(user_stores, signal_start_image_matching, signal_status_download, signal_finished)
+    download_products_for_all_stores(user_stores, signal_start_image_matching, signal_status_download)
 
 
 def get_num_of_rows_from_file(stores_dict_path):
@@ -44,6 +44,7 @@ def compare_images(signal_status, total_store_number):
     lock_manager = LockManager.LockManager()
     while True:
         multi_threading_downloaded_stores_index = next_store_index - 1
+
         if next_store_index > 2:  # todo - whole if condition with if and else, only for ---- DEMO
             if next_store_index <= total_store_number:
                 time.sleep(0.001)
@@ -68,7 +69,6 @@ def compare_images(signal_status, total_store_number):
                 store_path = "resources/photos/" + current_store
             signal_status.emit(str(next_store_index))
 
-            print("starting to compare for store:" + str(next_store_index))
             image_matcher.run_matching_for_store(None, store_path)
             next_store_index += 1
 

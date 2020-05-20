@@ -1,7 +1,7 @@
 import os
 from functools import partial
 
-from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot, QRunnable
 from PyQt5.QtWidgets import QApplication
 
 import controllers.runController as Controller
@@ -39,7 +39,7 @@ class WorkerCrawler(Worker):
         self.task_changed.connect(main_window.change_task)
         self.status_download.connect(main_window.explore_stores)
         self.status_search.connect(main_window.search_for_stores)
-        # self.finished.connect(main_window.finished_id)
+        # self.start_image_matching.connect(main_window.start_image_matching)
 
     @pyqtSlot(str)
     def execute(self):
@@ -52,7 +52,7 @@ class WorkerCrawler(Worker):
             counter -= 1
         Controller.search_stores(self.status_search)
         self.task_changed.emit(True)
-        Controller.download_products(self.start_image_matching, self.status_download, self.finished)
+        Controller.download_products(self.start_image_matching, self.status_download)
         self.finished.emit()
         self.thread.quit()
 
@@ -67,7 +67,7 @@ class WorkerImageMatcher(Worker):
 
     def connect_signals(self):
         self.status_changed.connect(main_window.explore_stores)
-        # self.up_to_date.connect(main_window.finish_all_stores_compare)
+        self.finished.connect(main_window.run_finished)
 
     @pyqtSlot(str)
     def execute_parallel(self):
@@ -77,40 +77,9 @@ class WorkerImageMatcher(Worker):
         self.thread.quit()
 
 
-# class WorkerLabel(Worker):
-#     change_search_label = pyqtSignal(str)
-#     task_changed = pyqtSignal(bool)
-#
-#     def __init__(self):
-#         super().__init__()
-#
-#     @pyqtSlot()
-#     def shop_search_status(self):
-#         global main_window
-#         self.task_changed.connect(main_window.change_task)
-#         self.change_search_label.connect(main_window.search_for_stores)
-#         self.task_changed.emit(False)
-#         value = 0
-#         while not main_window.task_changed:
-#             value += 1
-#             if value == 1:
-#                 self.change_search_label.emit(".")
-#                 time.sleep(1)
-#             elif value == 2:
-#                 self.change_search_label.emit("..")
-#                 time.sleep(1)
-#             elif value == 3:
-#                 self.change_search_label.emit("...")
-#                 time.sleep(1)
-#             else:
-#                 value = 0
-#         self.thread.quit()
-
-
 class ThreadController(Thread):
     def __init__(self, _main):
         global main_window
-        QApplication.processEvents()
         super().__init__(_main)
         self.threads = {}
         main_window = _main
@@ -121,8 +90,6 @@ class ThreadController(Thread):
         # Workers
         self.worker_crawler = WorkerCrawler()
         self.worker_im = WorkerImageMatcher()
-        # self.worker_im2 = WorkerImageMatcher()
-        # self.worker_search_status = WorkerLabel()
         self.start_thread()
 
     def _threaded_call(self, worker, fn, *args, signals=None, slots=None):
@@ -172,23 +139,17 @@ class ThreadController(Thread):
 
     @pyqtSlot(bool)
     def start_thread(self):
-
-        print("Active threads:")
-        for worker, t in self.threads.items():
-            print(str(type(worker)) + ": " + str(t.isRunning()))
+        # print("Active threads:")
+        # for worker, t in self.threads.items():
+        #     print(str(type(worker)) + ": " + str(t.isRunning()))
 
         signals = {self.worker_crawler.start_image_matching: self.start_image_matching_thread,
-                   # self.worker_crawler.status_search: self.start_shop_search_status,
                    self.worker_crawler.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_crawler, self.worker_crawler.execute, signals=signals)
 
     @pyqtSlot()
     def start_image_matching_thread(self):
-        # self.counter_im += 1
-        # if self.counter_im % 2 == 0:
-        #     signals = {self.worker_im2.finished: self._receive_finish_signal}
-        #     self._threaded_call(self.worker_im2, self.worker_im.execute_parallel, signals=signals)
-        # else:
+        print("starting image matching")
         signals = {self.worker_im.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_im, self.worker_im.execute_parallel, signals=signals)
 
@@ -200,3 +161,14 @@ class ThreadController(Thread):
     # @pyqtSlot()
     # def start_shop_search_status(self):
     #     self._threaded_call(self.worker_search_status, self.worker_search_status.shop_search_status)
+
+
+# class ControllerWorker(QRunnable):
+#     def __init__(self, main):
+#         super(ControllerWorker, self).__init__()
+#         # Store constructor arguments (re-used for processing)
+#         self._main = main
+#
+#     @pyqtSlot()
+#     def run(self):
+#         ThreadController(self._main)

@@ -409,7 +409,7 @@ MAIN METHOD CALL
 ------------------------------------'''
 
 
-def download_products_for_all_stores(user_stores, signal_start_image_matching, signal_status_download, signal_finished):
+def download_products_for_all_stores(user_stores, signal_start_image_matching, signal_status_download):
     global store_products, num_of_updates, multi_threading_downloaded_stores, multi_threading_end_of_file
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
     multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')
@@ -465,4 +465,3 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
             store_products = set()
             product_img_url_dict.clear()
     append_store_to_multi_threading(multi_threading_end_of_file)
-    # signal_finished.emit()

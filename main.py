@@ -1,9 +1,9 @@
 import os
 from functools import partial
 
-from PyQt5.QtCore import QSize, QThreadPool, QThread
+from PyQt5.QtCore import QSize, QThreadPool, QThread, QRunnable, pyqtSlot
 
-from controllers.threadCreation import Worker, ThreadController
+from controllers.threadCreation import ThreadController
 from controllers.ReaderWriterLockManager import LockManager
 from resultsTable import Table
 from ui_files import mainWindow, connectElements
@@ -13,7 +13,6 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow
 import sys
 import time
-
 
 
 class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
@@ -37,7 +36,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.im_done = False
         self.id_done = False
 
-        ThreadController(self)
+        self.controller = ThreadController(self)
 
     def check_results(self):
         results_path = "resources/photos/final_results.csv"
@@ -72,6 +71,10 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.current_store_number = split[0]
         self.check_results()
         self.label_3.setText("Exploring products for found store - {0}/{1}".format(split[0], self.num_of_stores))
+
+    def run_finished(self):
+        self.label_3.setText("IDLE")
+        self.controller = ThreadController(self)
 
     def update_matches(self, value):
         if value is None:
@@ -118,7 +121,7 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
 
 
 if __name__ == '__main__':
-    # time.sleep(20)  # <--- todo - only for video... delete
+    time.sleep(20)  # <--- todo - only for video... delete
     app = QtWidgets.QApplication(sys.argv)
     if configUtils.is_settings_file_exists():
         mipas_app = MipasApp()
