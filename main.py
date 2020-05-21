@@ -86,7 +86,6 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
                 self.pushButton.setVisible(True)
 
     def on_result_button_clicked(self):
-        print("clicked")
         if self.last_num_of_results != self.current_num_of_results:
             self.last_num_of_results = self.current_num_of_results
             data = connectElements.get_data_for_table()
@@ -121,7 +120,7 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
 
 
 if __name__ == '__main__':
-    time.sleep(20)  # <--- todo - only for video... delete
+    # time.sleep(20)  # <--- todo - only for video... delete
     app = QtWidgets.QApplication(sys.argv)
     if configUtils.is_settings_file_exists():
         mipas_app = MipasApp()

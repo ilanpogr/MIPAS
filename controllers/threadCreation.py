@@ -39,7 +39,6 @@ class WorkerCrawler(Worker):
         self.task_changed.connect(main_window.change_task)
         self.status_download.connect(main_window.explore_stores)
         self.status_search.connect(main_window.search_for_stores)
-        # self.start_image_matching.connect(main_window.start_image_matching)
 
     @pyqtSlot(str)
     def execute(self):
@@ -126,11 +125,6 @@ class ThreadController(Thread):
 
     @pyqtSlot()
     def _receive_finish_signal(self):
-        # print("id: " + str(main_window.id_done))
-        # print("im: " + str(main_window.im_done))
-        # if main_window.id_done and main_window.im_done:
-        #     os.remove("resources/app_files/downloaded_stores_multi_threading.txt")
-        #     self.start_thread()
         print("thread finish notification")
         self.all_modules_finished += 1
         if self.all_modules_finished % 2 == 0:
@@ -139,9 +133,10 @@ class ThreadController(Thread):
 
     @pyqtSlot(bool)
     def start_thread(self):
-        # print("Active threads:")
-        # for worker, t in self.threads.items():
-        #     print(str(type(worker)) + ": " + str(t.isRunning()))
+
+        print("Active threads:")
+        for worker, t in self.threads.items():
+            print(str(type(worker)) + ": " + str(t.isRunning()))
 
         signals = {self.worker_crawler.start_image_matching: self.start_image_matching_thread,
                    self.worker_crawler.finished: self._receive_finish_signal}
@@ -153,22 +148,3 @@ class ThreadController(Thread):
         signals = {self.worker_im.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_im, self.worker_im.execute_parallel, signals=signals)
 
-    # @pyqtSlot()
-    # def start_shop_search_status(self):
-    #     signals = {self.worker_im.finished: self._receive_finish_signal}
-    #     self._threaded_call(self.worker_im, self.worker_im.execute_parallel, signals=signals)
-
-    # @pyqtSlot()
-    # def start_shop_search_status(self):
-    #     self._threaded_call(self.worker_search_status, self.worker_search_status.shop_search_status)
-
-
-# class ControllerWorker(QRunnable):
-#     def __init__(self, main):
-#         super(ControllerWorker, self).__init__()
-#         # Store constructor arguments (re-used for processing)
-#         self._main = main
-#
-#     @pyqtSlot()
-#     def run(self):
-#         ThreadController(self._main)
