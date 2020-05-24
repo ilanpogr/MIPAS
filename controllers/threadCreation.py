@@ -30,6 +30,9 @@ class WorkerCrawler(Worker):
     status_search = pyqtSignal(str)
     status_download = pyqtSignal(str)
     task_changed = pyqtSignal(bool)
+    current_num_stores = pyqtSignal(int)
+    current_store_name = pyqtSignal(str)
+    signal_known_products = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
@@ -39,6 +42,9 @@ class WorkerCrawler(Worker):
         self.task_changed.connect(main_window.change_task)
         self.status_download.connect(main_window.explore_stores)
         self.status_search.connect(main_window.search_for_stores)
+        self.current_num_stores.connect(main_window.update_known_stores)
+        self.current_store_name.connect(main_window.update_current_store)
+        self.signal_known_products.connect(main_window.update_known_products)
 
     @pyqtSlot(str)
     def execute(self):
@@ -49,9 +55,13 @@ class WorkerCrawler(Worker):
             time.sleep(1)
             self.started.emit(counter)
             counter -= 1
-        Controller.search_stores(self.status_search)
+        Controller.search_stores(self.status_search, self.current_num_stores)
         self.task_changed.emit(True)
-        Controller.download_products(self.start_image_matching, self.status_download)
+        prev_known_products = 0
+        prev_known_products_lbl = main_window.kknown_prod_lbl.text()
+        if prev_known_products_lbl != "None":
+            prev_known_products = int(prev_known_products_lbl)
+        Controller.download_products(self.start_image_matching, self.status_download, self.current_store_name, self.signal_known_products, prev_known_products)
         self.finished.emit()
         self.thread.quit()
 
@@ -60,6 +70,8 @@ class WorkerImageMatcher(Worker):
     finished = pyqtSignal()
     status_changed = pyqtSignal(str)
     up_to_date = pyqtSignal(int)
+    current_store_name = pyqtSignal(str)
+    examined_products = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
@@ -67,11 +79,15 @@ class WorkerImageMatcher(Worker):
     def connect_signals(self):
         self.status_changed.connect(main_window.explore_stores)
         self.finished.connect(main_window.run_finished)
+        self.current_store_name.connect(main_window.update_current_store)
+        self.examined_products.connect(main_window.update_examined_products)
 
     @pyqtSlot(str)
     def execute_parallel(self):
         self.connect_signals()
-        Controller.compare_images(self.status_changed, int(main_window.num_of_stores))
+        Controller.compare_images(self.status_changed, int(main_window.num_of_stores), self.current_store_name, self.examined_products)
+        # Controller.compare_images(self.status_changed, int(main_window.num_of_stores), self.current_store_name)
+        self.current_store_name.emit(None)
         self.finished.emit()
         self.thread.quit()
 
@@ -148,3 +164,8 @@ class ThreadController(Thread):
         signals = {self.worker_im.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_im, self.worker_im.execute_parallel, signals=signals)
 
+
+    # if __name__ == '__main__':
+    #     path = "resources/photos/70Knots/products_counter"
+    #     with open(path, 'w') as f:
+    #         f.write()

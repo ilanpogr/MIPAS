@@ -1,18 +1,15 @@
 import os
-from functools import partial
+import sys
 
-from PyQt5.QtCore import QSize, QThreadPool, QThread, QRunnable, pyqtSlot
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QMainWindow
 
-from controllers.threadCreation import ThreadController
+import configUtils
 from controllers.ReaderWriterLockManager import LockManager
+from controllers.threadCreation import ThreadController
 from resultsTable import Table
 from ui_files import mainWindow, connectElements
 from ui_files.welcome import welcomeSettings_v2
-import configUtils
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMainWindow
-import sys
-import time
 
 
 class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
@@ -23,10 +20,12 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             super(MipasApp, self).__init__(parent)
         self.setupUi(self)
         self.pushButton.clicked.connect(self.on_result_button_clicked)
+        self.refresh_btn.clicked.connect(self.on_result_button_clicked)
         self.results_dialog = None
         connectElements.set_initial_screen(self)
         self.last_num_of_results = 0
         self.current_num_of_results = 0
+
         self.task_changed = False
         self.check_results()
         self.num_of_stores = None
@@ -36,7 +35,38 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.im_done = False
         self.id_done = False
 
-        self.controller = ThreadController(self)
+        # self.controller = ThreadController(self)  # todo - remove comment after UI ready!
+
+    def update_known_stores(self, value):
+        self.num_of_stores = str(value)
+        self.known_stores_lbl.setText(str(value))
+
+    def update_current_store(self, value):
+        if value is None:
+            self.current_store_lbl.setText("IDLE")
+        self.current_store_lbl.setText(value)
+
+    def update_known_products(self, value):
+        self.kknown_prod_lbl.setText(str(value))
+
+    def update_examined_products(self, value):
+        prev = self.examined_prod_lbl.text()
+        counter = 0
+        if prev != "None":
+            counter = int(prev)
+        counter += value
+        self.examined_prod_lbl.setText(str(counter))
+
+    @staticmethod
+    def get_num_of_susp_stores(lines):
+        num_of_susp_stores = set()
+        first_line = True
+        for line in lines:
+            if first_line:
+                first_line = False
+                continue
+            num_of_susp_stores.add(line.split(",")[2].split('/')[-1])
+        return str(len(num_of_susp_stores))
 
     def check_results(self):
         results_path = "resources/photos/final_results.csv"
@@ -45,6 +75,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             lines = lock_manager.read_results(results_path)
             if len(lines) > 1:
                 self.update_matches(len(lines) - 1)
+                self.susp_stores_lbl.setText(self.get_num_of_susp_stores(lines))
                 self.current_num_of_results = len(lines) - 1
             else:
                 self.update_matches(None)
@@ -62,9 +93,9 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.task_changed = value
 
     def search_for_stores(self, value):
-        self.label_3.setText("Searching for shops in Etsy platform:\n using {}".format(value))
+        self.label_3.setText("Searching for shops in Etsy platform - using {}".format(value))
 
-    def explore_stores(self, value):
+    def explore_stores(self, value):  # todo - change method to fit known stores that updated
         split = value.split('/')
         if self.num_of_stores is None:
             self.num_of_stores = split[1]
@@ -80,6 +111,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         if value is None:
             self.matches_found.setText("None")
             self.pushButton.setVisible(False)
+            self.susp_stores_lbl.setText("None")
         else:
             self.matches_found.setText(str(value))
             if not self.pushButton.isVisible():
@@ -88,12 +120,15 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
     def on_result_button_clicked(self):
         if self.last_num_of_results != self.current_num_of_results:
             self.last_num_of_results = self.current_num_of_results
-            data = connectElements.get_data_for_table()
-            self.results_dialog = Table.Results(data)
-            size = self.results_dialog.geometry()
-            self.results_dialog.resize(size.width(), 800)
-        self.results_dialog.statusBar().showMessage("")
-        self.results_dialog.show()
+        data = connectElements.get_data_for_table()
+            # self.results_dialog = Table.Results(data, self.tableView, self.export_btn)
+        Table.Results(data, self.tableView, self.export_btn)
+        #     size = self.results_dialog.geometry()
+        #     print(size.width())
+        #     self.results_dialog.resize(size.width(), 800)
+        # self.results_dialog.statusBar().showMessage("")
+        # self.results_dialog.show()
+        self.stackedWidget.setCurrentIndex(1)
 
 
 class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
