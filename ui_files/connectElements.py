@@ -3,7 +3,7 @@ from pathlib import Path
 
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDesktopWidget
 
 import resultsTable.resultsExctractor as resultsExtractor
@@ -69,48 +69,19 @@ def retranslate_welcome_ui(welcome_screen):
     welcome_screen.setWindowTitle("MIPAS - Configure Settings")
 
 
-# def change_run_method(main_screen):
-#     _translate = QtCore.QCoreApplication.translate
-#     state = main_screen.comboBox.currentText()
-#     if state == "Start New Search":
-#         main_screen.run_option = 0
-#     elif state == "Search Found Stores From Previous Run":
-#         main_screen.run_option = 1
-#     elif state == "Compare Only With What I Got":
-#         main_screen.run_option = 2
-#     main_screen.method_label.setText(_translate("MainWindow", state))
-#     main_screen.method_label_2.setText(_translate("MainWindow", state))
-
-
 def set_button_stylesheet(push_button):
     texture_path = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture.jpg"
-    push_button.setText("Show\nReport")
-    push_button.setStyleSheet(
-        "QPushButton#pushButton { background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture.jpg) 0 0 0 0 stretch stretch; "
-        "color: #671115; "
-        "border-style: outset; "
-        "border-width: 2px; "
-        "border-radius: 50px; "
-        "border-color: beige; "
-        "font: bold 30px; "
-        # "min-width: 5em; "
-        "padding: 40px; } "
-        "QPushButton#pushButton:hover { color: black; "
-        "border-width: 3px;"
-        "border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);}"
-        "QPushButton#pushButton:pressed {"
-        "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);"
-        "background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture_dark.jpg)}")
+    push_button.setText("Report")
     # push_button.setStyleSheet(
     #     "QPushButton#pushButton { background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture.jpg) 0 0 0 0 stretch stretch; "
+    #     "color: #671115; "
     #     "border-style: outset; "
     #     "border-width: 2px; "
-    #     "border-radius: 10px; "
+    #     "border-radius: 50px; "
     #     "border-color: beige; "
-    #     "color: #722f37; "
-    #     "font: bold 14px; "
-    #     "min-width: 10em; "
-    #     "padding: 6px; } "
+    #     "font: bold 30px; "
+    #     # "min-width: 5em; "
+    #     "padding: 40px; } "
     #     "QPushButton#pushButton:hover { color: black; "
     #     "border-width: 3px;"
     #     "border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);}"
@@ -118,14 +89,36 @@ def set_button_stylesheet(push_button):
     #     "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);"
     #     "background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture_dark.jpg)}")
 
+    push_button.setStyleSheet(
+        "QPushButton#pushButton { "
+        "border-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/btn_v2.png) 0 0 0 0 stretch stretch; "
+        # "border-style: outset; "
+        # "border-color: #290608; "
+        # "border-width: 3px; "
+        # "border-radius: 70px; "
+        "font: bold 25px; "
+        "color: #671115; "
+        "padding: 30; "
+        "height: 110px;"
+        "width: 110px;"
+        "}"
+        "QPushButton#pushButton:hover { "
+        # "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 #999999);"
+        "color: #520d10; "
+        # "border-width: 3px;"
+        "}"
+        "QPushButton#pushButton:pressed {"
+        "border-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/btn_pressed_v2.png) 0 0 0 0 stretch stretch; "
+        # "background-color: "
+        # "QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f2f2f2 stop: 1 #868686);"
+        "}")
+
 
 def set_colors_to_elements(main_window):
     # Main Window background Image
     background_image = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/DIAMONDS-BANNER_crop.png"
     main_window.setStyleSheet("#MainWindow { border-image: url(%s) 0 0 0 0 stretch stretch;"
                               "background-color: #222222; }" % background_image)
-    # Frames borders
-    # main_window.frame.setStyleSheet("border: 0")
     # Title
     main_window.label_5.setStyleSheet("color: #ffe34c; font: bold 70px; ")
     main_window.label_6.setStyleSheet("color: #ffe34c; font: 25px; ")
@@ -145,6 +138,7 @@ def set_colors_to_elements(main_window):
     main_window.label_10.setStyleSheet("color: #EEEEEE; font: 20px; ")
     main_window.examined_prod_lbl.setStyleSheet("color: #EEEEEE; font: 20px; ")
     # Button Show Report
+
     set_button_stylesheet(main_window.pushButton)
     main_window.stackedWidget.setStyleSheet(
         "QStackedWidget QTableWidget#Page1 QHeaderView::section {"
@@ -231,29 +225,29 @@ def set_colors_to_elements(main_window):
     main_window.refresh_btn.setIcon(QIcon(icon_path))
     main_window.refresh_btn.setIconSize(QSize(28, 28))
     main_window.refresh_btn.setStyleSheet("QPushButton#refresh_btn { "
-                                       "color: #333; "
-                                       "border: 2px solid #555; "
-                                       "border-radius: 21px; "
-                                       "border-style: outset; "
-                                       "background: qradialgradient( "
-                                       "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
-                                       "radius: 1.35, stop: 0 #fff, stop: 1 #7ec490 "
-                                       "); "
-                                       "padding: 5px; "
-                                       "} "
-                                       "QPushButton#refresh_btn:hover { "
-                                       "background: qradialgradient( "
-                                       "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
-                                       "radius: 1.35, stop: 0 #fff, stop: 1 #71b081 "
-                                       "); "
-                                       "} "
-                                       "QPushButton#refresh_btn:pressed { "
-                                       "border-style: inset; "
-                                       "background: qradialgradient( "
-                                       "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
-                                       "radius: 1.35, stop: 0 #e5e5e5, stop: 1 #649c73 "
-                                       "); "
-                                       "}")
+                                          "color: #333; "
+                                          "border: 2px solid #555; "
+                                          "border-radius: 21px; "
+                                          "border-style: outset; "
+                                          "background: qradialgradient( "
+                                          "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                          "radius: 1.35, stop: 0 #fff, stop: 1 #7ec490 "
+                                          "); "
+                                          "padding: 5px; "
+                                          "} "
+                                          "QPushButton#refresh_btn:hover { "
+                                          "background: qradialgradient( "
+                                          "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                          "radius: 1.35, stop: 0 #fff, stop: 1 #71b081 "
+                                          "); "
+                                          "} "
+                                          "QPushButton#refresh_btn:pressed { "
+                                          "border-style: inset; "
+                                          "background: qradialgradient( "
+                                          "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                          "radius: 1.35, stop: 0 #e5e5e5, stop: 1 #649c73 "
+                                          "); "
+                                          "}")
     # main_window.export_btn.setStyleSheet("QPushButton#button_export { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #383838, stop: 1 #8d2663); "
     #                                      "color: white;"
     #                                      "font-weight: bold;"

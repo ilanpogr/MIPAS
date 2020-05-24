@@ -1,8 +1,10 @@
 import os
 import sys
+import time
+from pathlib import Path
 
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
 import configUtils
 from controllers.ReaderWriterLockManager import LockManager
@@ -122,7 +124,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             self.last_num_of_results = self.current_num_of_results
         data = connectElements.get_data_for_table()
             # self.results_dialog = Table.Results(data, self.tableView, self.export_btn)
-        Table.Results(data, self.tableView, self.export_btn)
+        self.results_dialog = Table.Results(data, self.tableView, self.export_btn)
         #     size = self.results_dialog.geometry()
         #     print(size.width())
         #     self.results_dialog.resize(size.width(), 800)
@@ -155,7 +157,7 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
 
 
 if __name__ == '__main__':
-    # time.sleep(20)  # <--- todo - only for video... delete
+    # time.sleep(15)  # <--- todo - only for video... delete
     app = QtWidgets.QApplication(sys.argv)
     if configUtils.is_settings_file_exists():
         mipas_app = MipasApp()
