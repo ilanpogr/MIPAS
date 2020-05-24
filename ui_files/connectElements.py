@@ -172,6 +172,9 @@ def set_colors_to_elements(main_window):
                                         "}")
     # Button Export
     main_window.export_btn.setObjectName("button_export")
+    icon_path = '/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/export-icon.png'
+    icon = QIcon(icon_path)
+    main_window.export_btn.setIcon(icon)
     main_window.export_btn.setStyleSheet("QPushButton#button_export { "
                                          "color: #333; "
                                          "font-weight: bold;"
