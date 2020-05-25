@@ -69,7 +69,7 @@ class ImageMatchingUtils:
                     weighted_score += algorithm_score * float(weight)
 
                 # adds the pair to the initial filtering passed list if the weighted score passes the threshold
-                if weighted_score >= initial_threshold:
+                if weighted_score >= float(initial_threshold):
                     initial_score_passed_list.append(
                         InitialIPair(customer_path, customer_image[0], store_path, store_image[0], weighted_score))
         return initial_score_passed_list
