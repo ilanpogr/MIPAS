@@ -43,6 +43,9 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
     def update_current_store(self, value):
         if value is None or not value:
             self.current_store_lbl.setText("IDLE")
+        if value.startswith("@%@") and self.current_store_lbl.text() == "IDLE":
+            self.id_done = True
+            self.current_store_lbl.setText(value[3:])
         self.current_store_lbl.setText(value)
 
     def update_known_products(self, value):
@@ -81,6 +84,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
                 self.current_num_of_results = 0
 
     def start_timer(self, value):
+        self.id_done = False
         if self.first_run:
             self.label_3.setText("Starting in {}".format(value))
         else:
@@ -119,6 +123,8 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             self.num_of_stores = split[1]
         self.current_store_number = split[0]
         self.check_results()
+        if value.startswith("@%@") and self.id_done:
+            self.label_3.setText("Exploring products for found store - {0}/{1}".format(split[0][3:], self.num_of_stores))
         self.label_3.setText("Exploring products for found store - {0}/{1}".format(split[0], self.num_of_stores))
 
     def run_finished(self):

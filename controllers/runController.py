@@ -59,8 +59,8 @@ def compare_images(signal_status, total_store_number, signal_current_store_name,
                 break
             else:
                 store_path = "resources/photos/" + current_store
-                # signal_status.emit(str(next_store_index))
-                # signal_current_store_name.emit(current_store)
+                signal_status.emit("@%@" + str(next_store_index))
+                signal_current_store_name.emit("@%@" + current_store)
                 image_matcher.run_matching_for_store(None, store_path)
                 num_products = get_number_products_for_store(current_store)
                 signal_examined_products.emit(num_products)

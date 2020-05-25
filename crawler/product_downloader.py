@@ -455,22 +455,22 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
         os.makedirs(init_path)
     i = 0
     for name, url in stores.items():
-        signal_status_download.emit(str(i) + "/" + str(len(stores.items())))
+        signal_status_download.emit(str(i + 1) + "/" + str(len(stores.items())))
         signal_current_store_name.emit(name)
         if i == 2:
             signal_start_image_matching.emit()
         if name not in user_stores:
             if url in downloaded_stores:
                 url = url + '&sort_order=date_desc'
-                print('************************************************************************************')
-                print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-                print('************************************************************************************')
+                # print('************************************************************************************')
+                # print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
+                # print('************************************************************************************')
 
                 download_new_products_if_found(name, url)
                 save_products_img_url_dict(name)
-                print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
-                print('************************************************************************************')
-                print_output_for_debug(start_time)
+                # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
+                # print('************************************************************************************')
+                # print_output_for_debug(start_time)
 
                 if num_of_updates != 0:
                     append_store_to_multi_threading(name)
@@ -478,9 +478,9 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
 
             else:
                 if i < 41:  # todo - remove if
-                    print('************************************************************************************')
-                    print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-                    print('************************************************************************************')
+                    # print('************************************************************************************')
+                    # print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
+                    # print('************************************************************************************')
                     download_all_products_from_store(name, url)
                     append_store_to_cache(url)
                     print_output_for_debug(start_time)

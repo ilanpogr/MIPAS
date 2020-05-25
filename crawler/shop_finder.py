@@ -138,7 +138,7 @@ def search_for_stores_with_url(url, num_stores_signal):
 
     search_iteration_counter += 1
     # for _ in range(1, search_page_last + 1):  # todo - remove comment and delete next line
-    for _ in range(1, 5):
+    for _ in range(1, 10):
         full_url = url + str(search_page_counter)
         data = get_next_page_search_shops(full_url)
         get_stores_from_products_page(data, num_stores_signal)
