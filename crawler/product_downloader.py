@@ -454,9 +454,8 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
     if not os.path.exists(init_path):
         os.makedirs(init_path)
     i = 0
-    signal_status_download.emit("1/" + str(len(stores.items())))
     for name, url in stores.items():
-        i += 1
+        signal_status_download.emit(str(i) + "/" + str(len(stores.items())))
         signal_current_store_name.emit(name)
         if i == 2:
             signal_start_image_matching.emit()
@@ -478,7 +477,7 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
                     num_of_updates = 0
 
             else:
-                if i < 6:  # todo - remove
+                if i < 41:  # todo - remove if
                     print('************************************************************************************')
                     print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                     print('************************************************************************************')

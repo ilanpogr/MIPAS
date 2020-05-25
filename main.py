@@ -1,6 +1,5 @@
 import os
 import sys
-
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow
 
@@ -35,14 +34,14 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.im_done = False
         self.id_done = False
 
-        self.controller = ThreadController(self)  # todo - remove comment after UI ready!
+        self.controller = ThreadController(self)
 
     def update_known_stores(self, value):
         self.num_of_stores = str(value)
         self.known_stores_lbl.setText(str(value))
 
     def update_current_store(self, value):
-        if value is None:
+        if value is None or not value:
             self.current_store_lbl.setText("IDLE")
         self.current_store_lbl.setText(value)
 
@@ -114,7 +113,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
     def search_for_stores(self, value):
         self.label_3.setText("Searching for shops in Etsy platform - using {}".format(value))
 
-    def explore_stores(self, value):  # todo - change method to fit known stores that updated
+    def explore_stores(self, value):
         split = value.split('/')
         if self.num_of_stores is None:
             self.num_of_stores = split[1]

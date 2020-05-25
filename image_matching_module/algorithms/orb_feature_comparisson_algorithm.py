@@ -87,7 +87,6 @@ class ORBFeatureComparisonAlgorithm(FeatureComparisonAlgorithm):
         origin_image_mirror_horizontal = FeatureComparisonAlgorithm.flipped_image_horizontal(origin_image)
         key_points1, description1, key_points2, description2, key_points3, description3 = self.detect_and_compute(origin_image,to_compare_image,origin_image_mirror_horizontal)
 
-        # TODO : no to rethink this method, what is the mirrored has features but origion not?
         # if is_there_no_features_found(description1, description2, description3):
         #    return 0
 
