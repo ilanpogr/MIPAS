@@ -46,14 +46,6 @@ def compare_images(signal_status, total_store_number, signal_current_store_name,
     while True:
         multi_threading_downloaded_stores_index = next_store_index - 1
 
-        if next_store_index > 2:  # todo - whole if condition with if and else, only for ---- DEMO
-            if next_store_index <= total_store_number:
-                time.sleep(0.001)
-                signal_status.emit(str(next_store_index))
-                next_store_index += 1
-            else:
-                break
-
         if not os.path.exists(multi_threading_downloaded_stores):
             continue
         elif os.stat(multi_threading_downloaded_stores).st_size == 0:
@@ -64,8 +56,7 @@ def compare_images(signal_status, total_store_number, signal_current_store_name,
                 continue
             current_store = current_store.strip('\n')
             if current_store == multi_threading_end_file:
-                continue  # todo - only for demo. change back to break.
-                # break
+                break
             else:
                 store_path = "resources/photos/" + current_store
                 signal_status.emit(str(next_store_index))

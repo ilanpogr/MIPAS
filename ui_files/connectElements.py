@@ -11,14 +11,9 @@ import resultsTable.resultsExctractor as resultsExtractor
 results_file = "resources/photos/final_results.csv"
 
 
-# background_image = ":/resources/images_app/DIAMOND-BANNER.png"
-
-
 def set_initial_screen(main_window):
     main_window.setWindowTitle("MIPAS")
-    # main_window.status_lbl.setText("IDLE")
     main_window.stackedWidget.setCurrentIndex(0)
-    # main_window.resize(1532, 700)
     main_window.pushButton.setVisible(False)
     main_window.back_btn.clicked.connect(lambda: main_window.stackedWidget.setCurrentIndex(0))
     main_window.export_btn.setFixedHeight(40)
@@ -70,32 +65,11 @@ def retranslate_welcome_ui(welcome_screen):
 
 
 def set_button_stylesheet(push_button):
-    texture_path = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture.jpg"
+    # Show Report button
     push_button.setText("Report")
-    # push_button.setStyleSheet(
-    #     "QPushButton#pushButton { background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture.jpg) 0 0 0 0 stretch stretch; "
-    #     "color: #671115; "
-    #     "border-style: outset; "
-    #     "border-width: 2px; "
-    #     "border-radius: 50px; "
-    #     "border-color: beige; "
-    #     "font: bold 30px; "
-    #     # "min-width: 5em; "
-    #     "padding: 40px; } "
-    #     "QPushButton#pushButton:hover { color: black; "
-    #     "border-width: 3px;"
-    #     "border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);}"
-    #     "QPushButton#pushButton:pressed {"
-    #     "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);"
-    #     "background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/Prestige-texture_dark.jpg)}")
-
     push_button.setStyleSheet(
         "QPushButton#pushButton { "
         "border-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/btn_v2.png) 0 0 0 0 stretch stretch; "
-        # "border-style: outset; "
-        # "border-color: #290608; "
-        # "border-width: 3px; "
-        # "border-radius: 70px; "
         "font: bold 22px 'Futura'; "
         "color: #671115; "
         "padding: 30; "
@@ -103,14 +77,10 @@ def set_button_stylesheet(push_button):
         "width: 110px;"
         "}"
         "QPushButton#pushButton:hover { "
-        # "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 #999999);"
         "color: #520d10; "
-        # "border-width: 3px;"
         "}"
         "QPushButton#pushButton:pressed {"
         "border-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/btn_pressed_v2.png) 0 0 0 0 stretch stretch; "
-        # "background-color: "
-        # "QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f2f2f2 stop: 1 #868686);"
         "}")
 
 
@@ -248,29 +218,3 @@ def set_colors_to_elements(main_window):
                                           "radius: 1.35, stop: 0 #e5e5e5, stop: 1 #649c73 "
                                           "); "
                                           "}")
-    # main_window.export_btn.setStyleSheet("QPushButton#button_export { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #383838, stop: 1 #8d2663); "
-    #                                      "color: white;"
-    #                                      "font-weight: bold;"
-    #                                      "font-size: 16px;"
-    #                                      "width: 120"
-    #                                      "border-style: solid;"
-    #                                      "border-color: black;"
-    #                                      "border-width: 5px;"
-    #                                      "border-radius: 10px;"
-    #                                      "}"
-    #                                      "QPushButton#button_export:pressed { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2c2c2c, stop: 1 #621a45); "
-    #                                      "color: #DCDCDC;"
-    #                                      "}")
-    # main_window.back_btn.setStyleSheet("QPushButton#button_back { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #383838, stop: 1 #8d2663); "
-    #                                    "color: white;"
-    #                                    "font-size: 16px;"
-    #                                    "width: 120"
-    #                                    "border-style: solid;"
-    #                                    "border-color: black;"
-    #                                    "border-width: 5px;"
-    #                                    "border-radius: 10px;"
-    #                                    "}"
-    #                                    "QPushButton#button_back:pressed { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2c2c2c, stop: 1 #621a45); "
-    #                                    "color: #DCDCDC;"
-    #                                    "font-size: 16px;"
-    #                                    "}")

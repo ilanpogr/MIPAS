@@ -21,7 +21,7 @@ import psutil
 GLOBAL VARS
 ------------------------------------'''
 
-http = httplib2.Http()
+http = httplib2.Http(".cache")
 
 stores_dict_file_name = 'resources/app_files/stores_dict.csv'
 downloaded_stores_file_name = 'resources/app_files/downloaded_stores_dict.txt'
@@ -87,7 +87,7 @@ def response_handler(current_url, status):
 def make_http_req(current_url):
     sleeper()
     try:
-        resp, data = http.request(current_url)
+        resp, data = http.request(current_url, "GET")
         if resp.status == 200:
             return data
         else:
@@ -95,7 +95,7 @@ def make_http_req(current_url):
             print('---------???????????????????????????????????????????????????????????????????---------')
             pprint(resp)
             print('---------???????????????????????????????????????????????????????????????????---------')
-            resp, data = http.request(current_url)
+            resp, data = http.request(current_url, "GET")
             if resp.status == 200:
                 return data
             else:
@@ -103,6 +103,9 @@ def make_http_req(current_url):
                 return None
     except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
         print('--------------EXCEPTION RAISED, CHECK YOUR INTERNET CONNECTION.--------------')
+        return None
+    except OSError:
+        print('--------------OS EXCEPTION RAISED..............................--------------')
         return None
 
 
@@ -112,6 +115,8 @@ PRE-RUNNING METHODS
 
 
 def get_all_stores_urls():
+    global stores
+    stores = {}
     with open(stores_dict_file_name, "r") as f:
         reader = csv.reader(f, delimiter="\t")
         next(reader, None)
@@ -161,7 +166,7 @@ PRODUCTS DOWNLOADER FROM STORES
 
 def write_number_products(name):
     image_extensions = {"jpg", "JPG", "png", "PNG", "JPEG", "jpeg"}
-    path = "resources/photos/{0}/"
+    path = "resources/photos/{0}/".format(name)
     counter = 0
     for extn in image_extensions:
         counter += len(glob.glob1(path, "*.{0}".format(extn)))
@@ -181,7 +186,6 @@ def append_store_to_multi_threading(store_name):
 
 def save_products_img_url_dict(store_name):
     csv_file = init_path + store_name + '/' + store_name + '_products.csv'
-    print("number of pictures: " + str(len(product_img_url_dict)))
     df = DataFrame(product_img_url_dict.items())
     if not os.path.isfile(csv_file):
         df.to_csv(csv_file, index=False, header=['File', 'URL'])
@@ -274,6 +278,8 @@ def get_products_from_updated_page(data, store_name, current_url):
                     except(KeyError, AttributeError):
                         failed_products[store_name + ',' + current_url] = a['href']
         return new_images
+    else:
+        return 0
 
 
 def download_new_products_if_found(store_name, store_url):
@@ -326,7 +332,6 @@ def download_image(resp, content, store_name, img_url, product_url):
     if is_file_exist(rest, store_path):
         if rest not in product_img_url_dict:
             product_img_url_dict[rest] = product_url
-            print("file: {0} --- {1}".format(file_path.split('/')[-1], known_products + 1))
             signal_num_of_products.emit(known_products + 1)
             known_products += 1
     # img_url = img_url.replace(default_image_size_str, full_image_size_str)
@@ -452,40 +457,34 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
     signal_status_download.emit("1/" + str(len(stores.items())))
     for name, url in stores.items():
         i += 1
-        if i == 1:
-            signal_current_store_name.emit(name)
+        signal_current_store_name.emit(name)
         if i == 2:
             signal_start_image_matching.emit()
         if name not in user_stores:
             if url in downloaded_stores:
-                url = url + '&sort_order=date_desc'  # todo -commented only for demo
-                # print('************************************************************************************')
-                # print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-                # print('************************************************************************************')
-                #
-                # download_new_products_if_found(name, url)
-                # save_products_img_url_dict(name)
-                # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
-                # print('************************************************************************************')
-                # print_output_for_debug(start_time)
+                url = url + '&sort_order=date_desc'
+                print('************************************************************************************')
+                print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
+                print('************************************************************************************')
+
+                download_new_products_if_found(name, url)
+                save_products_img_url_dict(name)
+                print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
+                print('************************************************************************************')
+                print_output_for_debug(start_time)
 
                 if num_of_updates != 0:
                     append_store_to_multi_threading(name)
                     num_of_updates = 0
 
-                if i < 3:  # todo - if condition AND NEXT LINE only for ---- DEMO
-                    append_store_to_multi_threading(name)
-                time.sleep(0.001)  # todo - remove sleep and uncomment above lines ---- DEMO
             else:
-                if i < 3:  # todo - if condition only for ---- DEMO
-
+                if i < 6:  # todo - remove
                     print('************************************************************************************')
                     print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                     print('************************************************************************************')
                     download_all_products_from_store(name, url)
                     append_store_to_cache(url)
                     print_output_for_debug(start_time)
-                time.sleep(0.001)   # todo - remove sleep and uncomment above lines ---- DEMO
             store_products = set()
             product_img_url_dict.clear()
     append_store_to_multi_threading(multi_threading_end_of_file)

@@ -49,6 +49,7 @@ class WorkerCrawler(Worker):
     @pyqtSlot(str)
     def execute(self):
         self.connect_signals()
+        self.task_changed.emit(False)
         counter = 3
         time.sleep(1)
         for i in range(4):
@@ -86,7 +87,6 @@ class WorkerImageMatcher(Worker):
     def execute_parallel(self):
         self.connect_signals()
         Controller.compare_images(self.status_changed, int(main_window.num_of_stores), self.current_store_name, self.examined_products)
-        # Controller.compare_images(self.status_changed, int(main_window.num_of_stores), self.current_store_name)
         self.current_store_name.emit(None)
         self.finished.emit()
         self.thread.quit()
@@ -149,11 +149,10 @@ class ThreadController(Thread):
 
     @pyqtSlot(bool)
     def start_thread(self):
-
-        print("Active threads:")
-        for worker, t in self.threads.items():
-            print(str(type(worker)) + ": " + str(t.isRunning()))
-
+        # print("Active threads:")
+        # for worker, t in self.threads.items():
+        #     print(str(type(worker)) + ": " + str(t.isRunning()))
+        self.threads = {}
         signals = {self.worker_crawler.start_image_matching: self.start_image_matching_thread,
                    self.worker_crawler.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_crawler, self.worker_crawler.execute, signals=signals)
@@ -163,9 +162,3 @@ class ThreadController(Thread):
         print("starting image matching")
         signals = {self.worker_im.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_im, self.worker_im.execute_parallel, signals=signals)
-
-
-    # if __name__ == '__main__':
-    #     path = "resources/photos/70Knots/products_counter"
-    #     with open(path, 'w') as f:
-    #         f.write()

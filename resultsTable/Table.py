@@ -6,10 +6,9 @@ from pathlib import Path
 from resultsTable.resultsExctractor import ResultsExtractor
 
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt, QAbstractTableModel, QThread
+from PyQt5.QtCore import Qt, QAbstractTableModel
 from PyQt5.QtGui import QPixmap, QColor
-from PyQt5.QtWidgets import QMainWindow, QTableView, QVBoxLayout, QPushButton, QWidget, QGridLayout, QAction, \
-    QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QFileDialog
 import configUtils
 from PIL import Image
 
@@ -17,7 +16,6 @@ from PIL import Image
 class Results(QMainWindow):
     def __init__(self, data, table_view, export_btn, parent=None):
         super(Results, self).__init__(parent)
-        # self.create_ui(data)
         table_view.doubleClicked.connect(self.cell_clicked)
 
         self.model = TableModel(data)
@@ -28,43 +26,6 @@ class Results(QMainWindow):
         table_view.setModel(self.model)
 
         export_btn.clicked.connect(self.export_table)
-        # self.setFixedWidth(self.table.columnWidth(0) + self.table.columnWidth(1) +
-        #                    self.table.columnWidth(2) + self.table.columnWidth(3) + 60)
-
-
-    # def create_ui(self, data):
-    #     self.model = TableModel(data)
-    #     # central_widget = QWidget(self)
-    #     # central_widget.setObjectName("central_widget")
-    #     # central_widget.setStyleSheet("QWidget#central_widget { background-color: #2d2d2d;}")
-    #     # self.button_export.setFixedHeight(50)
-    #     # self.button_export.setObjectName("button_export")
-    #     # self.button_export.setStyleSheet("QPushButton#button_export { background-color: #8d2663; "
-    #     #                                  "color: white;"
-    #     #                                  "font-weight: bold;"
-    #     #                                  "font-size: 18px;"
-    #     #                                  "}"
-    #     #                                  "QPushButton#button_export:pressed { background-color: #701e4f; "
-    #     #                                  "color: #DCDCDC;"
-    #     #                                  "font-weight: bold;"
-    #     #                                  "font-size: 18px;"
-    #     #                                  "}")
-    #     # gridLayout = QGridLayout(central_widget)
-    #     # layout = QVBoxLayout()
-    #     # layout.addWidget(self.table)
-    #     # layout.addWidget(self.button_export)
-    #     header = self.table.horizontalHeader()
-    #     rows = self.table.verticalHeader()
-    #     header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-    #     rows.setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-    #     self.table.setModel(self.model)
-    #     # self.setCentralWidget(central_widget)
-    #     # gridLayout.addLayout(layout, 0, 0, 1, 1)
-    #     # self.statusBar().showMessage("")
-    #
-    #     self.button_export.clicked.connect(self.export_table)
-    #     self.setFixedWidth(self.table.columnWidth(0) + self.table.columnWidth(1) +
-    #                        self.table.columnWidth(2) + self.table.columnWidth(3) + 60)
 
     @staticmethod
     def cell_clicked(item):
@@ -84,9 +45,7 @@ class Results(QMainWindow):
         if file_name:
             try:
                 output.to_csv(file_name)
-                # self.statusBar().showMessage("'" + file_name + "' saved successfully")
             except PermissionError:
-                # self.statusBar().showMessage("Unable to save '" + file_name + "'")
                 pass
 
     def closeEvent(self, event):

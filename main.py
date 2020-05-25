@@ -1,10 +1,8 @@
 import os
 import sys
-import time
-from pathlib import Path
 
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from PyQt5.QtWidgets import QMainWindow
 
 import configUtils
 from controllers.ReaderWriterLockManager import LockManager
@@ -37,7 +35,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.im_done = False
         self.id_done = False
 
-        # self.controller = ThreadController(self)  # todo - remove comment after UI ready!
+        self.controller = ThreadController(self)  # todo - remove comment after UI ready!
 
     def update_known_stores(self, value):
         self.num_of_stores = str(value)
@@ -90,7 +88,26 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             self.label_3.setText("Starting another run in {}".format(value))
 
     def change_task(self, value):
-        if self.first_run:
+        # change label colors
+        if not value:
+            self.label_7.setStyleSheet("color: #999999; font: 20px; ")
+            self.current_store_lbl.setStyleSheet("color: #999999; font: 20px; ")
+            self.label_10.setStyleSheet("color: #999999; font: 20px; ")
+            self.examined_prod_lbl.setStyleSheet("color: #999999; font: 20px; ")
+            self.label_9.setStyleSheet("color: #999999; font: 20px; ")
+            self.kknown_prod_lbl.setStyleSheet("color: #999999; font: 20px; ")
+            self.label_8.setStyleSheet("color: #ffffff; font: 20px; ")
+            self.known_stores_lbl.setStyleSheet("color: #ffffff; font: 20px; ")
+        else:
+            self.label_7.setStyleSheet("color: #ffffff; font: 20px; ")
+            self.current_store_lbl.setStyleSheet("color: #ffffff; font: 20px; ")
+            self.label_10.setStyleSheet("color: #ffffff; font: 20px; ")
+            self.examined_prod_lbl.setStyleSheet("color: #ffffff; font: 20px; ")
+            self.label_9.setStyleSheet("color: #ffffff; font: 20px; ")
+            self.kknown_prod_lbl.setStyleSheet("color: #ffffff; font: 20px; ")
+            self.label_8.setStyleSheet("color: #999999; font: 20px; ")
+            self.known_stores_lbl.setStyleSheet("color: #999999; font: 20px; ")
+        if self.first_run and value:
             self.first_run = False
         self.task_changed = value
 
@@ -123,13 +140,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         if self.last_num_of_results != self.current_num_of_results:
             self.last_num_of_results = self.current_num_of_results
         data = connectElements.get_data_for_table()
-            # self.results_dialog = Table.Results(data, self.tableView, self.export_btn)
         self.results_dialog = Table.Results(data, self.tableView, self.export_btn)
-        #     size = self.results_dialog.geometry()
-        #     print(size.width())
-        #     self.results_dialog.resize(size.width(), 800)
-        # self.results_dialog.statusBar().showMessage("")
-        # self.results_dialog.show()
         self.stackedWidget.setCurrentIndex(1)
 
 
@@ -157,7 +168,6 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
 
 
 if __name__ == '__main__':
-    # time.sleep(15)  # <--- todo - only for video... delete
     app = QtWidgets.QApplication(sys.argv)
     if configUtils.is_settings_file_exists():
         mipas_app = MipasApp()
