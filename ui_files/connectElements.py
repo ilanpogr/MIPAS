@@ -96,7 +96,7 @@ def set_button_stylesheet(push_button):
         # "border-color: #290608; "
         # "border-width: 3px; "
         # "border-radius: 70px; "
-        "font: bold 25px; "
+        "font: bold 22px 'Futura'; "
         "color: #671115; "
         "padding: 30; "
         "height: 110px;"
@@ -120,8 +120,8 @@ def set_colors_to_elements(main_window):
     main_window.setStyleSheet("#MainWindow { border-image: url(%s) 0 0 0 0 stretch stretch;"
                               "background-color: #222222; }" % background_image)
     # Title
-    main_window.label_5.setStyleSheet("color: #ffe34c; font: bold 70px; ")
-    main_window.label_6.setStyleSheet("color: #ffe34c; font: 25px; ")
+    main_window.label_5.setStyleSheet("color: #ffe34c; font: bold 70px 'Recoleta';")
+    main_window.label_6.setStyleSheet("color: #ffe34c; font: 25px 'Trajan'; ")
     # labels
     main_window.label.setStyleSheet("color: #EEEEEE; font: 20px; ")
     main_window.label_2.setStyleSheet("color: #EEEEEE; font: 20px; ")
