@@ -14,7 +14,7 @@ results_file = "resources/photos/final_results.csv"
 def set_initial_screen(main_window):
     main_window.setWindowTitle("MIPAS")
     main_window.stackedWidget.setCurrentIndex(0)
-    main_window.pushButton.setVisible(False)
+    # main_window.pushButton.setVisible(False) # TODO: UNCOMMENT THIS
     main_window.back_btn.clicked.connect(lambda: main_window.stackedWidget.setCurrentIndex(0))
     main_window.export_btn.setFixedHeight(40)
     main_window.back_btn.setFixedHeight(40)
@@ -63,24 +63,33 @@ def set_button_stylesheet(push_button):
     push_button.setText("Report")
     push_button.setStyleSheet(
         "QPushButton#pushButton { "
-        "border-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/btn_v2.png) 0 0 0 0 stretch stretch; "
-        "font: bold 22px 'Futura'; "
-        "color: #671115; "
-        "padding: 30; "
-        "height: 110px;"
-        "width: 110px;"
+        # "border-image: url(C:/Users/Shalev/Desktop/images_app/btn_v2.png) 0 0 0 0 stretch stretch; "
+        "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #5B5B5B, stop:1 #EDEDED);"
+        "font: bold 23px 'verdana';"
+        "color: #333325;"
+        "padding: 10; "
+        "height: 40px;"
+        "width: 120px;"
+        "border: 3px solid;"
+        "border-color: #8C8E81;"
+        "border-radius: 14px;"
+        "border-style: outset;"
         "}"
         "QPushButton#pushButton:hover { "
-        "color: #520d10; "
+        "color: #454542;"
         "}"
         "QPushButton#pushButton:pressed {"
-        "border-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/btn_pressed_v2.png) 0 0 0 0 stretch stretch; "
-        "}")
+        "font: bold 22px 'verdana';"
+        "text-align: center;"
+        "display: inline-block;"
+        "border-style: inset;"
+        "}"
+    )
 
 
 def set_colors_to_elements(main_window):
     # Main Window background Image
-    background_image = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/DIAMONDS-BANNER_crop.png"
+    background_image = "C:/Users/Shalev/Desktop/images_app/DIAMONDS-BANNER_crop.png"
     main_window.setStyleSheet("#MainWindow { border-image: url(%s) 0 0 0 0 stretch stretch;"
                               "background-color: #222222; }" % background_image)
     # Title
@@ -130,7 +139,7 @@ def set_colors_to_elements(main_window):
                                         "}")
     # Button Export
     main_window.export_btn.setObjectName("button_export")
-    icon_path = '/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/export-icon.png'
+    icon_path = 'C:/Users/Shalev/Desktop/images_app/export-icon.png'
     main_window.export_btn.setIcon(QIcon(icon_path))
     main_window.export_btn.setStyleSheet("QPushButton#button_export { "
                                          "color: #333; "
@@ -185,7 +194,7 @@ def set_colors_to_elements(main_window):
                                        "}")
     # Button Refresh
     main_window.refresh_btn.setObjectName("refresh_btn")
-    icon_path = '/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/refresh.png'
+    icon_path = 'C:/Users/Shalev/Desktop/images_app/refresh.png'
     main_window.refresh_btn.setIcon(QIcon(icon_path))
     main_window.refresh_btn.setIconSize(QSize(28, 28))
     main_window.refresh_btn.setStyleSheet("QPushButton#refresh_btn { "
