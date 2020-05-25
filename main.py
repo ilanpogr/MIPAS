@@ -125,7 +125,8 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.check_results()
         if value.startswith("@%@") and self.id_done:
             self.label_3.setText("Exploring products for found store - {0}/{1}".format(split[0][3:], self.num_of_stores))
-        self.label_3.setText("Exploring products for found store - {0}/{1}".format(split[0], self.num_of_stores))
+        else:
+            self.label_3.setText("Exploring products for found store - {0}/{1}".format(split[0], self.num_of_stores))
 
     def run_finished(self):
         self.label_3.setText("IDLE")
