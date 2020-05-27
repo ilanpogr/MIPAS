@@ -138,7 +138,7 @@ class Ui_MainWindow(object):
         self.matches_found.setObjectName("matches_found")
         self.horizontalLayout_2.addWidget(self.matches_found)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
-        spacerItem6 = QtWidgets.QSpacerItem(20, 25, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        spacerItem6 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.verticalLayout_2.addItem(spacerItem6)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")

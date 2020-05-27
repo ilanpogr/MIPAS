@@ -1,5 +1,7 @@
 import os
 import sys
+import time
+
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow
 
@@ -53,6 +55,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.kknown_prod_lbl.setText(str(value))
 
     def update_examined_products(self, value):
+        self.check_results()
         prev = self.examined_prod_lbl.text()
         counter = 0
         if prev != "None":
@@ -78,7 +81,8 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
             lines = lock_manager.read_results(results_path)
             if len(lines) > 1:
                 self.update_matches(len(lines) - 1)
-                self.susp_stores_lbl.setText(self.get_num_of_susp_stores(lines))
+                num = self.get_num_of_susp_stores(lines)
+                self.susp_stores_lbl.setText(num)
                 self.current_num_of_results = len(lines) - 1
             else:
                 self.update_matches(None)
@@ -123,7 +127,6 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         if self.num_of_stores is None:
             self.num_of_stores = split[1]
         self.current_store_number = split[0]
-        self.check_results()
         if value.startswith("@%@") and self.id_done:
             self.label_3.setText("Comparing products from found store - {0}/{1}".format(split[0][3:], self.num_of_stores))
         elif not value.startswith("@%@"):
@@ -176,6 +179,7 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
 
 
 if __name__ == '__main__':
+    # time.sleep(5)
     app = QtWidgets.QApplication(sys.argv)
     if configUtils.is_settings_file_exists():
         mipas_app = MipasApp()
