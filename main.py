@@ -160,6 +160,7 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
         self.setupUi(self)
         self.__done_config = False
         connectElements.connect_welcome_buttons(self)
+        connectElements.set_style_for_welcome_screen(self)
         self.finish_settings.clicked.connect(lambda: self.finish_settings_configuration())
 
     def finish_settings_configuration(self):
