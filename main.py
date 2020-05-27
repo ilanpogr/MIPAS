@@ -46,7 +46,8 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         if value.startswith("@%@") and self.current_store_lbl.text() == "IDLE":
             self.id_done = True
             self.current_store_lbl.setText(value[3:])
-        self.current_store_lbl.setText(value)
+        elif not value.startswith("@%@"):
+            self.current_store_lbl.setText(value)
 
     def update_known_products(self, value):
         self.kknown_prod_lbl.setText(str(value))
@@ -125,7 +126,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.check_results()
         if value.startswith("@%@") and self.id_done:
             self.label_3.setText("Comparing products from found store - {0}/{1}".format(split[0][3:], self.num_of_stores))
-        else:
+        elif not value.startswith("@%@"):
             self.label_3.setText("Exploring products from found store - {0}/{1}".format(split[0], self.num_of_stores))
 
     def run_finished(self):

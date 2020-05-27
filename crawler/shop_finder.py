@@ -155,7 +155,7 @@ def search_for_stores(user_store_category, user_sub_category, signal_status_sear
 
     main_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
         category=store_category)
-    # search_for_stores_with_url(main_category_url_without_page_number, num_stores_signal)   # todo - uncomment
+    search_for_stores_with_url(main_category_url_without_page_number, num_stores_signal)
 
     for sub_c in sub_category:
         signal_status_search.emit("Subcategory: " + sub_c)
