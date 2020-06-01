@@ -2,7 +2,7 @@ import configUtils
 import controllers.ReaderWriterLockManager as LockManager
 
 import re
-# import httplib2
+import httplib2
 import urllib.request
 import urllib.error
 import random
@@ -23,7 +23,7 @@ import psutil
 GLOBAL VARS
 ------------------------------------'''
 
-# http = httplib2.Http(".cache")
+http_photos = httplib2.Http()
 http = urllib.request
 
 stores_dict_file_name = 'resources/app_files/stores_dict.csv'
@@ -407,33 +407,33 @@ def get_products_from_page(data, store_name, current_url):
             pruduct_url = ''
             if img is not None:
                 try:
-                    # resp, data = http.request(img['src'])
-                    # if resp.status == 200:
-                    res = http.urlopen(current_url)
-                    resp = res.code
-                    data = res.read()
-                    if resp == 200:
+                    resp, data = http_photos.request(img['src'])
+                    if resp.status == 200:
+                    # res = http.urlopen(current_url)
+                    # resp = res.code
+                    # data = res.read()
+                    # if resp == 200:
                         product_url = a['href']
                         download_image(resp, data, store_name, img['src'], product_url)
                     else:
                         failed_products[store_name + ',' + current_url] = img['src']
-                # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
-                except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
+                except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                # except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
                     failed_products[store_name + ',' + current_url] = img['src']
                 except(KeyError, AttributeError):
                     try:
-                        # resp, data = http.request(img['data-src'])
-                        # if resp.status == 200:
-                        res = http.urlopen(current_url)
-                        resp = res.code
-                        data = res.read()
-                        if resp == 200:
+                        resp, data = http_photos.request(img['data-src'])
+                        if resp.status == 200:
+                        # res = http.urlopen(current_url)
+                        # resp = res.code
+                        # data = res.read()
+                        # if resp == 200:
                             product_url = a['href']
                             download_image(resp, data, store_name, img['data-src'], product_url)
                         else:
                             failed_products[store_name + ',' + current_url] = img['data-src']
-                    # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
-                    except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
+                    except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                    # except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
 
                         failed_products[store_name + ',' + current_url] = img['data-src']
                     except(KeyError, AttributeError):
