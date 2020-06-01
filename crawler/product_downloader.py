@@ -515,7 +515,7 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
                     num_of_updates = 0
 
             else:
-                if i < 41:  # todo - remove if after debug
+                if i < 41:  # todo - remove if after debug - or modify for DEMO
                     # print('************************************************************************************')
                     # print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                     # print('************************************************************************************')
