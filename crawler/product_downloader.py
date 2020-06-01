@@ -93,10 +93,10 @@ def make_http_req(current_url):
         # resp, data = http.request(current_url, "GET")
         # if resp.status == 200:
         # resp, data = http.request(url, "GET")
+        # if resp.status == 200:
         res = http.urlopen(current_url)
         resp = res.code
         data = res.read()
-        # if resp.status == 200:
         if resp == 200:
             return data
         else:
@@ -115,8 +115,7 @@ def make_http_req(current_url):
                 response_handler(current_url, resp.status)
                 return None
     # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
-    except (
-    urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
+    except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
         print('--------------EXCEPTION RAISED, CHECK YOUR INTERNET CONNECTION.--------------')
         return None
     except OSError:
@@ -264,8 +263,13 @@ def get_products_from_updated_page(data, store_name, current_url):
             pruduct_url = ''
             if img is not None:
                 try:
-                    resp, data = http.request(img['src'])
-                    if resp.status == 200:
+                    # resp, data = http.request(img['src'])
+                    # if resp.status == 200:
+                    res = http.urlopen(current_url)
+                    resp = res.code
+                    data = res.read()
+                    if resp == 200:
+
                         file_name = img['src'].split('?version', 1)[0].split(default_image_size_str)[1]
                         if not is_file_exist(file_name, store_path):
                             product_url = a['href']
@@ -274,12 +278,18 @@ def get_products_from_updated_page(data, store_name, current_url):
                             num_of_updates += 1
                     else:
                         failed_products[store_name + ',' + current_url] = img['src']
-                except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError,TimeoutError):
                     failed_products[store_name + ',' + current_url] = img['src']
                 except(KeyError, AttributeError):
                     try:
-                        resp, data = http.request(img['data-src'])
-                        if resp.status == 200:
+                        # resp, data = http.request(img['data-src'])
+                        # if resp.status == 200:
+                        res = http.urlopen(current_url)
+                        resp = res.code
+                        data = res.read()
+                        if resp == 200:
+
                             file_name = img['src'].split('?version', 1)[0].split(default_image_size_str)[1]
                             if not is_file_exist(file_name, store_path):
                                 product_url = a['href']
@@ -288,7 +298,8 @@ def get_products_from_updated_page(data, store_name, current_url):
                                 num_of_updates += 1 
                         else:
                             failed_products[store_name + ',' + current_url] = img['data-src']
-                    except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                    # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                    except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
                         failed_products[store_name + ',' + current_url] = img['data-src']
                     except(KeyError, AttributeError):
                         failed_products[store_name + ',' + current_url] = a['href']
@@ -396,23 +407,34 @@ def get_products_from_page(data, store_name, current_url):
             pruduct_url = ''
             if img is not None:
                 try:
-                    resp, data = http.request(img['src'])
-                    if resp.status == 200:
+                    # resp, data = http.request(img['src'])
+                    # if resp.status == 200:
+                    res = http.urlopen(current_url)
+                    resp = res.code
+                    data = res.read()
+                    if resp == 200:
                         product_url = a['href']
                         download_image(resp, data, store_name, img['src'], product_url)
                     else:
                         failed_products[store_name + ',' + current_url] = img['src']
-                except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
                     failed_products[store_name + ',' + current_url] = img['src']
                 except(KeyError, AttributeError):
                     try:
-                        resp, data = http.request(img['data-src'])
-                        if resp.status == 200:
+                        # resp, data = http.request(img['data-src'])
+                        # if resp.status == 200:
+                        res = http.urlopen(current_url)
+                        resp = res.code
+                        data = res.read()
+                        if resp == 200:
                             product_url = a['href']
                             download_image(resp, data, store_name, img['data-src'], product_url)
                         else:
                             failed_products[store_name + ',' + current_url] = img['data-src']
-                    except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                    # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                    except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
+
                         failed_products[store_name + ',' + current_url] = img['data-src']
                     except(KeyError, AttributeError):
                         failed_products[store_name + ',' + current_url] = a['href']
