@@ -41,7 +41,7 @@ def compare_images(signal_status, total_store_number, signal_current_store_name,
     multi_threading_end_file = configUtils.get_property('multi_threading_end_of_file')
     image_matcher = ImageMatching(user_photos_path, downloaded_products_path)
     next_store_index = 1
-
+    need_new_store = True
     lock_manager = LockManager.LockManager()
     while True:
         multi_threading_downloaded_stores_index = next_store_index - 1
@@ -50,7 +50,7 @@ def compare_images(signal_status, total_store_number, signal_current_store_name,
             continue
         elif os.stat(multi_threading_downloaded_stores).st_size == 0:
             continue
-        else:
+        elif need_new_store:
             current_store = lock_manager.read(multi_threading_downloaded_stores, multi_threading_downloaded_stores_index)
             if current_store is None:
                 continue
@@ -65,6 +65,7 @@ def compare_images(signal_status, total_store_number, signal_current_store_name,
                 num_products = get_number_products_for_store(current_store)
                 signal_examined_products.emit(num_products)
                 next_store_index += 1
+                need_new_store = True
 
 
 def compare_images_all_stores():

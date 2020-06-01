@@ -170,7 +170,7 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
         if configUtils.is_all_settings_configured(self):
             configUtils.create_config_file("Etsy", self.store_names.text(), self.store_main_category.text(),
                                            self.store_sub_categories.text(), self.path_str.text())
-            self.hide()
+            self.close()
             self.__start_app()
 
     def __start_app(self):

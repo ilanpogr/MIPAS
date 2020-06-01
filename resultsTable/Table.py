@@ -3,6 +3,8 @@ import os
 import webbrowser
 from pathlib import Path
 
+from PyQt5.uic.properties import QtCore
+
 from resultsTable.resultsExctractor import ResultsExtractor
 
 from PyQt5 import QtWidgets
@@ -40,16 +42,13 @@ class Results(QMainWindow):
         for idx, row in output.iterrows():
             output.loc[idx, 'Image'] = output.loc[idx, 'Image'].split(configUtils.get_property("images_delimiter"))[0]
         options = QFileDialog.Options()
-        file_name, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Export table content", filter='CSV (*.csv)', options=options,
+        file_name, _ = QtWidgets.QFileDialog().getSaveFileName(None, "Export table content", filter='CSV (*.csv)', options=options,
                                               directory=str(Path.home()) + '/report.csv')
         if file_name:
             try:
                 output.to_csv(file_name)
             except PermissionError:
                 pass
-
-    def closeEvent(self, event):
-        self.close()
 
 
 class TableModel(QAbstractTableModel):

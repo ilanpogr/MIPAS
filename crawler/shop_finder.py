@@ -1,4 +1,5 @@
-import httplib2
+# import httplib2
+import urllib.request
 from bs4 import SoupStrainer, BeautifulSoup
 from pandas import DataFrame
 import csv
@@ -14,7 +15,8 @@ GLOBAL VARS
 ------------------------------------'''
 
 
-http = httplib2.Http(".cache")
+# http = httplib2.Http(".cache")
+http = urllib.request
 
 search_page_counter = 1
 search_page_last = 250
@@ -67,16 +69,23 @@ def response_handler(url, status):
 def make_http_req(url):
     sleeper()
     try:
-        resp, data = http.request(url, "GET")
-        if resp.status == 200:
+        # resp, data = http.request(url, "GET")
+        res = http.urlopen(url)
+        resp = res.code
+        data = res.read()
+        # if resp.status == 200:
+        if resp == 200:
             return data
         else:
             time.sleep(20)
-            resp, data = http.request(url)
-            if resp.status == 200:
+            # resp, data = http.request(url)
+            # if resp.status == 200:
+            res = http.urlopen(url)
+            resp = res.code
+            if resp == 200:
                 return data
             else:
-                response_handler(url, resp.status)
+                response_handler(url, resp)
                 return None
     except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
         return None
