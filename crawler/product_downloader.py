@@ -2,7 +2,9 @@ import configUtils
 import controllers.ReaderWriterLockManager as LockManager
 
 import re
-import httplib2
+# import httplib2
+import urllib.request
+import urllib.error
 import random
 from bs4 import SoupStrainer, BeautifulSoup
 from pandas import DataFrame
@@ -21,7 +23,8 @@ import psutil
 GLOBAL VARS
 ------------------------------------'''
 
-http = httplib2.Http(".cache")
+# http = httplib2.Http(".cache")
+http = urllib.request
 
 stores_dict_file_name = 'resources/app_files/stores_dict.csv'
 downloaded_stores_file_name = 'resources/app_files/downloaded_stores_dict.txt'
@@ -87,21 +90,33 @@ def response_handler(current_url, status):
 def make_http_req(current_url):
     sleeper()
     try:
-        resp, data = http.request(current_url, "GET")
-        if resp.status == 200:
+        # resp, data = http.request(current_url, "GET")
+        # if resp.status == 200:
+        # resp, data = http.request(url, "GET")
+        res = http.urlopen(current_url)
+        resp = res.code
+        data = res.read()
+        # if resp.status == 200:
+        if resp == 200:
             return data
         else:
             time.sleep(20)
             print('---------???????????????????????????????????????????????????????????????????---------')
             pprint(resp)
             print('---------???????????????????????????????????????????????????????????????????---------')
-            resp, data = http.request(current_url, "GET")
-            if resp.status == 200:
+            # resp, data = http.request(current_url, "GET")
+            # if resp.status == 200:
+            res = http.urlopen(current_url)
+            resp = res.code
+            data = res.read()
+            if resp == 200:
                 return data
             else:
                 response_handler(current_url, resp.status)
                 return None
-    except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+    # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+    except (
+    urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
         print('--------------EXCEPTION RAISED, CHECK YOUR INTERNET CONNECTION.--------------')
         return None
     except OSError:

@@ -1,5 +1,6 @@
 # import httplib2
 import urllib.request
+import urllib.error
 from bs4 import SoupStrainer, BeautifulSoup
 from pandas import DataFrame
 import csv
@@ -82,12 +83,14 @@ def make_http_req(url):
             # if resp.status == 200:
             res = http.urlopen(url)
             resp = res.code
+            data = res.read()
             if resp == 200:
                 return data
             else:
                 response_handler(url, resp)
                 return None
-    except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+    # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+    except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
         return None
     except OSError:
         print("OS Exception...")
