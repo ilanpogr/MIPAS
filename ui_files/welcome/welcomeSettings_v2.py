@@ -20,25 +20,11 @@ class Ui_MainWindow(object):
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.stackedWidget = QtWidgets.QStackedWidget(self.centralwidget)
         MainWindow.setStyleSheet("#MainWindow { background-color: #222222; }")
-        self.stackedWidget.setStyleSheet("QFrame { border: 0}"
-                                         "QLabel {color: #EEEEEE }"
-                                         "QPushButton { background-color: #8d2663; "
-                                         "color: white;"
-                                         "font-size: 12px;"
-                                         "}"
-                                         "QPushButton:pressed { background-color: #701e4f; "
-                                         "color: #DCDCDC;"
-                                         "font-size: 12px;"
-                                         "}"
-                                         "QToolButton { background-color: #8d2663; "
-                                         "color: white;"
-                                         "font-size: 12px;"
-                                         "}"
-                                         "QToolButton:pressed { background-color: #701e4f; "
-                                         "color: #DCDCDC;"
-                                         "font-size: 12px;"
-                                         "}")
         self.stackedWidget.setObjectName("stackedWidget")
+        self.stackedWidget.setStyleSheet("QFrame { border: 0}"
+                                            "QLabel {"
+                                            "color: #EEEEEE ;"
+                                            "}")
         self.welcome = QtWidgets.QWidget()
         self.welcome.setObjectName("welcome")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.welcome)
@@ -57,7 +43,7 @@ class Ui_MainWindow(object):
         self.gridLayout_12.setObjectName("gridLayout_12")
         self.label_6 = QtWidgets.QLabel(self.frame_text1)
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(13)
         self.label_6.setFont(font)
         self.label_6.setScaledContents(False)
         self.label_6.setWordWrap(False)
@@ -117,7 +103,7 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addWidget(self.label_2, 0, 0, 1, 1)
         self.label_4 = QtWidgets.QLabel(self.frame_text2)
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(13)
         self.label_4.setFont(font)
         self.label_4.setWordWrap(True)
         self.label_4.setObjectName("label_4")
@@ -160,7 +146,7 @@ class Ui_MainWindow(object):
         self.gridLayout_15.setObjectName("gridLayout_15")
         self.label_8 = QtWidgets.QLabel(self.frame_text2_3)
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(13)
         self.label_8.setFont(font)
         self.label_8.setWordWrap(True)
         self.label_8.setObjectName("label_8")
@@ -226,7 +212,7 @@ class Ui_MainWindow(object):
         self.gridLayout_9.addWidget(self.label_11, 0, 0, 1, 1)
         self.label_10 = QtWidgets.QLabel(self.frame_text2_4)
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(13)
         self.label_10.setFont(font)
         self.label_10.setWordWrap(True)
         self.label_10.setObjectName("label_10")
@@ -278,7 +264,7 @@ class Ui_MainWindow(object):
         self.gridLayout_22.addItem(spacerItem11, 2, 0, 1, 1)
         self.label_12 = QtWidgets.QLabel(self.frame_text2_5)
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(13)
         self.label_12.setFont(font)
         self.label_12.setWordWrap(True)
         self.label_12.setObjectName("label_12")
@@ -331,7 +317,7 @@ class Ui_MainWindow(object):
         self.gridLayout_26.setObjectName("gridLayout_26")
         self.label_14 = QtWidgets.QLabel(self.frame_text2_6)
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(13)
         self.label_14.setFont(font)
         self.label_14.setWordWrap(True)
         self.label_14.setObjectName("label_14")
@@ -443,3 +429,10 @@ class Ui_MainWindow(object):
         self.dataset_path.setText(_translate("MainWindow", "Browse"))
         self.prev_page5.setText(_translate("MainWindow", "Previous"))
         self.finish_settings.setText(_translate("MainWindow", "FINISH"))
+
+# label_6
+# label_4
+# label_8
+# label_10
+# label_12
+# label_14

@@ -3,6 +3,8 @@ import controllers.ReaderWriterLockManager as LockManager
 
 import re
 import httplib2
+import urllib.request
+import urllib.error
 import random
 from bs4 import SoupStrainer, BeautifulSoup
 from pandas import DataFrame
@@ -10,6 +12,7 @@ import csv
 from PIL import Image
 from io import BytesIO
 import os
+import glob
 
 import time
 from pprint import pprint
@@ -20,13 +23,16 @@ import psutil
 GLOBAL VARS
 ------------------------------------'''
 
-http = httplib2.Http()
+http_photos = httplib2.Http()
+http = urllib.request
 
 stores_dict_file_name = 'resources/app_files/stores_dict.csv'
 downloaded_stores_file_name = 'resources/app_files/downloaded_stores_dict.txt'
 init_path = 'resources/photos/'
 search_page_counter = 0
 num_of_updates = 0
+known_products = 0
+signal_num_of_products = None
 
 multi_threading_downloaded_stores = ""
 multi_threading_end_of_file = ""
@@ -84,22 +90,36 @@ def response_handler(current_url, status):
 def make_http_req(current_url):
     sleeper()
     try:
-        resp, data = http.request(current_url)
-        if resp.status == 200:
+        # resp, data = http.request(current_url, "GET")
+        # if resp.status == 200:
+        # resp, data = http.request(url, "GET")
+        # if resp.status == 200:
+        res = http.urlopen(current_url)
+        resp = res.code
+        data = res.read()
+        if resp == 200:
             return data
         else:
             time.sleep(20)
             print('---------???????????????????????????????????????????????????????????????????---------')
             pprint(resp)
             print('---------???????????????????????????????????????????????????????????????????---------')
-            resp, data = http.request(current_url)
-            if resp.status == 200:
+            # resp, data = http.request(current_url, "GET")
+            # if resp.status == 200:
+            res = http.urlopen(current_url)
+            resp = res.code
+            data = res.read()
+            if resp == 200:
                 return data
             else:
                 response_handler(current_url, resp.status)
                 return None
-    except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+    # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+    except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
         print('--------------EXCEPTION RAISED, CHECK YOUR INTERNET CONNECTION.--------------')
+        return None
+    except OSError:
+        print('--------------OS EXCEPTION RAISED..............................--------------')
         return None
 
 
@@ -109,6 +129,8 @@ PRE-RUNNING METHODS
 
 
 def get_all_stores_urls():
+    global stores
+    stores = {}
     with open(stores_dict_file_name, "r") as f:
         reader = csv.reader(f, delimiter="\t")
         next(reader, None)
@@ -156,6 +178,17 @@ PRODUCTS DOWNLOADER FROM STORES
 ------------------------------------'''
 
 
+def write_number_products(name):
+    image_extensions = {"jpg", "JPG", "png", "PNG", "JPEG", "jpeg"}
+    path = "resources/photos/{0}/".format(name)
+    counter = 0
+    for extn in image_extensions:
+        counter += len(glob.glob1(path, "*.{0}".format(extn)))
+    path += "num_products"
+    with open(path, 'w') as f:
+        f.write(str(counter))
+
+
 def append_store_to_cache(current_url):
     with open(downloaded_stores_file_name, 'a') as f:
         f.write(current_url + '\n')
@@ -167,7 +200,6 @@ def append_store_to_multi_threading(store_name):
 
 def save_products_img_url_dict(store_name):
     csv_file = init_path + store_name + '/' + store_name + '_products.csv'
-    print("number of pictures: " + str(len(product_img_url_dict)))
     df = DataFrame(product_img_url_dict.items())
     if not os.path.isfile(csv_file):
         df.to_csv(csv_file, index=False, header=['File', 'URL'])
@@ -231,8 +263,13 @@ def get_products_from_updated_page(data, store_name, current_url):
             pruduct_url = ''
             if img is not None:
                 try:
-                    resp, data = http.request(img['src'])
-                    if resp.status == 200:
+                    # resp, data = http.request(img['src'])
+                    # if resp.status == 200:
+                    res = http.urlopen(current_url)
+                    resp = res.code
+                    data = res.read()
+                    if resp == 200:
+
                         file_name = img['src'].split('?version', 1)[0].split(default_image_size_str)[1]
                         if not is_file_exist(file_name, store_path):
                             product_url = a['href']
@@ -241,12 +278,18 @@ def get_products_from_updated_page(data, store_name, current_url):
                             num_of_updates += 1
                     else:
                         failed_products[store_name + ',' + current_url] = img['src']
-                except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError,TimeoutError):
                     failed_products[store_name + ',' + current_url] = img['src']
                 except(KeyError, AttributeError):
                     try:
-                        resp, data = http.request(img['data-src'])
-                        if resp.status == 200:
+                        # resp, data = http.request(img['data-src'])
+                        # if resp.status == 200:
+                        res = http.urlopen(current_url)
+                        resp = res.code
+                        data = res.read()
+                        if resp == 200:
+
                             file_name = img['src'].split('?version', 1)[0].split(default_image_size_str)[1]
                             if not is_file_exist(file_name, store_path):
                                 product_url = a['href']
@@ -255,39 +298,38 @@ def get_products_from_updated_page(data, store_name, current_url):
                                 num_of_updates += 1 
                         else:
                             failed_products[store_name + ',' + current_url] = img['data-src']
-                    except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                    # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                    except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
                         failed_products[store_name + ',' + current_url] = img['data-src']
                     except(KeyError, AttributeError):
                         failed_products[store_name + ',' + current_url] = a['href']
         return new_images
+    else:
+        return 0
 
 
-def download_new_products_if_found(store_name, store_url, signal_status, status):
+def download_new_products_if_found(store_name, store_url):
     global search_page_counter
+    write_number_products(store_name)
     search_page_counter = 0
     data = make_http_req(store_url)
     if data is None:
         failed_updated_stores.add(store_url)
         return
     search_page_counter = 1
-    current_status = status + "\nChecking if have new products"
-    signal_status.emit(current_status)
-    found_new_pictures = False
     found_new_images = get_products_from_updated_page(data, store_name, store_url)
     if found_new_images:
-        current_status = status + "\nDownloading only new products from known store: " + store_name
-        signal_status.emit(current_status)
-    num_of_pages = get_number_of_pages_in_store(data)
-    if num_of_pages is not None:
-        page_url_sefix = '&page={page_num}#items'
-        for i in range(2, num_of_pages + 1):
-            if found_new_images:
-                page_url = store_url + page_url_sefix.format(page_num=i)
-                search_page_counter = i
-                data = make_http_req(page_url)
-                up_to_date = get_products_from_updated_page(data, store_name, page_url)
-            else:
-                return
+        num_of_pages = get_number_of_pages_in_store(data)
+        if num_of_pages is not None:
+            page_url_sefix = '&page={page_num}#items'
+            for i in range(2, num_of_pages + 1):
+                if found_new_images:
+                    page_url = store_url + page_url_sefix.format(page_num=i)
+                    search_page_counter = i
+                    data = make_http_req(page_url)
+                    found_new_images = get_products_from_updated_page(data, store_name, page_url)
+                else:
+                    return
     save_products_img_url_dict(store_name)
 
 
@@ -305,6 +347,7 @@ def get_number_of_pages_in_store(data):
 
 
 def download_image(resp, content, store_name, img_url, product_url):
+    global known_products
     if not os.path.exists(init_path + store_name):
         os.makedirs(init_path + store_name)
     rest = img_url.split('?version', 1)[0].split(default_image_size_str)[1]
@@ -312,43 +355,45 @@ def download_image(resp, content, store_name, img_url, product_url):
     store_path = init_path + store_name
     with open(file_path, 'wb') as f:
         f.write(content)
-    if (is_file_exist(rest, store_path)):
-        product_img_url_dict[rest] = product_url
-    img_url = img_url.replace(default_image_size_str, full_image_size_str)
+    if is_file_exist(rest, store_path):
+        if rest not in product_img_url_dict:
+            product_img_url_dict[rest] = product_url
+            signal_num_of_products.emit(known_products + 1)
+            known_products += 1
+    # img_url = img_url.replace(default_image_size_str, full_image_size_str)
     #     before_time = time.time()
-    resp, content = http.request(img_url)
+    # resp, content = http.request(img_url)
     #     print(convert_time(time.time() - before_time))
-    if resp.status == 200:
-        # rest = img_url.split('?version', 1)[0].split(full_image_size_str)[1]
-        # full_file_name = 'highQ_' + rest
-        # file_path = init_path + store_name + '/' + full_file_name
-        # new_image_size = get_pxl_width_pxl_height_by_common_division_close_to_o_pixels(content, resp)
-        # if new_image_size is None or is_smaller_then_min_size(new_image_size):
-        #     if new_image_size is not None and new_image_size[0] == new_image_size[1]:
-        #         new_image_size = (o_pixels, o_pixels)
-        #         img = Image.open(BytesIO(content))
-        #         img.thumbnail(new_image_size)
-        #         img.save(file_path)
-        #         if (is_file_exist(full_file_name, store_path)):
-        #             product_img_url_dict[full_file_name] = product_url
-        #     else:
-        #         with open(file_path, 'wb') as f:
-        #             f.write(content)
-        #         if (is_file_exist(full_file_name, store_path)):
-        #             product_img_url_dict[full_file_name] = product_url
-        # else:
-        #     img = Image.open(BytesIO(content))
-        #     img.thumbnail(new_image_size)
-        #     img.save(file_path)
-        #     if (is_file_exist(full_file_name, store_path)):
-        #         product_img_url_dict[full_file_name] = product_url
-        pass
-    else:
-        print('§§§§§§§§§§§§§§§§§§§§§§§')
-        print('RESPONSE ISSUE')
-        print('URL:  ' + img_url)
-        pprint(resp)
-        print('§§§§§§§§§§§§§§§§§§§§§§§')
+    # if resp.status == 200:
+    #     rest = img_url.split('?version', 1)[0].split(full_image_size_str)[1]
+    #     full_file_name = 'highQ_' + rest
+    #     file_path = init_path + store_name + '/' + full_file_name
+    #     new_image_size = get_pxl_width_pxl_height_by_common_division_close_to_o_pixels(content, resp)
+    #     if new_image_size is None or is_smaller_then_min_size(new_image_size):
+    #         if new_image_size is not None and new_image_size[0] == new_image_size[1]:
+    #             new_image_size = (o_pixels, o_pixels)
+    #             img = Image.open(BytesIO(content))
+    #             img.thumbnail(new_image_size)
+    #             img.save(file_path)
+    #             if (is_file_exist(full_file_name, store_path)):
+    #                 product_img_url_dict[full_file_name] = product_url
+    #         else:
+    #             with open(file_path, 'wb') as f:
+    #                 f.write(content)
+    #             if (is_file_exist(full_file_name, store_path)):
+    #                 product_img_url_dict[full_file_name] = product_url
+    #     else:
+    #         img = Image.open(BytesIO(content))
+    #         img.thumbnail(new_image_size)
+    #         img.save(file_path)
+    #         if (is_file_exist(full_file_name, store_path)):
+    #             product_img_url_dict[full_file_name] = product_url
+    # else:
+    #     print('§§§§§§§§§§§§§§§§§§§§§§§')
+    #     print('RESPONSE ISSUE')
+    #     print('URL:  ' + img_url)
+    #     pprint(resp)
+    #     print('§§§§§§§§§§§§§§§§§§§§§§§')
 
 
 def get_products_from_page(data, store_name, current_url):
@@ -362,46 +407,53 @@ def get_products_from_page(data, store_name, current_url):
             pruduct_url = ''
             if img is not None:
                 try:
-                    resp, data = http.request(img['src'])
+                    resp, data = http_photos.request(img['src'])
                     if resp.status == 200:
+                    # res = http.urlopen(current_url)
+                    # resp = res.code
+                    # data = res.read()
+                    # if resp == 200:
                         product_url = a['href']
                         download_image(resp, data, store_name, img['src'], product_url)
                     else:
                         failed_products[store_name + ',' + current_url] = img['src']
                 except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                # except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
                     failed_products[store_name + ',' + current_url] = img['src']
                 except(KeyError, AttributeError):
                     try:
-                        resp, data = http.request(img['data-src'])
+                        resp, data = http_photos.request(img['data-src'])
                         if resp.status == 200:
+                        # res = http.urlopen(current_url)
+                        # resp = res.code
+                        # data = res.read()
+                        # if resp == 200:
                             product_url = a['href']
                             download_image(resp, data, store_name, img['data-src'], product_url)
                         else:
                             failed_products[store_name + ',' + current_url] = img['data-src']
                     except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+                    # except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
+
                         failed_products[store_name + ',' + current_url] = img['data-src']
                     except(KeyError, AttributeError):
                         failed_products[store_name + ',' + current_url] = a['href']
     return got_data
 
 
-def download_all_products_from_store(store_name, store_url, signal_status, status):
+def download_all_products_from_store(store_name, store_url):
     global search_page_counter
     search_page_counter = 0
     data = make_http_req(store_url)
     if data is None:
         failed_stores.add(store_url)
         return
-    current_status = status + "\nDownloading page #1"
-    signal_status.emit(current_status)
     search_page_counter = 1
     got_data = get_products_from_page(data, store_name, store_url)
     num_of_pages = get_number_of_pages_in_store(data)
     if num_of_pages is not None:
         page_url_sefix = '&page={page_num}#items'
         for i in range(2, num_of_pages + 1):
-            current_status = status + "\nDownloading page #" + str(i)
-            signal_status.emit(current_status)
             page_url = store_url + page_url_sefix.format(page_num=i)
             search_page_counter = i
             data = make_http_req(page_url)
@@ -418,8 +470,10 @@ MAIN METHOD CALL
 ------------------------------------'''
 
 
-def download_products_for_all_stores(signal_process, signal_status, user_stores, signal_start_image_matching):
-    global store_products, num_of_updates, multi_threading_downloaded_stores, multi_threading_end_of_file
+def download_products_for_all_stores(user_stores, signal_start_image_matching, signal_status_download, signal_current_store_name, signal_known_products, prev_known_products):
+    global store_products, num_of_updates, multi_threading_downloaded_stores, multi_threading_end_of_file, signal_num_of_products, known_products
+    signal_num_of_products = signal_known_products
+    known_products = prev_known_products
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
     multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')
     start_time = time.ctime()
@@ -439,37 +493,34 @@ def download_products_for_all_stores(signal_process, signal_status, user_stores,
     i = 0
     for name, url in stores.items():
         i += 1
+        signal_status_download.emit(str(i) + "/" + str(len(stores.items())))
+        signal_current_store_name.emit(name)
         if i == 2:
             signal_start_image_matching.emit()
         if name not in user_stores:
-            current_status = str(i) + "/" + str(len(stores)) + "\nDownloading products for store: " + name
-            signal_status.emit(current_status)  # signal task
             if url in downloaded_stores:
-                url = url + '&sort_order=date_desc'
+                # url = url + '&sort_order=date_desc'
                 # print('************************************************************************************')
                 # print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                 # print('************************************************************************************')
                 #
-                # download_new_products_if_found(name, url, signal_status, current_status)
-                # save_products_img_url_dict(name)
+                download_new_products_if_found(name, url)
+                save_products_img_url_dict(name)
                 # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
                 # print('************************************************************************************')
                 # print_output_for_debug(start_time)
-                # if num_of_updates != 0:
-                #     append_store_to_multi_threading(name)
-                #     num_of_updates = 0
-                time.sleep(0.001)  # todo - remove sleep and uncomment above lines ---- DEMO
-                signal_process.emit(i/len(stores) * 100)
+
+                if num_of_updates != 0:
+                    append_store_to_multi_threading(name)
+                    num_of_updates = 0
+
             else:
-                if i < 3:  # todo - if condition only for ---- DEMO
-                    print('************************************************************************************')
-                    print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-                    print('************************************************************************************')
-                    download_all_products_from_store(name, url, signal_status, current_status)
-                    append_store_to_cache(url)
-                    print_output_for_debug(start_time)
-                time.sleep(0.001)   # todo - remove sleep and uncomment above lines ---- DEMO
-                signal_process.emit(i/len(stores) * 100)
+                # print('************************************************************************************')
+                # print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
+                # print('************************************************************************************')
+                download_all_products_from_store(name, url)
+                append_store_to_cache(url)
+                # print_output_for_debug(start_time)
             store_products = set()
             product_img_url_dict.clear()
     append_store_to_multi_threading(multi_threading_end_of_file)

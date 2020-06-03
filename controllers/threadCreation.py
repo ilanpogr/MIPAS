@@ -1,7 +1,9 @@
 import os
 from functools import partial
 
-from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot, QRunnable
+from PyQt5.QtWidgets import QApplication
+
 import controllers.runController as Controller
 
 import time
@@ -23,79 +25,71 @@ class Thread(QObject):
 
 class WorkerCrawler(Worker):
     finished = pyqtSignal()
-    started = pyqtSignal(int)
-    # download_products_not_chosen = pyqtSignal()
     start_image_matching = pyqtSignal()
-    # progress_changed = pyqtSignal(int)
-    # progress_pd_changed = pyqtSignal(int)
-    # status_sf_changed = pyqtSignal(str)
-    # status_pd_changed = pyqtSignal(str)
-    # task_sf_changed = pyqtSignal(str)
-    # task_pd_changed = pyqtSignal(str)
-    # switch_screen = pyqtSignal()
+    started = pyqtSignal(int)
+    status_search = pyqtSignal(str)
+    status_download = pyqtSignal(str)
+    task_changed = pyqtSignal(bool)
+    current_num_stores = pyqtSignal(int)
+    current_store_name = pyqtSignal(str)
+    signal_known_products = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
 
-    # def connect_signals(self):
-        # self.progress_changed.connect(main_window.update_progress_bar_sf)
-        # self.progress_pd_changed.connect(main_window.update_progress_bar_pd)
-        # self.status_sf_changed.connect(main_window.update_status_sf)
-        # self.status_pd_changed.connect(main_window.update_status_pd)
-        # self.task_sf_changed.connect(main_window.update_task_sf)
-        # self.task_pd_changed.connect(main_window.update_task_pd)
-        # self.switch_screen.connect(main_window.switch_to_parallel_screen)
-        # self.finished.connect(main_window.finished_crawler)
-        # self.started.connect(main_window.idle_im)
-        # self.download_products_not_chosen.connect(main_window.idle_download_products)
+    def connect_signals(self):
+        self.started.connect(main_window.start_timer)
+        self.task_changed.connect(main_window.change_task)
+        self.status_download.connect(main_window.explore_stores)
+        self.status_search.connect(main_window.search_for_stores)
+        self.current_num_stores.connect(main_window.update_known_stores)
+        self.current_store_name.connect(main_window.update_current_store)
+        self.signal_known_products.connect(main_window.update_known_products)
 
     @pyqtSlot(str)
     def execute(self):
-        global main_window
-        self.started.connect(main_window.start_timer)
-        counter = 10
+        self.connect_signals()
+        self.task_changed.emit(False)
+        counter = 3
         time.sleep(1)
-        for i in range(10):
+        for i in range(4):
             time.sleep(1)
             self.started.emit(counter)
             counter -= 1
-
-        # Controller.search_stores(self.progress_changed, self.status_sf_changed, self.task_sf_changed)
-        # Controller.download_products(self.progress_pd_changed, self.status_pd_changed, self.task_pd_changed,
-        #                              self.start_image_matching)
-        # self.finished.emit()
+        Controller.search_stores(self.status_search, self.current_num_stores)
+        self.task_changed.emit(True)
+        prev_known_products = 0
+        prev_known_products_lbl = main_window.kknown_prod_lbl.text()
+        if prev_known_products_lbl != "None":
+            prev_known_products = int(prev_known_products_lbl)
+        Controller.download_products(self.start_image_matching, self.status_download, self.current_store_name, self.signal_known_products, prev_known_products)
+        self.finished.emit()
         self.thread.quit()
 
 
 class WorkerImageMatcher(Worker):
     finished = pyqtSignal()
-    # progress_changed = pyqtSignal(int)
-    # status_changed = pyqtSignal(str)
-    # task_changed = pyqtSignal(str)
+    status_changed = pyqtSignal(str)
+    up_to_date = pyqtSignal(int)
+    current_store_name = pyqtSignal(str)
+    examined_products = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
 
-    # def connect_signals(self):
-        # self.progress_changed.connect(main_window.update_progress_bar_im)
-        # self.status_changed.connect(main_window.update_status_im)
-        # self.task_changed.connect(main_window.update_task_im)
+    def connect_signals(self):
+        self.status_changed.connect(main_window.explore_stores)
+        self.finished.connect(main_window.run_finished)
+        self.current_store_name.connect(main_window.update_current_store)
+        self.examined_products.connect(main_window.update_examined_products)
 
     @pyqtSlot(str)
     def execute_parallel(self):
-        # global main_window
-        # self.connect_signals()
-        Controller.compare_images()
+        self.connect_signals()
+        Controller.compare_images(self.status_changed, int(main_window.num_of_stores), self.current_store_name, self.examined_products)
+        self.current_store_name.emit(None)
         self.finished.emit()
         self.thread.quit()
-
-    # @pyqtSlot(str)
-    # def execute(self):
-    #     global main_window
-    #     self.connect_signals()
-    #     Controller.compare_images_all_stores(self.progress_changed, self.status_changed, self.task_changed)
-    #     self.finished.emit()
-    #     self.thread.quit()
 
 
 class ThreadController(Thread):
@@ -104,13 +98,13 @@ class ThreadController(Thread):
         super().__init__(_main)
         self.threads = {}
         main_window = _main
-        # self._main.start_btn.clicked.connect(self.start_thread)
+
+        self.counter_im = 0
+        self.all_modules_finished = 0
 
         # Workers
         self.worker_crawler = WorkerCrawler()
         self.worker_im = WorkerImageMatcher()
-        self.all_modules_finished = 0
-
         self.start_thread()
 
     def _threaded_call(self, worker, fn, *args, signals=None, slots=None):
@@ -142,12 +136,12 @@ class ThreadController(Thread):
                 except TypeError:  # Signal has no slots to disconnect
                     pass
                 signal.connect(slot)
-
         thread.started.connect(partial(fn, *args))  # fn needs to be slot
         thread.start()
 
     @pyqtSlot()
     def _receive_finish_signal(self):
+        print("thread finish notification")
         self.all_modules_finished += 1
         if self.all_modules_finished % 2 == 0:
             os.remove("resources/app_files/downloaded_stores_multi_threading.txt")
@@ -155,17 +149,16 @@ class ThreadController(Thread):
 
     @pyqtSlot(bool)
     def start_thread(self):
+        # print("Active threads:")
+        # for worker, t in self.threads.items():
+        #     print(str(type(worker)) + ": " + str(t.isRunning()))
+        self.threads = {}
         signals = {self.worker_crawler.start_image_matching: self.start_image_matching_thread,
                    self.worker_crawler.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_crawler, self.worker_crawler.execute, signals=signals)
 
     @pyqtSlot()
     def start_image_matching_thread(self):
+        print("starting image matching")
         signals = {self.worker_im.finished: self._receive_finish_signal}
         self._threaded_call(self.worker_im, self.worker_im.execute_parallel, signals=signals)
-
-    # @pyqtSlot()
-    # def alone_start_image_matching_thread(self):
-    #     signals = {self.worker_im.finished: self._receive_finish_signal}
-    #     self._threaded_call(self.worker_im, self.worker_im.execute, signals=signals)
-

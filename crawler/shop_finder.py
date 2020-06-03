@@ -1,4 +1,6 @@
-import httplib2
+# import httplib2
+import urllib.request
+import urllib.error
 from bs4 import SoupStrainer, BeautifulSoup
 from pandas import DataFrame
 import csv
@@ -14,7 +16,8 @@ GLOBAL VARS
 ------------------------------------'''
 
 
-http = httplib2.Http()
+# http = httplib2.Http(".cache")
+http = urllib.request
 
 search_page_counter = 1
 search_page_last = 250
@@ -23,7 +26,6 @@ store_category = ''
 sub_category = []
 file_name = 'resources/app_files/stores_dict.csv'
 search_iteration_counter = 0
-pages_counter = 0
 
 
 '''------------------------------------
@@ -55,7 +57,10 @@ def save_stores_dict_to_csv():
 
 def save_stores_dict_to_csv_as_backup():
     df = DataFrame(list(stores_dict.items()), columns=['NAME', 'URL'])
-    df.to_csv('BACKUP_' + file_name)
+    original_file_name = 'resources/app_files/stores_dict.csv'
+    backup_file_name = 'BACKUP_' + original_file_name.split('/')[-1]
+    path = '/'.join(original_file_name.split('/')[:-1]) + '/' + backup_file_name
+    df.to_csv(path)
 
 
 def response_handler(url, status):
@@ -65,18 +70,30 @@ def response_handler(url, status):
 def make_http_req(url):
     sleeper()
     try:
-        resp, data = http.request(url)
-        if resp.status == 200:
+        # resp, data = http.request(url, "GET")
+        res = http.urlopen(url)
+        resp = res.code
+        data = res.read()
+        # if resp.status == 200:
+        if resp == 200:
             return data
         else:
             time.sleep(20)
-            resp, data = http.request(url)
-            if resp.status == 200:
+            # resp, data = http.request(url)
+            # if resp.status == 200:
+            res = http.urlopen(url)
+            resp = res.code
+            data = res.read()
+            if resp == 200:
                 return data
             else:
-                response_handler(url, resp.status)
+                response_handler(url, resp)
                 return None
-    except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+    # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
+    except (urllib.error.HTTPError, urllib.error.URLError, urllib.error.ContentTooShortError, ConnectionError, TimeoutError):
+        return None
+    except OSError:
+        print("OS Exception...")
         return None
 
 
@@ -112,10 +129,10 @@ def add_store_to_dict(name, url):
         stores_dict[name] = url
 
 
-def get_stores_from_products_page(data):
+def get_stores_from_products_page(data, num_stores_signal):
     if data is not None:
         products_a_links_in_page = SoupStrainer('a', {'class': re.compile('display-inline-block')})
-        products_links_elements = BeautifulSoup(data, 'lxml', parse_only=products_a_links_in_page).findAll('a')
+        products_links_elements = BeautifulSoup(data, 'html.parser', parse_only=products_a_links_in_page).findAll('a')
         for a in products_links_elements:
             try:
                 product_shop_name = a.find('p', {'class': 'text-gray-lighter'}).text.strip()
@@ -123,42 +140,42 @@ def get_stores_from_products_page(data):
                     generic_store_url = 'https://www.etsy.com/il-en/shop/{shop_name}?ref=ss_profile'.format(
                         shop_name=product_shop_name)
                     add_store_to_dict(product_shop_name, generic_store_url)
+                    num_stores_signal.emit(len(stores_dict))
             except (KeyError, AttributeError):
                 continue
 
 
-def search_for_stores_with_url(url, signal_process, signal_status, status):
-    global pages_counter, search_iteration_counter
+def search_for_stores_with_url(url, num_stores_signal):
+    global search_iteration_counter
+
     search_iteration_counter += 1
     for _ in range(1, search_page_last + 1):
-        current_status = status + " - " + str(_) + "/" + str(search_page_last)
-        signal_status.emit(current_status)  # signal task
         full_url = url + str(search_page_counter)
-        time.sleep(0.005)  # todo - comment sleep and uncomment next lines ---- DEMO
-        # data = get_next_page_search_shops(full_url)
-        # get_stores_from_products_page(data)
-        pages_counter += 1
-        num_of_categories = len(sub_category) + 1  # 1 - main category
-        signal_process.emit((pages_counter/(num_of_categories * search_page_last)) * 100)
+        data = get_next_page_search_shops(full_url)
+        get_stores_from_products_page(data, num_stores_signal)
 
 
-def search_for_stores(user_store_category, user_sub_category, signal_process, signal_status):
+def search_for_stores(user_store_category, user_sub_category, signal_status_search, num_stores_signal):
     global search_page_counter, store_category, sub_category
-    current_status = "Searching by store's main category: " + store_category
-    signal_status.emit(current_status)  # signal task
     store_category = user_store_category
     sub_category = user_sub_category.split(",")
+
+    signal_status_search.emit("Main Category: " + store_category)
     get_stores_dict_from_file()
+    num_stores_signal.emit(len(stores_dict))
+
     main_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
         category=store_category)
-    search_for_stores_with_url(main_category_url_without_page_number, signal_process, signal_status, current_status)
+    search_for_stores_with_url(main_category_url_without_page_number, num_stores_signal)
+
     for sub_c in sub_category:
+        signal_status_search.emit("Subcategory: " + sub_c)
         search_page_counter = 1
         sub_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}/{sub_category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
             category=store_category, sub_category=sub_c)
         current_status = "Searching by store's sub-category: " + sub_c
-        signal_status.emit(current_status)  # signal task
-        search_for_stores_with_url(sub_category_url_without_page_number, signal_process, signal_status, current_status)
-    # save_stores_dict_to_csv() # todo - uncomment next lines  ---- DEMO
-    # save_stores_dict_to_csv_as_backup()
+        search_for_stores_with_url(sub_category_url_without_page_number, num_stores_signal)
+
+    save_stores_dict_to_csv()
+    save_stores_dict_to_csv_as_backup()
 

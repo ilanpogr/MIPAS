@@ -1,35 +1,23 @@
 import os
-
-from PyQt5 import QtWidgets, QtCore
 from pathlib import Path
 
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDesktopWidget
+
 import resultsTable.resultsExctractor as resultsExtractor
 
 results_file = "resources/photos/final_results.csv"
-background_image = ":/resources/images/DIAMOND-BANNER.png"
-
-
-def set_colors_to_elements(main_window):
-    # Frames borders
-    main_window.frame.setStyleSheet("border: 0")
-    # Title
-    main_window.label_5.setStyleSheet("color: #ffe34c")
-    main_window.label_6.setStyleSheet("color: #ffe34c")
-    # labels
-    main_window.label.setStyleSheet("color: #EEEEEE")
-    main_window.label_2.setStyleSheet("color: #EEEEEE")
-    main_window.matches_found.setStyleSheet("color: #EEEEEE")
-    main_window.label_3.setStyleSheet("color: #EEEEEE")
-    # Button
-    set_button_stylesheet(main_window.pushButton)
 
 
 def set_initial_screen(main_window):
     main_window.setWindowTitle("MIPAS")
-    # main_window.status_lbl.setText("IDLE")
-    main_window.resize(700, 350)
+    main_window.stackedWidget.setCurrentIndex(0)
     main_window.pushButton.setVisible(False)
+    main_window.back_btn.clicked.connect(lambda: main_window.stackedWidget.setCurrentIndex(0))
+    main_window.export_btn.setFixedHeight(40)
+    main_window.back_btn.setFixedHeight(40)
     qr = main_window.frameGeometry()
     cp = QDesktopWidget().availableGeometry().center()
     qr.moveCenter(cp)
@@ -57,11 +45,11 @@ def connect_welcome_buttons(welcome_screen):
     welcome_screen.dataset_path.clicked.connect(lambda: _open_file_dialog(welcome_screen))
     retranslate_welcome_ui(welcome_screen)
 
-    # todo - for mock-up!  ---- DEMO
-    welcome_screen.store_names.setText("Store-A,Store-B")
-    welcome_screen.store_main_category.setText("jewelry")
-    welcome_screen.store_sub_categories.setText("necklaces,earrings,bracelets,rings")
-    welcome_screen.path_str.setText("/Users/ipogrebinsky/Documents/School/Final Project/Artisan Pictures_mini")
+    # for mock-up!  ---- DEMO
+    # welcome_screen.store_names.setText("Store-A,Store-B")
+    # welcome_screen.store_main_category.setText("jewelry")
+    # welcome_screen.store_sub_categories.setText("necklaces,earrings,bracelets,rings")
+    # welcome_screen.path_str.setText("/Users/ipogrebinsky/Documents/School/Final Project/Artisan Pictures_mini")
 
 
 def _open_file_dialog(welcome_screen):
@@ -76,34 +64,259 @@ def retranslate_welcome_ui(welcome_screen):
     welcome_screen.setWindowTitle("MIPAS - Configure Settings")
 
 
-# def change_run_method(main_screen):
-#     _translate = QtCore.QCoreApplication.translate
-#     state = main_screen.comboBox.currentText()
-#     if state == "Start New Search":
-#         main_screen.run_option = 0
-#     elif state == "Search Found Stores From Previous Run":
-#         main_screen.run_option = 1
-#     elif state == "Compare Only With What I Got":
-#         main_screen.run_option = 2
-#     main_screen.method_label.setText(_translate("MainWindow", state))
-#     main_screen.method_label_2.setText(_translate("MainWindow", state))
-
-
 def set_button_stylesheet(push_button):
-    texture_path = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/Prestige-texture.jpg"
+    # Show Report button
+    push_button.setText("Report")
     push_button.setStyleSheet(
-        "QPushButton#pushButton { background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/Prestige-texture.jpg) 0 0 0 0 stretch stretch; "
-        "border-style: outset; "
-        "border-width: 2px; "
-        "border-radius: 10px; "
-        "border-color: beige; "
-        "color: #722f37; "
-        "font: bold 14px; "
-        "min-width: 10em; "
-        "padding: 6px; } "
-        "QPushButton#pushButton:hover { color: black; "
-        "border-width: 3px;"
-        "border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);}"
+        "QPushButton#pushButton { "
+        "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #5B5B5B, stop:1 #EDEDED);"
+        "font: bold 23px 'verdana';"
+        "color: #333325;"
+        "padding: 10; "
+        "height: 40px;"
+        "width: 120px;"
+        "border: 3px solid;"
+        "border-color: #8C8E81;"
+        "border-radius: 14px;"
+        "border-style: outset;"
+        "}"
+        "QPushButton#pushButton:hover { "
+        "color: #454542;"
+        "}"
         "QPushButton#pushButton:pressed {"
-        "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);"
-        "background-image: url(/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images/Prestige-texture_dark.jpg)}")
+        "font: bold 22px 'verdana';"
+        "text-align: center;"
+        "display: inline-block;"
+        "border-style: inset;"
+        "}"
+    )
+
+
+def set_colors_to_elements(main_window):
+    # Main Window background Image
+    background_image = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/DIAMONDS-BANNER_crop.png"
+    main_window.setStyleSheet("#MainWindow { border-image: url(%s) 0 0 0 0 stretch stretch;"
+                              "background-color: #222222; }" % background_image)
+    # Title
+    main_window.label_5.setStyleSheet("color: #ffe34c; font: bold 70px 'Recoleta';")
+    main_window.label_6.setStyleSheet("color: #ffe34c; font: 25px 'Trajan'; ")
+    # labels
+    main_window.label.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.label_2.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.matches_found.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.label_3.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.label_4.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.susp_stores_lbl.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.label_7.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.current_store_lbl.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.label_8.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.known_stores_lbl.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.label_9.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.kknown_prod_lbl.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.label_10.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    main_window.examined_prod_lbl.setStyleSheet("color: #EEEEEE; font: 20px; ")
+    # Button Show Report
+
+    set_button_stylesheet(main_window.pushButton)
+    main_window.stackedWidget.setStyleSheet(
+        "QStackedWidget QTableWidget#Page1 QHeaderView::section {"
+        " background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+        " stop:0 #616161, stop: 0.5 #505050,"
+        " stop: 0.6 #434343, stop:1 #656565);"
+        " color: white;"
+        " padding-left: 4px;"
+        " border: 1px solid #6c6c6c;"
+        "}")
+    # Table
+    main_window.tableView.setStyleSheet("QTableView { background-color: #383838;"
+                                        "gridline-color: #000000;"
+                                        "}"
+                                        "QHeaderView::section {"
+                                        "background-color: #708090;"
+                                        "padding: 4px;"
+                                        "}"
+                                        "QTableView QTableCornerButton::section { background: #708090;"
+                                        "border: 1px inset #708090;"
+                                        "}"
+                                        "QHeaderView { font-size: 20pt; "
+                                        "qproperty-defaultAlignment: AlignHCenter;"
+                                        "background-color: #383838;"
+                                        "}")
+    # Button Export
+    main_window.export_btn.setObjectName("button_export")
+    icon_path = '/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/export-icon.png'
+    main_window.export_btn.setIcon(QIcon(icon_path))
+    main_window.export_btn.setStyleSheet("QPushButton#button_export { "
+                                         "color: #333; "
+                                         "font-weight: bold;"
+                                         "border: 2px solid #555; "
+                                         "border-radius: 20px; "
+                                         "border-style: outset; "
+                                         "background: qradialgradient( "
+                                         "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                         "radius: 1.35, stop: 0 #fff, stop: 1 #8d2663 "
+                                         "); "
+                                         "padding: 60px; "
+                                         "} "
+                                         "QPushButton#button_export:hover { "
+                                         "background: qradialgradient( "
+                                         "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                         "radius: 1.35, stop: 0 #fff, stop: 1 #7e2259 "
+                                         "); "
+                                         "} "
+                                         "QPushButton#button_export:pressed { "
+                                         "border-style: inset; "
+                                         "background: qradialgradient( "
+                                         "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                         "radius: 1.35, stop: 0 #e5e5e5, stop: 1 #701e4f "
+                                         "); "
+                                         "}")
+    # Button Back
+    main_window.back_btn.setObjectName("button_back")
+    main_window.back_btn.setStyleSheet("QPushButton#button_back { "
+                                       "color: #333; "
+                                       "border: 2px solid #555; "
+                                       "border-radius: 20px; "
+                                       "border-style: outset; "
+                                       "background: qradialgradient( "
+                                       "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                       "radius: 1.35, stop: 0 #fff, stop: 1 #888 "
+                                       "); "
+                                       "padding: 5px; "
+                                       "} "
+                                       "QPushButton#button_back:hover { "
+                                       "background: qradialgradient( "
+                                       "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                       "radius: 1.35, stop: 0 #fff, stop: 1 #7a7a7a "
+                                       "); "
+                                       "} "
+                                       "QPushButton#button_back:pressed { "
+                                       "border-style: inset; "
+                                       "background: qradialgradient( "
+                                       "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                       "radius: 1.35, stop: 0 #e5e5e5, stop: 1 #6d6d6d "
+                                       "); "
+                                       "}")
+    # Button Refresh
+    main_window.refresh_btn.setObjectName("refresh_btn")
+    icon_path = '/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/refresh.png'
+    main_window.refresh_btn.setIcon(QIcon(icon_path))
+    main_window.refresh_btn.setIconSize(QSize(28, 28))
+    main_window.refresh_btn.setStyleSheet("QPushButton#refresh_btn { "
+                                          "color: #333; "
+                                          "border: 2px solid #555; "
+                                          "border-radius: 21px; "
+                                          "border-style: outset; "
+                                          "background: qradialgradient( "
+                                          "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                          "radius: 1.35, stop: 0 #fff, stop: 1 #7ec490 "
+                                          "); "
+                                          "padding: 5px; "
+                                          "} "
+                                          "QPushButton#refresh_btn:hover { "
+                                          "background: qradialgradient( "
+                                          "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                          "radius: 1.35, stop: 0 #fff, stop: 1 #71b081 "
+                                          "); "
+                                          "} "
+                                          "QPushButton#refresh_btn:pressed { "
+                                          "border-style: inset; "
+                                          "background: qradialgradient( "
+                                          "cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, "
+                                          "radius: 1.35, stop: 0 #e5e5e5, stop: 1 #649c73 "
+                                          "); "
+                                          "}")
+
+def set_style_for_welcome_screen(welcome):
+    welcome.centralwidget.setStyleSheet("QPushButton { "
+                                     "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #5B5B5B, stop:1 #EDEDED);"
+                                     "color: #333325;"
+                                     "font: bold 12px 'verdana';"
+                                     "padding: 10; "
+                                     "width: 100%;"
+                                     "border: 3px solid;"
+                                     "border-color: #8C8E81;"
+                                     "border-radius: 14px;"
+                                     "border-style: outset;"
+                                     "}"
+                                     "QPushButton:hover { "
+                                     "color: #454542;"
+                                     "}"
+                                     "QPushButton:pressed { "
+                                     "font: bold 11px 'verdana';"
+                                     "text-align: center;"
+                                     "border-style: inset;"
+                                     "}"
+                                     "QToolButton { "
+                                     "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #5B5B5B, stop:1 #EDEDED);"
+                                     "color: #333325;"
+                                     "font: 10px 'verdana';"
+                                     "padding: 4; "
+                                     "border: 3px solid;"
+                                     "border-color: #8C8E81;"
+                                     "border-radius: 8px;"
+                                     "border-style: outset;"
+                                     "}"
+                                     "QToolButton::hover { "
+                                     "color: #454542;"
+                                     "}"
+                                     "QToolButton:pressed { "
+                                     "font: 9px 'verdana';"
+                                     "text-align: center;"
+                                     "border-style: inset;"
+                                     "}")
+    welcome.finish_settings.setStyleSheet("QPushButton { "
+                                       "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #54163b, stop:1 #8d2663);"
+                                       "color: #e5e5e5;"
+                                       "font: bold 12px 'verdana';"
+                                       "padding: 10; "
+                                       "border: 3px solid;"
+                                       "border-color: #8C8E81;"
+                                       "border-radius: 14px;"
+                                       "border-style: outset;"
+                                       "}"
+                                       "QPushButton::hover { "
+                                       "color: #b2b2b2;"
+                                       "}"
+                                       "QPushButton:pressed { "
+                                       "font: bold 11px 'verdana';"
+                                       "text-align: center;"
+                                       "border-style: inset;"
+                                       "}")
+    welcome.next_page2.setStyleSheet("QPushButton { "
+                                     "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #5B5B5B, stop:1 #EDEDED);"
+                                     "color: #333325;"
+                                     "font: bold 12px 'verdana';"
+                                     "padding: 10; "
+                                     "width: 100%;"
+                                     "border: 3px solid;"
+                                     "border-color: #8C8E81;"
+                                     "border-radius: 14px;"
+                                     "border-style: outset;"
+                                     "}"
+                                     "QPushButton:hover { "
+                                     "color: #454542;"
+                                     "}"
+                                     "QPushButton:pressed { "
+                                     "font: bold 11px 'verdana';"
+                                     "text-align: center;"
+                                     "border-style: inset;"
+                                     "}"
+                                     "QToolButton { "
+                                     "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #5B5B5B, stop:1 #EDEDED);"
+                                     "color: #333325;"
+                                     "font: bold 12px 'verdana';"
+                                     "padding: 10; "
+                                     "border: 3px solid;"
+                                     "border-color: #8C8E81;"
+                                     "border-radius: 14px;"
+                                     "border-style: outset;"
+                                     "}"
+                                     "QToolButton::hover { "
+                                     "color: #454542;"
+                                     "}"
+                                     "QToolButton:pressed { "
+                                     "font: bold 11px 'verdana';"
+                                     "text-align: center;"
+                                     "border-style: inset;"
+                                     "}")

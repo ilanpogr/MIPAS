@@ -2,7 +2,6 @@ import cv2
 from image_matching_module.algorithms.comparison_algorithm import ComparisonAlgorithm
 
 
-# TODO: CHANGE HISTOGRAMS OF IMAGES SENT TO CALCULATE_SCORE INTO JUST THE IMAGES
 class FeatureComparisonAlgorithm(ComparisonAlgorithm):
 
     def __init__(self, name_of_algorithm):
