@@ -515,13 +515,12 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
                     num_of_updates = 0
 
             else:
-                if i < 41:  # todo - remove if after debug - or modify for DEMO
-                    # print('************************************************************************************')
-                    # print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-                    # print('************************************************************************************')
-                    download_all_products_from_store(name, url)
-                    append_store_to_cache(url)
-                    # print_output_for_debug(start_time)
+                # print('************************************************************************************')
+                # print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
+                # print('************************************************************************************')
+                download_all_products_from_store(name, url)
+                append_store_to_cache(url)
+                # print_output_for_debug(start_time)
             store_products = set()
             product_img_url_dict.clear()
     append_store_to_multi_threading(multi_threading_end_of_file)

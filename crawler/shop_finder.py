@@ -149,8 +149,7 @@ def search_for_stores_with_url(url, num_stores_signal):
     global search_iteration_counter
 
     search_iteration_counter += 1
-    # for _ in range(1, search_page_last + 1):  # todo - remove comment and delete next line after debug
-    for _ in range(1, 4):
+    for _ in range(1, search_page_last + 1):
         full_url = url + str(search_page_counter)
         data = get_next_page_search_shops(full_url)
         get_stores_from_products_page(data, num_stores_signal)
@@ -175,7 +174,7 @@ def search_for_stores(user_store_category, user_sub_category, signal_status_sear
         sub_category_url_without_page_number = 'https://www.etsy.com/il-en/c/{category}/{sub_category}?explicit=1&order=most_relevant&ref=pagination&page='.format(
             category=store_category, sub_category=sub_c)
         current_status = "Searching by store's sub-category: " + sub_c
-        # search_for_stores_with_url(sub_category_url_without_page_number, num_stores_signal) #  todo - uncomment after debug
+        search_for_stores_with_url(sub_category_url_without_page_number, num_stores_signal)
 
     save_stores_dict_to_csv()
     save_stores_dict_to_csv_as_backup()
