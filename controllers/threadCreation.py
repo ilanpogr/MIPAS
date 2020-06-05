@@ -51,7 +51,7 @@ class WorkerCrawler(Worker):
         self.connect_signals()
         self.task_changed.emit(False)
         counter = 3
-        time.sleep(1)
+        # time.sleep(1)
         for i in range(4):
             time.sleep(1)
             self.started.emit(counter)
@@ -73,6 +73,7 @@ class WorkerImageMatcher(Worker):
     up_to_date = pyqtSignal(int)
     current_store_name = pyqtSignal(str)
     examined_products = pyqtSignal(int)
+    demo_stores = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
@@ -82,11 +83,12 @@ class WorkerImageMatcher(Worker):
         self.finished.connect(main_window.run_finished)
         self.current_store_name.connect(main_window.update_current_store)
         self.examined_products.connect(main_window.update_examined_products)
+        self.demo_stores.connect(main_window.check_results_DEMO)
 
     @pyqtSlot(str)
     def execute_parallel(self):
         self.connect_signals()
-        Controller.compare_images(self.status_changed, int(main_window.num_of_stores), self.current_store_name, self.examined_products)
+        Controller.compare_images(self.status_changed, int(main_window.num_of_stores), self.current_store_name, self.examined_products, self.demo_stores)
         self.current_store_name.emit(None)
         self.finished.emit()
         self.thread.quit()

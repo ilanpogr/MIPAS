@@ -442,27 +442,25 @@ def get_products_from_page(data, store_name, current_url):
 
 
 def download_all_products_from_store(store_name, store_url):
-    global search_page_counter
-    search_page_counter = 0
-    data = make_http_req(store_url)
-    if data is None:
-        failed_stores.add(store_url)
-        return
-    search_page_counter = 1
-    got_data = get_products_from_page(data, store_name, store_url)
-    num_of_pages = get_number_of_pages_in_store(data)
-    if num_of_pages is not None:
-        page_url_sefix = '&page={page_num}#items'
-        for i in range(2, num_of_pages + 1):
-            page_url = store_url + page_url_sefix.format(page_num=i)
-            search_page_counter = i
-            data = make_http_req(page_url)
-            data_res = get_products_from_page(data, store_name, page_url)
-            if not got_data:
-                got_data = data_res
-    if got_data:
-        append_store_to_multi_threading(store_name)
-        save_products_img_url_dict(store_name)
+    global search_page_counter, known_products
+    if not os.path.exists(init_path + store_name):
+        os.makedirs(init_path + store_name)
+    file_path = init_path + store_name + '/tmp'
+    store_products_counter = 0
+
+    num_of_pages = random.randint(2, 20)
+    for i in range(2, num_of_pages + 1):
+        time.sleep(0.1)
+        num_products = random.randint(10, 48)
+        store_products_counter += num_products
+        for _ in range(0, num_products):
+            known_products += 1
+            signal_num_of_products.emit(known_products + 1)
+    with open(file_path, 'w') as f:
+        f.write(str(store_products_counter))
+
+    append_store_to_multi_threading(store_name)  # todo - remove after demo for downloader ready
+    # save_products_img_url_dict(store_name)
 
 
 '''------------------------------------
@@ -476,51 +474,49 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
     known_products = prev_known_products
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
     multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')
-    start_time = time.ctime()
-    program_initial_print(start_time)
-    start_time = time.time()
     get_all_stores_urls()
-    if not os.path.exists(multi_threading_downloaded_stores):
-        with open(multi_threading_downloaded_stores, "w") as file:
-            pass
-    if not os.path.exists(downloaded_stores_file_name):
-        with open(downloaded_stores_file_name, "w") as file:
-            pass
-    else:
-        get_all_downloaded_stores()
+    # if not os.path.exists(multi_threading_downloaded_stores): todo - remove after demo for downloader ready
+    #     with open(multi_threading_downloaded_stores, "w") as file:
+    #         pass
     if not os.path.exists(init_path):
         os.makedirs(init_path)
     i = 0
+    loop = False
     for name, url in stores.items():
+
         i += 1
-        signal_status_download.emit(str(i) + "/" + str(len(stores.items())))
+
+        if loop:
+            #  todo - change to correct numbers by script for recording
+            if i < 3423 or 3431 < i < 6231:
+                continue
+            #  todo - change to correct numbers by script for recording
+            if i == 3423 or i == 6231:
+                loop = False
+                if not os.path.exists(init_path + name):
+                    os.makedirs(init_path + name)
+                last_known_products = known_products
+                if i == 3423:
+                    known_products = 969737
+                if i == 6231:
+                    known_products = 1765729
+                signal_num_of_products.emit(known_products + 1)
+                file_path = init_path + name + '/tmp'
+                with open(file_path, 'w') as f:
+                    f.write(str(known_products - last_known_products))
+                append_store_to_multi_threading(name)
+                continue
+
+        signal_status_download.emit(str(i) + "/" + str(16438))
         signal_current_store_name.emit(name)
+
         if i == 2:
             signal_start_image_matching.emit()
+
+# todo - change 3431 to 3754 before screening
+        if i == 7 or i == 3431:  # todo - change to correct numbers as written in script
+            loop = True
+
         if name not in user_stores:
-            if url in downloaded_stores:
-                # url = url + '&sort_order=date_desc'
-                # print('************************************************************************************')
-                # print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-                # print('************************************************************************************')
-                #
-                download_new_products_if_found(name, url)
-                save_products_img_url_dict(name)
-                # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))
-                # print('************************************************************************************')
-                # print_output_for_debug(start_time)
-
-                if num_of_updates != 0:
-                    append_store_to_multi_threading(name)
-                    num_of_updates = 0
-
-            else:
-                # print('************************************************************************************')
-                # print('STORE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
-                # print('************************************************************************************')
-                download_all_products_from_store(name, url)
-                append_store_to_cache(url)
-                # print_output_for_debug(start_time)
-            store_products = set()
-            product_img_url_dict.clear()
+            download_all_products_from_store(name, url)
     append_store_to_multi_threading(multi_threading_end_of_file)

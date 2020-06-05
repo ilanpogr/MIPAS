@@ -39,6 +39,9 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.controller = ThreadController(self)
 
     def update_known_stores(self, value):
+        # if self.num_of_stores is not None:
+        #     self.num_of_stores = str(value + int(self.num_of_stores))
+        # else:
         self.num_of_stores = str(value)
         self.known_stores_lbl.setText(str(value))
 
@@ -75,7 +78,12 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         return str(len(num_of_susp_stores))
 
     def check_results(self):
-        results_path = "resources/photos/final_results.csv"
+        pass
+
+    def check_results_DEMO(self, value):
+        results_path = ""
+        if value == 1:
+            results_path = "resources/photos/final_results_demo1.csv"
         if os.path.exists(results_path):
             lock_manager = LockManager()
             lines = lock_manager.read_results(results_path)

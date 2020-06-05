@@ -34,7 +34,7 @@ def get_num_of_rows_from_file(stores_dict_path):
         return len(data)
 
 
-def compare_images(signal_status, total_store_number, signal_current_store_name, signal_examined_products):
+def compare_images(signal_status, total_store_number, signal_current_store_name, signal_examined_products, signal_demo_stores):
     user_photos_path = configUtils.get_property('dataset_path')
     stores_dict_path = configUtils.get_property('stores_dict')
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
@@ -58,11 +58,15 @@ def compare_images(signal_status, total_store_number, signal_current_store_name,
             if current_store == multi_threading_end_file:
                 break
             else:
-                store_path = "resources/photos/" + current_store
-                signal_status.emit("@%@" + str(next_store_index))
-                signal_current_store_name.emit("@%@" + current_store)
-                image_matcher.run_matching_for_store(None, store_path)
+
+                # num_products = 0
+                # if next_store_index == 82:
+                #
+                # else:
+                if current_store == 'TheYaYaShoppe':
+                    signal_demo_stores(1)
                 num_products = get_number_products_for_store(current_store)
+                # time.sleep(num_products / 1000)
                 signal_examined_products.emit(num_products)
                 next_store_index += 1
                 need_new_store = True
@@ -76,12 +80,12 @@ def compare_images_all_stores():
 
 def get_number_products_for_store(name):
     path = "resources/photos/{0}/".format(name)
-    try:
-        f = open(path + "num_products")
-        return int(f.readline())
-    except FileNotFoundError:
-        image_extensions = {"jpg", "JPG", "png", "PNG", "JPEG", "jpeg"}
-        counter = 0
-        for extn in image_extensions:
-            counter += len(glob.glob1(path, "*.{0}".format(extn)))
-        return counter
+    # try:
+    f = open(path + "tmp")
+    return int(f.readline())
+    # except FileNotFoundError:
+    #     image_extensions = {"jpg", "JPG", "png", "PNG", "JPEG", "jpeg"}
+    #     counter = 0
+    #     for extn in image_extensions:
+    #         counter += len(glob.glob1(path, "*.{0}".format(extn)))
+    #     return counter
