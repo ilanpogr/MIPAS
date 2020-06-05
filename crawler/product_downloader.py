@@ -459,7 +459,7 @@ def download_all_products_from_store(store_name, store_url):
     with open(file_path, 'w') as f:
         f.write(str(store_products_counter))
 
-    append_store_to_multi_threading(store_name)  # todo - remove after demo for downloader ready
+    append_store_to_multi_threading(store_name)
     # save_products_img_url_dict(store_name)
 
 
@@ -475,9 +475,9 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
     multi_threading_end_of_file = configUtils.get_property('multi_threading_end_of_file')
     get_all_stores_urls()
-    # if not os.path.exists(multi_threading_downloaded_stores): todo - remove after demo for downloader ready
-    #     with open(multi_threading_downloaded_stores, "w") as file:
-    #         pass
+    if not os.path.exists(multi_threading_downloaded_stores):
+        with open(multi_threading_downloaded_stores, "w") as file:
+            pass
     if not os.path.exists(init_path):
         os.makedirs(init_path)
     i = 0
@@ -487,16 +487,14 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
         i += 1
 
         if loop:
-            #  todo - change to correct numbers by script for recording -- 3423 to 3268
-            if i < 3423 or 3431 < i < 6231:
+            if i < 3268 or 3754 < i < 6231:
                 continue
-            #  todo - change to correct numbers by script for recording
-            if i == 3423 or i == 6231:
+            if i == 3268 or i == 6231:
                 loop = False
                 if not os.path.exists(init_path + name):
                     os.makedirs(init_path + name)
                 last_known_products = known_products
-                if i == 3423:
+                if i == 3268:
                     known_products = 969737
                 if i == 6231:
                     known_products = 1765729
@@ -513,8 +511,7 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
         if i == 2:
             signal_start_image_matching.emit()
 
-# todo - change 3431 to 3754 before screening
-        if i == 7 or i == 3431:  # todo - change to correct numbers as written in script
+        if i == 147 or i == 3268:
             loop = True
 
         if name not in user_stores:
