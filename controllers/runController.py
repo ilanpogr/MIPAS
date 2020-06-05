@@ -63,8 +63,8 @@ def compare_images(signal_status, total_store_number, signal_current_store_name,
                 # if next_store_index == 82:
                 #
                 # else:
-                if current_store == 'TheYaYaShoppe':
-                    signal_demo_stores(1)
+                if current_store == 'ELEMENTisle':
+                    signal_demo_stores.emit(1)
                 num_products = get_number_products_for_store(current_store)
                 # time.sleep(num_products / 1000)
                 signal_examined_products.emit(num_products)
