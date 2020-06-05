@@ -18,7 +18,7 @@ from PIL import Image
 class Results(QMainWindow):
     def __init__(self, data, table_view, export_btn, parent=None):
         super(Results, self).__init__(parent)
-        table_view.doubleClicked.connect(self.cell_clicked)
+        table_view.clicked.connect(self.cell_clicked)
 
         self.model = TableModel(data)
         header = table_view.horizontalHeader()

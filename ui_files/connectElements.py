@@ -25,9 +25,9 @@ def set_initial_screen(main_window):
     set_colors_to_elements(main_window)
 
 
-def get_data_for_table():
-    if os.path.isfile(results_file):
-        results = resultsExtractor.ResultsExtractor(results_file)
+def get_data_for_table(file):
+    if os.path.isfile(file):
+        results = resultsExtractor.ResultsExtractor(file)
         return results.read_results()
 
 

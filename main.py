@@ -84,6 +84,8 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         results_path = ""
         if value == 1:
             results_path = "resources/photos/final_results_demo1.csv"
+        if value == 2:
+            results_path = "resources/photos/final_results_demo2.csv"
         if os.path.exists(results_path):
             lock_manager = LockManager()
             lines = lock_manager.read_results(results_path)
@@ -157,7 +159,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
     def on_result_button_clicked(self):
         if self.last_num_of_results != self.current_num_of_results:
             self.last_num_of_results = self.current_num_of_results
-        data = connectElements.get_data_for_table()
+        data = connectElements.get_data_for_table("resources/photos/final_results_demo2.csv")
         self.results_dialog = Table.Results(data, self.tableView, self.export_btn)
         self.stackedWidget.setCurrentIndex(1)
 

@@ -487,7 +487,7 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
         i += 1
 
         if loop:
-            #  todo - change to correct numbers by script for recording
+            #  todo - change to correct numbers by script for recording -- 3423 to 3268
             if i < 3423 or 3431 < i < 6231:
                 continue
             #  todo - change to correct numbers by script for recording
