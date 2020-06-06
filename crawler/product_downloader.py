@@ -487,7 +487,7 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
         i += 1
 
         if loop:
-            if i < 3268 or 3754 < i < 6231:
+            if i < 3268 or 3554 < i < 6231:
                 continue
             if i == 3268 or i == 6231:
                 loop = False
@@ -511,7 +511,7 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
         if i == 2:
             signal_start_image_matching.emit()
 
-        if i == 147 or i == 3268:
+        if i == 147 or i == 3554:
             loop = True
 
         if name not in user_stores:
