@@ -3,7 +3,7 @@ import sys
 import time
 
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QAbstractScrollArea, QHeaderView
 
 import configUtils
 from controllers.ReaderWriterLockManager import LockManager
@@ -37,6 +37,7 @@ class MipasApp(mainWindow.Ui_MainWindow, QMainWindow):
         self.id_done = False
 
         self.controller = ThreadController(self)
+
 
     def update_known_stores(self, value):
         # if self.num_of_stores is not None:
@@ -189,7 +190,7 @@ class Welcome(welcomeSettings_v2.Ui_MainWindow, QMainWindow):
 
 
 if __name__ == '__main__':
-    # time.sleep(5)
+    time.sleep(15)
     app = QtWidgets.QApplication(sys.argv)
     if configUtils.is_settings_file_exists():
         mipas_app = MipasApp()

@@ -487,15 +487,15 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
         i += 1
 
         if loop:
-            if i < 3268 or 3554 < i < 6231:
+            if i < 3368 or 3554 < i < 6231:
                 continue
-            if i == 3268 or i == 6231:
+            if i == 3368 or i == 6231:
                 loop = False
                 if not os.path.exists(init_path + name):
                     os.makedirs(init_path + name)
                 last_known_products = known_products
-                if i == 3268:
-                    known_products = 969737
+                if i == 3368:
+                    known_products = 969837
                 if i == 6231:
                     known_products = 1765729
                 signal_num_of_products.emit(known_products + 1)
