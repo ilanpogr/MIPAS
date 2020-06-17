@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1532, 700)
+        MainWindow.resize(1440, 700)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("")
         self.centralwidget.setObjectName("centralwidget")
@@ -165,8 +165,8 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.current_store_lbl.sizePolicy().hasHeightForWidth())
         self.current_store_lbl.setSizePolicy(sizePolicy)
-        self.current_store_lbl.setMinimumSize(QtCore.QSize(130, 0))
-        self.current_store_lbl.setMaximumSize(QtCore.QSize(130, 16777215))
+        self.current_store_lbl.setMinimumSize(QtCore.QSize(190, 0))
+        self.current_store_lbl.setMaximumSize(QtCore.QSize(190, 16777215))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -174,7 +174,7 @@ class Ui_MainWindow(object):
         self.current_store_lbl.setFont(font)
         self.current_store_lbl.setObjectName("current_store_lbl")
         self.horizontalLayout_4.addWidget(self.current_store_lbl)
-        spacerItem8 = QtWidgets.QSpacerItem(340, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        spacerItem8 = QtWidgets.QSpacerItem(280, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem8)
         self.label_10 = QtWidgets.QLabel(self.page)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
