@@ -43,6 +43,7 @@ def create_config_file(platform, store_name, main_category, sub_categories, data
         'main_category': main_category,
         'sub_categories': sub_categories,
         'dataset_path': dataset_path,
+        'working_dataset_path': dataset_path + "_resized",
         'multi_threading_downloaded_stores': 'resources/app_files/downloaded_stores_multi_threading.txt',
         'multi_threading_end_of_file': '~~~',
         'stores_dict': 'resources/app_files/stores_dict.csv',

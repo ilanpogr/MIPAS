@@ -8,7 +8,7 @@ from image_matching_module.image_matching import ImageMatching
 import controllers.ReaderWriterLockManager as LockManager
 import os
 import glob
-
+from image_matching_module import manipulation
 
 downloaded_products_path = "resources/photos"
 
@@ -35,7 +35,7 @@ def get_num_of_rows_from_file(stores_dict_path):
 
 
 def compare_images(signal_status, total_store_number, signal_current_store_name, signal_examined_products):
-    user_photos_path = configUtils.get_property('dataset_path')
+    user_photos_path = configUtils.get_property('working_dataset_path')
     stores_dict_path = configUtils.get_property('stores_dict')
     multi_threading_downloaded_stores = configUtils.get_property('multi_threading_downloaded_stores')
     multi_threading_end_file = configUtils.get_property('multi_threading_end_of_file')
@@ -85,3 +85,8 @@ def get_number_products_for_store(name):
         for extn in image_extensions:
             counter += len(glob.glob1(path, "*.{0}".format(extn)))
         return counter
+
+
+def resize_data_set():
+    user_photos_path = configUtils.get_property('dataset_path')
+    manipulation.resize_all_images_in_path(user_photos_path)

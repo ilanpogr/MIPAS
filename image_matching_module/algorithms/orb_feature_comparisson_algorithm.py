@@ -1,6 +1,7 @@
 import cv2
 from image_matching_module.algorithms.feature_comparison_algorithm import FeatureComparisonAlgorithm
-
+from image_matching_module import manipulation
+import numpy as np
 
 class ORBFeatureComparisonAlgorithm(FeatureComparisonAlgorithm):
 
@@ -83,8 +84,10 @@ class ORBFeatureComparisonAlgorithm(FeatureComparisonAlgorithm):
         return len(matches) / less_features
 
     def calculate_score(self,origin_image, to_compare_image):
+        if not (type(origin_image) is np.ndarray and type(to_compare_image) is np.ndarray):
+            return TypeError
 
-        origin_image_mirror_horizontal = FeatureComparisonAlgorithm.flipped_image_horizontal(origin_image)
+        origin_image_mirror_horizontal = manipulation.flipped_image_horizontal(origin_image)
         key_points1, description1, key_points2, description2, key_points3, description3 = self.detect_and_compute(origin_image,to_compare_image,origin_image_mirror_horizontal)
 
         # if is_there_no_features_found(description1, description2, description3):
@@ -94,7 +97,8 @@ class ORBFeatureComparisonAlgorithm(FeatureComparisonAlgorithm):
                                                                                                           description2,
                                                                                                           description3)
 
-        less_features_origin_to_compare, less_features_origin_horizontal_compare = self.calculate_less_features_matches(description1, description2, description3)
+        less_features_origin_to_compare, less_features_origin_horizontal_compare = self.calculate_less_features_matches\
+            (description1, description2, description3)
 
         score_origin_to_compare = self.calculate_score_of_two_images(matches_origin_to_compare,
                                                                      less_features_origin_to_compare)
