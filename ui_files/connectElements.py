@@ -47,10 +47,10 @@ def connect_welcome_buttons(welcome_screen):
     retranslate_welcome_ui(welcome_screen)
 
     # for mock-up!  ---- DEMO
-    welcome_screen.store_names.setText("Store-A,Store-B")
-    welcome_screen.store_main_category.setText("jewelry")
-    welcome_screen.store_sub_categories.setText("necklaces,earrings,bracelets,rings")
-    welcome_screen.path_str.setText("F:/avi/test_image_maching/tmpCustomer")
+    # welcome_screen.store_names.setText("Store-A,Store-B")
+    # welcome_screen.store_main_category.setText("jewelry")
+    # welcome_screen.store_sub_categories.setText("necklaces,earrings,bracelets,rings")
+    # welcome_screen.path_str.setText("F:/avi/test_image_maching/tmpCustomer")
 
 
 def _open_file_dialog(welcome_screen):
