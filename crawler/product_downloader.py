@@ -263,12 +263,8 @@ def get_products_from_updated_page(data, store_name, current_url):
             pruduct_url = ''
             if img is not None:
                 try:
-                    # resp, data = http.request(img['src'])
-                    # if resp.status == 200:
-                    res = http.urlopen(current_url)
-                    resp = res.code
-                    data = res.read()
-                    if resp == 200:
+                    resp, data = http_photos.request(img['src'])
+                    if resp.status == 200:
 
                         file_name = img['src'].split('?version', 1)[0].split(default_image_size_str)[1]
                         if not is_file_exist(file_name, store_path):
@@ -283,19 +279,15 @@ def get_products_from_updated_page(data, store_name, current_url):
                     failed_products[store_name + ',' + current_url] = img['src']
                 except(KeyError, AttributeError):
                     try:
-                        # resp, data = http.request(img['data-src'])
-                        # if resp.status == 200:
-                        res = http.urlopen(current_url)
-                        resp = res.code
-                        data = res.read()
-                        if resp == 200:
+                        resp, data = http_photos.request(img['data-src'])
+                        if resp.status == 200:
 
                             file_name = img['src'].split('?version', 1)[0].split(default_image_size_str)[1]
                             if not is_file_exist(file_name, store_path):
                                 product_url = a['href']
                                 download_image(resp, data, store_name, img['data-src'], product_url)
                                 new_images = True
-                                num_of_updates += 1 
+                                num_of_updates += 1
                         else:
                             failed_products[store_name + ',' + current_url] = img['data-src']
                     # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
