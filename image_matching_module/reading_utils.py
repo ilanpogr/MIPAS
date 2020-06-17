@@ -2,6 +2,8 @@ import os
 from typing import List, Tuple, Set
 import cv2
 from PIL import Image
+from image_matching_module import manipulation
+import numpy as np
 
 
 class ReadingUtils:
@@ -23,7 +25,12 @@ class ReadingUtils:
         :param tuple_image_path_and_name: The given tuple of (path to image, image name).
         :return: The image of the given tuple.
         """
+        if not (type(tuple_image_path_and_name) is tuple and type(tuple_image_path_and_name[0]) is str and
+            type(tuple_image_path_and_name[1]) is str):
+            return TypeError
         image_name = tuple_image_path_and_name[0] + "/" + tuple_image_path_and_name[1]
+        if not os.path.isfile(image_name):
+            return FileNotFoundError
         return cv2.imread(image_name)
 
     @staticmethod
@@ -34,7 +41,12 @@ class ReadingUtils:
         :param tuple_image_path_and_name: The given tuple of (path to image, image name).
         :return: The image of the given tuple.
         """
+        if not (type(tuple_image_path_and_name) is tuple and type(tuple_image_path_and_name[0]) is str and
+                type(tuple_image_path_and_name[1]) is str):
+            return TypeError
         image_name = tuple_image_path_and_name[0] + "/" + tuple_image_path_and_name[1]
+        if not os.path.isfile(image_name):
+            return FileNotFoundError
         return Image.open(image_name)
 
     @staticmethod
@@ -45,6 +57,10 @@ class ReadingUtils:
         :param tuple_path_list: List of tuple (path to image, image name)
         :return: List of tuples containing (image name, image)
         """
+        if not type(tuple_path_list) is list:
+            return TypeError
+        if not os.path.isfile(tuple_path_list[0][0] + "/" + tuple_path_list[0][1]):
+            return FileNotFoundError
         all_images = []
         for image_path in tuple_path_list:
             all_images.append((image_path[1], ReadingUtils.reading_image_from_tuple_path_open_cv(image_path)))
@@ -58,6 +74,8 @@ class ReadingUtils:
         :param path: The given path of the images.
         :return: List of tuples containing (path to image, image name)
         """
+        if type(path) is not str:
+            return TypeError
         images = []
         for r, d, f in os.walk(path):
             for file in f:
@@ -75,6 +93,10 @@ class ReadingUtils:
         :param path_to_csv_files: The given path to csv files.
         :return: List of the path to the csv files.
         """
+        if type(path_to_csv_files) is not str:
+            return TypeError
+        if not os.path.isdir(path_to_csv_files):
+            return NotADirectoryError
         csv_files_paths = []
         for r, d, f in os.walk(path_to_csv_files):
             for file in f:
@@ -91,6 +113,10 @@ class ReadingUtils:
         :param stores_path: The path to the stores folder.
         :return: A list of the full path to the store.
         """
+        if type(stores_path) is not str:
+            return TypeError
+        if not os.path.isdir(stores_path):
+            return NotADirectoryError
         sub_folders = [stores_path + "/" + dI for dI in os.listdir(stores_path) if os.path.isdir
                                                                 (os.path.join(stores_path, dI))]
         return sub_folders
@@ -120,11 +146,15 @@ class ReadingUtils:
 
     @staticmethod
     def init_algorithm_and_weights_dict(algorithms_and_weights_list):
+        if type(algorithms_and_weights_list) is not list:
+            return TypeError
         algorithms_and_weights_dict = {}
         for algorithm_and_weight in algorithms_and_weights_list:
             algorithm , weight = algorithm_and_weight.split(",")
             if "\n" in weight:
                 weight = weight.strip()
+            if float(weight) > 1:
+                return ValueError
             algorithms_and_weights_dict[algorithm] = weight
         return algorithms_and_weights_dict
 

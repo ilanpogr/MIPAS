@@ -50,6 +50,7 @@ class WorkerCrawler(Worker):
     def execute(self):
         self.connect_signals()
         self.task_changed.emit(False)
+        Controller.resize_data_set()
         counter = 3
         time.sleep(1)
         for i in range(4):

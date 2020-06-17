@@ -1,16 +1,11 @@
 import cv2
 from image_matching_module.algorithms.comparison_algorithm import ComparisonAlgorithm
+from image_matching_module import manipulation
 
 
 class FeatureComparisonAlgorithm(ComparisonAlgorithm):
-
     def __init__(self, name_of_algorithm):
         super().__init__(name_of_algorithm)
-
-    @staticmethod
-    def flipped_image_horizontal(image):
-        flipped_horizontal =  cv2.flip(image, 1)
-        return flipped_horizontal
 
     def calculate_score(self, origin_image, to_compare_image):
         pass
@@ -24,7 +19,7 @@ class FeatureComparisonAlgorithm(ComparisonAlgorithm):
                 # create a tuple for the compared pairs
                 image_pair_tuple = (origin_image[0],to_compare_image[0])
 
-                origin_image_mirror_horizontal = self.flipped_image_horizontal(origin_image[1])
+                origin_image_mirror_horizontal = manipulation.flipped_image_horizontal(origin_image[1])
 
                 # get the score
                 score = self.calculate_score(origin_image[1], to_compare_image[1], origin_image_mirror_horizontal)

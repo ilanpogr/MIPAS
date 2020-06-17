@@ -68,11 +68,11 @@ class ImageMatching:
         # run in-depth image matching on all images that passed the initial filtering
         in_depth_results = self.run_in_depth_filtering(initial_results)
 
-        # write results to store results file (overwrite old file if exists)
-        WU.write_store_results_to_file(store_path, in_depth_results)
-
         # get list of previous store results, if exists
         prev_store_results = RU.get_prev_store_results(store_path)
+
+        # write results to store results file (overwrite old file if exists)
+        WU.write_store_results_to_file(store_path, in_depth_results)
 
         # merge results with total results file (create one if doesn't exist)
         if prev_store_results is None:

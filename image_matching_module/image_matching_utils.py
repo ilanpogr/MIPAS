@@ -33,6 +33,10 @@ class ImageMatchingUtils:
         :param batch_size: the size of each batch.
         :return: a list containing lists with images' paths that represent batches (each inner list is a batch).
         """
+        if type(batch_size) is not int:
+            return TypeError
+        if batch_size <= 0:
+            return ValueError
         list_of_batches = []
         for i in range(0, len(images_list), batch_size):
             list_of_batches.append(images_list[i:i + batch_size])
@@ -56,6 +60,10 @@ class ImageMatchingUtils:
         :return: a list of InitialImagePair objects containing only the image pairs that got a valid
         score from the initial filtering algorithms.
         """
+        if not (type(customer_path) is str and type(customer_images_batch) is list and
+                type(store_images_batch) is list and type(initial_algorithms) is list and
+                type(store_path) is str and type(initial_threshold) is Decimal):
+            return TypeError
 
         initial_score_passed_list = []
         for customer_image in customer_images_batch:
@@ -93,6 +101,10 @@ class ImageMatchingUtils:
         :return: a list of InDepthImagePair objects containing only the image pairs that got a valid score
         from the in depth filtering algorithms.
         """
+
+        if not (type(image_pair_batch) is list and type(in_depth_algorithms) is list and
+                type(initial_score_weight) is Decimal and type(in_depth_threshold) is Decimal):
+            return TypeError
 
         in_depth_passed_list = []
 

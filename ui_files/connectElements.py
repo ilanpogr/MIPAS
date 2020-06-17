@@ -13,6 +13,7 @@ results_file = "resources/photos/final_results.csv"
 
 def set_initial_screen(main_window):
     main_window.setWindowTitle("MIPAS")
+    main_window.label_3.setText("Please wait, configuring data.")
     main_window.stackedWidget.setCurrentIndex(0)
     main_window.pushButton.setVisible(False)
     main_window.back_btn.clicked.connect(lambda: main_window.stackedWidget.setCurrentIndex(0))
@@ -46,10 +47,10 @@ def connect_welcome_buttons(welcome_screen):
     retranslate_welcome_ui(welcome_screen)
 
     # for mock-up!  ---- DEMO
-    # welcome_screen.store_names.setText("Store-A,Store-B")
-    # welcome_screen.store_main_category.setText("jewelry")
-    # welcome_screen.store_sub_categories.setText("necklaces,earrings,bracelets,rings")
-    # welcome_screen.path_str.setText("/Users/ipogrebinsky/Documents/School/Final Project/Artisan Pictures_mini")
+    welcome_screen.store_names.setText("Store-A,Store-B")
+    welcome_screen.store_main_category.setText("jewelry")
+    welcome_screen.store_sub_categories.setText("necklaces,earrings,bracelets,rings")
+    welcome_screen.path_str.setText("F:/avi/test_image_maching/tmpCustomer")
 
 
 def _open_file_dialog(welcome_screen):
