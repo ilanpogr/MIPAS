@@ -13,7 +13,7 @@ results_file = "resources/photos/final_results.csv"
 
 def set_initial_screen(main_window):
     main_window.setWindowTitle("MIPAS")
-    main_window.label_3.setText("Please wait, configuring data.")
+    set_label_configure_data(main_window)
     main_window.stackedWidget.setCurrentIndex(0)
     main_window.pushButton.setVisible(False)
     main_window.back_btn.clicked.connect(lambda: main_window.stackedWidget.setCurrentIndex(0))
@@ -24,6 +24,10 @@ def set_initial_screen(main_window):
     qr.moveCenter(cp)
     main_window.move(qr.topLeft())
     set_colors_to_elements(main_window)
+
+
+def set_label_configure_data(main_window):
+    main_window.label_3.setText("Please wait, configuring data.")
 
 
 def get_data_for_table():

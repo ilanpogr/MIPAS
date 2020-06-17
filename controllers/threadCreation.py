@@ -5,7 +5,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot, QRunnable
 from PyQt5.QtWidgets import QApplication
 
 import controllers.runController as Controller
-
+from ui_files import connectElements
 import time
 
 main_window = None
@@ -50,6 +50,7 @@ class WorkerCrawler(Worker):
     def execute(self):
         self.connect_signals()
         self.task_changed.emit(False)
+        connectElements.set_label_configure_data(main_window)
         Controller.resize_data_set()
         counter = 3
         time.sleep(1)
@@ -57,7 +58,7 @@ class WorkerCrawler(Worker):
             time.sleep(1)
             self.started.emit(counter)
             counter -= 1
-        Controller.search_stores(self.status_search, self.current_num_stores)
+        # Controller.search_stores(self.status_search, self.current_num_stores)
         self.task_changed.emit(True)
         prev_known_products = 0
         prev_known_products_lbl = main_window.kknown_prod_lbl.text()

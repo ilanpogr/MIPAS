@@ -13,11 +13,13 @@ def resize_all_images_in_path(path_to_origin):
         os.mkdir(new_path)
     else:
         old_customer_pics = reading_utils.ReadingUtils.get_images_names_in_folder(new_path)
-
+    old_customer_pics_name = []
+    for pic_path_and_name in old_customer_pics:
+        old_customer_pics_name.append(pic_path_and_name[1])
     images_names = reading_utils.ReadingUtils.get_images_names_in_folder(path_to_origin)
     size = 750
     for image_name in images_names:
-        if not old_customer_pics.__contains__(image_name):
+        if not old_customer_pics_name.__contains__(image_name[1]):
             image = resize_image(image_name,size)
             image.save(new_path+ "/" + image_name[1], 'JPEG')
 
