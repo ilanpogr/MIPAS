@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import QDesktopWidget
 
 import resultsTable.resultsExctractor as resultsExtractor
 
+from resources import resources
+
 results_file = "resources/photos/final_results.csv"
 
 
@@ -51,10 +53,10 @@ def connect_welcome_buttons(welcome_screen):
     retranslate_welcome_ui(welcome_screen)
 
     # for mock-up!  ---- DEMO
-    welcome_screen.store_names.setText("Store-A,Store-B")
-    welcome_screen.store_main_category.setText("jewelry")
-    welcome_screen.store_sub_categories.setText("necklaces,earrings,bracelets,rings")
-    welcome_screen.path_str.setText("/Users/ipogrebinsky/Documents/School/Final Project/Artisan Pictures_mini")
+    # welcome_screen.store_names.setText("Store-A,Store-B")
+    # welcome_screen.store_main_category.setText("jewelry")
+    # welcome_screen.store_sub_categories.setText("necklaces,earrings,bracelets,rings")
+    # welcome_screen.path_str.setText("/Users/ipogrebinsky/Documents/School/Final Project/Artisan Pictures_mini")
 
 
 def _open_file_dialog(welcome_screen):
@@ -99,7 +101,7 @@ def set_button_stylesheet(push_button):
 
 def set_colors_to_elements(main_window):
     # Main Window background Image
-    background_image = "/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/DIAMONDS-BANNER_crop.png"
+    background_image = ":/images_app/DIAMONDS-BANNER_crop.png"
     main_window.setStyleSheet("#MainWindow { border-image: url(%s) 0 0 0 0 stretch stretch;"
                               "background-color: #222222; }" % background_image)
     # Title
@@ -149,7 +151,7 @@ def set_colors_to_elements(main_window):
                                         "}")
     # Button Export
     main_window.export_btn.setObjectName("button_export")
-    icon_path = '/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/export-icon.png'
+    icon_path = ':/images_app/export-icon.png'
     main_window.export_btn.setIcon(QIcon(icon_path))
     main_window.export_btn.setStyleSheet("QPushButton#button_export { "
                                          "color: #333; "
@@ -204,7 +206,7 @@ def set_colors_to_elements(main_window):
                                        "}")
     # Button Refresh
     main_window.refresh_btn.setObjectName("refresh_btn")
-    icon_path = '/Users/ipogrebinsky/Documents/School/Final Project/GUI/MIPAS/resources/images_app/refresh.png'
+    icon_path = ':/images_app/refresh.png'
     main_window.refresh_btn.setIcon(QIcon(icon_path))
     main_window.refresh_btn.setIconSize(QSize(28, 28))
     main_window.refresh_btn.setStyleSheet("QPushButton#refresh_btn { "

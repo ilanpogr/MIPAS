@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+  <file>images_app/DIAMONDS-BANNER_crop.png</file>
+  <file>images_app/export-icon.png</file>
+  <file>images_app/refresh.png</file>
+</qresource>
+</RCC>
