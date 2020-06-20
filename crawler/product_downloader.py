@@ -178,6 +178,19 @@ PRODUCTS DOWNLOADER FROM STORES
 ------------------------------------'''
 
 
+def get_number_products_for_downlaoded_store(name):
+    path = "resources/photos/{0}/".format(name)
+    try:
+        f = open(path + "num_products")
+        return int(f.readline())
+    except FileNotFoundError:
+        image_extensions = {"jpg", "JPG", "png", "PNG", "JPEG", "jpeg"}
+        counter = 0
+        for extn in image_extensions:
+            counter += len(glob.glob1(path, "*.{0}".format(extn)))
+        return counter
+
+
 def write_number_products(name):
     image_extensions = {"jpg", "JPG", "png", "PNG", "JPEG", "jpeg"}
     path = "resources/photos/{0}/".format(name)
@@ -263,12 +276,8 @@ def get_products_from_updated_page(data, store_name, current_url):
             pruduct_url = ''
             if img is not None:
                 try:
-                    # resp, data = http.request(img['src'])
-                    # if resp.status == 200:
-                    res = http.urlopen(current_url)
-                    resp = res.code
-                    data = res.read()
-                    if resp == 200:
+                    resp, data = http_photos.request(img['src'])
+                    if resp.status == 200:
 
                         file_name = img['src'].split('?version', 1)[0].split(default_image_size_str)[1]
                         if not is_file_exist(file_name, store_path):
@@ -283,19 +292,15 @@ def get_products_from_updated_page(data, store_name, current_url):
                     failed_products[store_name + ',' + current_url] = img['src']
                 except(KeyError, AttributeError):
                     try:
-                        # resp, data = http.request(img['data-src'])
-                        # if resp.status == 200:
-                        res = http.urlopen(current_url)
-                        resp = res.code
-                        data = res.read()
-                        if resp == 200:
+                        resp, data = http_photos.request(img['data-src'])
+                        if resp.status == 200:
 
                             file_name = img['src'].split('?version', 1)[0].split(default_image_size_str)[1]
                             if not is_file_exist(file_name, store_path):
                                 product_url = a['href']
                                 download_image(resp, data, store_name, img['data-src'], product_url)
                                 new_images = True
-                                num_of_updates += 1 
+                                num_of_updates += 1
                         else:
                             failed_products[store_name + ',' + current_url] = img['data-src']
                     # except (httplib2.HttpLib2Error, ConnectionError, TimeoutError):
@@ -504,6 +509,9 @@ def download_products_for_all_stores(user_stores, signal_start_image_matching, s
                 # print('STORE UPDATE: ' + name + ' --- ' + str(i) + '/' + str(len(stores)))
                 # print('************************************************************************************')
                 #
+                current_num_known_products = get_number_products_for_downlaoded_store(name)
+                signal_num_of_products.emit(current_num_known_products)
+
                 download_new_products_if_found(name, url)
                 save_products_img_url_dict(name)
                 # print('\t\t\tNUMBER OF NEW PRODUCTS FOUND: ' + str(num_of_updates))

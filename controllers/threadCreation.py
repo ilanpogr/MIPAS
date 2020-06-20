@@ -58,7 +58,7 @@ class WorkerCrawler(Worker):
             time.sleep(1)
             self.started.emit(counter)
             counter -= 1
-        # Controller.search_stores(self.status_search, self.current_num_stores)
+        Controller.search_stores(self.status_search, self.current_num_stores)
         self.task_changed.emit(True)
         prev_known_products = 0
         prev_known_products_lbl = main_window.kknown_prod_lbl.text()
