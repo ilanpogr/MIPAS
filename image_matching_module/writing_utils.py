@@ -18,6 +18,13 @@ class WritingUtils:
         :param vintage_im: The image to save.
         :param filter_name: The filter name.
         """
+
+        if not (type(tuple_image_path_and_name) is tuple and type(tuple_image_path_and_name[0]) is str  \
+                and type(tuple_image_path_and_name[1]) is str and type(index) is int and type(filter_name) is str):
+            return TypeError
+        if not os.path.isdir(tuple_image_path_and_name[0]):
+            return FileNotFoundError
+
         image_name = tuple_image_path_and_name[1].split(".")[0]
         cv2.imwrite(tuple_image_path_and_name[
                         0] + "\\" + image_name + "\\" + filter_name + "\\" + image_name + filter_name + str(
@@ -32,6 +39,13 @@ class WritingUtils:
         :param img: The image to save.
         :param filter_name: The filter name.
         """
+
+        if not (type(tuple_image_path_and_name) is tuple and type(tuple_image_path_and_name[0]) is str \
+                and type(tuple_image_path_and_name[1]) is str and type(filter_name) is str):
+            return TypeError
+        if not os.path.isdir(tuple_image_path_and_name[0]):
+            return FileNotFoundError
+
         image_name = tuple_image_path_and_name[1].split(".")[0]
         cv2.imwrite(tuple_image_path_and_name[0] + "\\" + image_name + "\\" + filter_name + "\\" + image_name
                     + filter_name + ".jpg", img)

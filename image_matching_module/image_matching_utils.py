@@ -33,14 +33,22 @@ class ImageMatchingUtils:
         :param batch_size: the size of each batch.
         :return: a list containing lists with images' paths that represent batches (each inner list is a batch).
         """
-        if type(batch_size) is not int:
+        try:
+            if type(batch_size) is not int:
+                raise TypeError
+            if batch_size <= 0:
+                raise ValueError
+        except TypeError:
+            print("TypeError in divide images to batches")
             return TypeError
-        if batch_size <= 0:
+        except ValueError:
+            print("ValueError in divide images to batches")
             return ValueError
         list_of_batches = []
         for i in range(0, len(images_list), batch_size):
             list_of_batches.append(images_list[i:i + batch_size])
         return list_of_batches
+
 
     @staticmethod
     def get_combined_initial_score(customer_path: str, customer_images_batch: List[List[str]],
@@ -60,27 +68,28 @@ class ImageMatchingUtils:
         :return: a list of InitialImagePair objects containing only the image pairs that got a valid
         score from the initial filtering algorithms.
         """
-        if not (type(customer_path) is str and type(customer_images_batch) is list and
-                type(store_images_batch) is list and type(initial_algorithms) is list and
-                type(store_path) is str and type(initial_threshold) is Decimal):
+        try:
+            if not (type(customer_path) is str and type(customer_images_batch) is list and
+                    type(store_images_batch) is list and type(initial_algorithms) is list and
+                    type(store_path) is str and type(initial_threshold) is Decimal):
+                raise TypeError
+        except TypeError:
+            print("TypeError in get combined initial score")
             return TypeError
-
         initial_score_passed_list = []
         for customer_image in customer_images_batch:
-
             for store_image in store_images_batch:
                 weighted_score = 0.0
-
                 # calculate the weighted score for for each algorithm
                 for algorithm, weight in initial_algorithms:
                     algorithm_score = algorithm.calculate_score(customer_image[1], store_image[1])
                     weighted_score += algorithm_score * float(weight)
-
                 # adds the pair to the initial filtering passed list if the weighted score passes the threshold
                 if weighted_score >= float(initial_threshold):
                     initial_score_passed_list.append(
                         InitialIPair(customer_path, customer_image[0], store_path, store_image[0], weighted_score))
         return initial_score_passed_list
+
 
     @staticmethod
     def get_combined_in_depth_score(image_pair_batch: List[List[Tuple]],
@@ -101,13 +110,14 @@ class ImageMatchingUtils:
         :return: a list of InDepthImagePair objects containing only the image pairs that got a valid score
         from the in depth filtering algorithms.
         """
-
-        if not (type(image_pair_batch) is list and type(in_depth_algorithms) is list and
-                type(initial_score_weight) is Decimal and type(in_depth_threshold) is Decimal):
+        try:
+            if not (type(image_pair_batch) is list and type(in_depth_algorithms) is list and
+                    type(initial_score_weight) is Decimal and type(in_depth_threshold) is Decimal):
+                raise TypeError
+        except TypeError:
+            print("TypeError in get combined in depth score")
             return TypeError
-
         in_depth_passed_list = []
-
         # calculate the final score for each image pair
         for image_pair in image_pair_batch:
             combined_in_depth_score = 0.0
@@ -115,22 +125,17 @@ class ImageMatchingUtils:
             initial_score = image_pair[2][0]
             customer_image_path = image_pair[2][1]
             store_image_path = image_pair[2][2]
-
             # get the weighted score for each in depth algorithm
             for algorithm, weight in in_depth_algorithms:
                 algorithm_score = algorithm.calculate_score(customer_image[1], store_image[1])
                 combined_in_depth_score += algorithm_score * float(weight)
-
             # calculate the final score gathered from the weighted initial score and weighted combined in depth score
             weighted_final_score = float(initial_score_weight) * initial_score + \
                                    float((Decimal('1') - initial_score_weight)) * combined_in_depth_score
-
             # adds the pair to the in depth filtering passed list if the weighted score passes the threshold
             if weighted_final_score >= in_depth_threshold:
                 in_depth_passed_list.append(InDepthIPair(customer_image_path, customer_image[0], store_image_path,
                                                          store_image[0], weighted_final_score))
-
         # sort the in depth final list by final score
         in_depth_passed_list.sort(key=lambda x: x.final_score, reverse=True)
-
         return in_depth_passed_list
