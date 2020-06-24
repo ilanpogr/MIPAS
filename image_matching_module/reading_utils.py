@@ -25,13 +25,20 @@ class ReadingUtils:
         :param tuple_image_path_and_name: The given tuple of (path to image, image name).
         :return: The image of the given tuple.
         """
-        if not (type(tuple_image_path_and_name) is tuple and type(tuple_image_path_and_name[0]) is str and
-            type(tuple_image_path_and_name[1]) is str):
+        try:
+            if not (type(tuple_image_path_and_name) is tuple and type(tuple_image_path_and_name[0]) is str and
+                    type(tuple_image_path_and_name[1]) is str):
+                raise TypeError
+            image_name = tuple_image_path_and_name[0] + "/" + tuple_image_path_and_name[1]
+            if not os.path.isfile(image_name):
+                raise FileNotFoundError
+            return cv2.imread(image_name,0)
+        except TypeError:
+            print("TypeError in reading image from tuple path open cv")
             return TypeError
-        image_name = tuple_image_path_and_name[0] + "/" + tuple_image_path_and_name[1]
-        if not os.path.isfile(image_name):
+        except FileNotFoundError:
+            print("FileNotFoundError in reading image from tuple path open cv")
             return FileNotFoundError
-        return cv2.imread(image_name)
 
     @staticmethod
     def reading_image_from_tuple_path_using_image(tuple_image_path_and_name: Tuple):
@@ -41,13 +48,20 @@ class ReadingUtils:
         :param tuple_image_path_and_name: The given tuple of (path to image, image name).
         :return: The image of the given tuple.
         """
-        if not (type(tuple_image_path_and_name) is tuple and type(tuple_image_path_and_name[0]) is str and
-                type(tuple_image_path_and_name[1]) is str):
+        try:
+            if not (type(tuple_image_path_and_name) is tuple and type(tuple_image_path_and_name[0]) is str and
+                    type(tuple_image_path_and_name[1]) is str):
+                raise TypeError
+            image_name = tuple_image_path_and_name[0] + "/" + tuple_image_path_and_name[1]
+            if not os.path.isfile(image_name):
+                raise FileNotFoundError
+            return Image.open(image_name)
+        except TypeError:
+            print("TypeError in reading image from tuple path using image")
             return TypeError
-        image_name = tuple_image_path_and_name[0] + "/" + tuple_image_path_and_name[1]
-        if not os.path.isfile(image_name):
+        except FileNotFoundError:
+            print("FileNotFoundError in reading image from tuple path using image")
             return FileNotFoundError
-        return Image.open(image_name)
 
     @staticmethod
     def reading_all_images_from_given_tuple_path_list(tuple_path_list: Tuple) -> List[Tuple]:
@@ -57,14 +71,21 @@ class ReadingUtils:
         :param tuple_path_list: List of tuple (path to image, image name)
         :return: List of tuples containing (image name, image)
         """
-        if not type(tuple_path_list) is list:
+        try:
+            if not type(tuple_path_list) is list:
+                raise TypeError
+            if not os.path.isfile(tuple_path_list[0][0] + "/" + tuple_path_list[0][1]):
+                raise FileNotFoundError
+            all_images = []
+            for image_path in tuple_path_list:
+                all_images.append((image_path[1], ReadingUtils.reading_image_from_tuple_path_open_cv(image_path)))
+            return all_images
+        except TypeError:
+            print("TypeError reading all images from given tuple path list")
             return TypeError
-        if not os.path.isfile(tuple_path_list[0][0] + "/" + tuple_path_list[0][1]):
+        except FileNotFoundError:
+            print("FileNotFoundError reading all images from given tuple path list")
             return FileNotFoundError
-        all_images = []
-        for image_path in tuple_path_list:
-            all_images.append((image_path[1], ReadingUtils.reading_image_from_tuple_path_open_cv(image_path)))
-        return all_images
 
     @staticmethod
     def get_images_names_in_folder(path: str) -> List[Tuple[str, str]]:
@@ -74,16 +95,20 @@ class ReadingUtils:
         :param path: The given path of the images.
         :return: List of tuples containing (path to image, image name)
         """
-        if type(path) is not str:
+        try:
+            if type(path) is not str:
+                raise TypeError
+            images = []
+            for r, d, f in os.walk(path):
+                for file in f:
+                    for ext in ReadingUtils.image_extensions:
+                        if ext in file:
+                            to_add = os.path.join(r), file
+                            images.append(to_add)
+            return images
+        except TypeError:
+            print("TypeError in get images names in folder")
             return TypeError
-        images = []
-        for r, d, f in os.walk(path):
-            for file in f:
-                for ext in ReadingUtils.image_extensions:
-                    if ext in file:
-                        to_add = os.path.join(r), file
-                        images.append(to_add)
-        return images
 
     @staticmethod
     def read_all_csv_paths_from_path(path_to_csv_files: str) -> List[str]:
@@ -93,17 +118,24 @@ class ReadingUtils:
         :param path_to_csv_files: The given path to csv files.
         :return: List of the path to the csv files.
         """
-        if type(path_to_csv_files) is not str:
+        try:
+            if type(path_to_csv_files) is not str:
+                raise TypeError
+            if not os.path.isdir(path_to_csv_files):
+                raise NotADirectoryError
+            csv_files_paths = []
+            for r, d, f in os.walk(path_to_csv_files):
+                for file in f:
+                    if ReadingUtils.csv_extensions in file:
+                        to_add = os.path.join(r) + file
+                        csv_files_paths.append(to_add)
+            return csv_files_paths
+        except TypeError:
+            print("TypeError in read all csv paths from path")
             return TypeError
-        if not os.path.isdir(path_to_csv_files):
-            return NotADirectoryError
-        csv_files_paths = []
-        for r, d, f in os.walk(path_to_csv_files):
-            for file in f:
-                if ReadingUtils.csv_extensions in file:
-                    to_add = os.path.join(r) + file
-                    csv_files_paths.append(to_add)
-        return csv_files_paths
+        except FileNotFoundError:
+            print("FileNotFoundError in read all csv paths from path")
+            return FileNotFoundError
 
     @staticmethod
     def reading_all_folders_paths_in_given_path(stores_path: str) -> List[str]:
@@ -113,13 +145,17 @@ class ReadingUtils:
         :param stores_path: The path to the stores folder.
         :return: A list of the full path to the store.
         """
-        if type(stores_path) is not str:
+        try:
+            if type(stores_path) is not str:
+                raise TypeError
+            if not os.path.isdir(stores_path):
+                return NotADirectoryError
+            sub_folders = [stores_path + "/" + dI for dI in os.listdir(stores_path) if os.path.isdir
+                                                                    (os.path.join(stores_path, dI))]
+            return sub_folders
+        except TypeError:
+            print("TypeError in reading all folders paths in given path")
             return TypeError
-        if not os.path.isdir(stores_path):
-            return NotADirectoryError
-        sub_folders = [stores_path + "/" + dI for dI in os.listdir(stores_path) if os.path.isdir
-                                                                (os.path.join(stores_path, dI))]
-        return sub_folders
 
     @staticmethod
     def get_prev_store_results(store_path: str) -> Set[str]:
@@ -146,17 +182,24 @@ class ReadingUtils:
 
     @staticmethod
     def init_algorithm_and_weights_dict(algorithms_and_weights_list):
-        if type(algorithms_and_weights_list) is not list:
+        try:
+            if type(algorithms_and_weights_list) is not list:
+                return TypeError
+            algorithms_and_weights_dict = {}
+            for algorithm_and_weight in algorithms_and_weights_list:
+                algorithm , weight = algorithm_and_weight.split(",")
+                if "\n" in weight:
+                    weight = weight.strip()
+                if float(weight) > 1:
+                    return ValueError
+                algorithms_and_weights_dict[algorithm] = weight
+            return algorithms_and_weights_dict
+        except TypeError:
+            print("TypeError in init algorithm and weights dict")
             return TypeError
-        algorithms_and_weights_dict = {}
-        for algorithm_and_weight in algorithms_and_weights_list:
-            algorithm , weight = algorithm_and_weight.split(",")
-            if "\n" in weight:
-                weight = weight.strip()
-            if float(weight) > 1:
-                return ValueError
-            algorithms_and_weights_dict[algorithm] = weight
-        return algorithms_and_weights_dict
+        except ValueError:
+            print("ValueError in init algorithm and weights dict")
+            return ValueError
 
     @staticmethod
     def read_config_file(file_name):
